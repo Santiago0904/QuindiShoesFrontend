@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 export const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -13,20 +14,25 @@ export const RegisterForm = () => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.nombre]: e.target.value,
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Datos enviados:", formData);
-    // Aquí podrías hacer un fetch o axios para enviar a un backend
+    try {
+      const response = await axios.post("http://localhost:22057/register", formData);
+      console.log("Usuario registrado:", response.data);
+  
+    } catch (error) {
+      console.error("Error al registrar usuario:", error);
+    }
   };
 
   return (
     <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded-2xl shadow-md">
       <h2 className="text-2xl font-bold mb-4 text-center">Registro de Usuario</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form className="space-y-4">
         <input
           type="text"
           name="nombre"
@@ -58,7 +64,7 @@ export const RegisterForm = () => {
           type="text"
           name="direccion"
           placeholder="Dirección"
-          value={formData.direccion}
+          value={formData.Direction}
           onChange={handleChange}
           className="w-full p-2 border rounded-md"
           required
@@ -67,7 +73,7 @@ export const RegisterForm = () => {
           type="email"
           name="correo"
           placeholder="Correo"
-          value={formData.correo}
+          value={formData.email}
           onChange={handleChange}
           className="w-full p-2 border rounded-md"
           required
@@ -76,12 +82,13 @@ export const RegisterForm = () => {
           type="password"
           name="contraseña"
           placeholder="Contraseña"
-          value={formData.contraseña}
+          value={formData.password}
           onChange={handleChange}
           className="w-full p-2 border rounded-md"
           required
         />
         <button
+          onClick={handleSubmit}
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
         >

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 export const LoginForm = () => {
   const [loginData, setLoginData] = useState({
-    correo: "",
-    contraseña: "",
+    email: "",
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -15,8 +16,17 @@ export const LoginForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Intento de login:", loginData);
-    // Aquí podrías validar con un backend
+
+    axios.post('http://localhost:22057/auth', credenciales)
+      .then(response => {
+        console.log('Login exitoso:', response.data);
+        alert('Bienvenida, ' + response.data.nombre + '!');
+     
+      })
+      .catch(error => {
+        console.error('Error al iniciar sesión:', error);
+        alert('Correo o contraseña incorrectos');
+      });
   };
 
   return (
@@ -27,7 +37,7 @@ export const LoginForm = () => {
           type="email"
           name="correo"
           placeholder="Correo"
-          value={loginData.correo}
+          value={loginData.email}
           onChange={handleChange}
           className="w-full p-2 border rounded-md"
           required
@@ -36,7 +46,7 @@ export const LoginForm = () => {
           type="password"
           name="contraseña"
           placeholder="Contraseña"
-          value={loginData.contraseña}
+          value={loginData.password}
           onChange={handleChange}
           className="w-full p-2 border rounded-md"
           required
