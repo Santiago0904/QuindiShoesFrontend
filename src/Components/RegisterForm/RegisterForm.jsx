@@ -3,8 +3,8 @@ import axios from "axios";
 
 export const RegisterForm = () => {
   const [formData, setFormData] = useState({
-    nombre: "",
-    apellido: "",
+    nombres: "",
+    apellidos: "",
     telefono: "",
     direccion: "",
     correo: "",
@@ -14,14 +14,14 @@ export const RegisterForm = () => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.nombre]: e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:22057/register", formData);
+      const response = await axios.post("http://localhost:3000/register", formData);
       console.log("Usuario registrado:", response.data);
   
     } catch (error) {
@@ -35,18 +35,18 @@ export const RegisterForm = () => {
       <form className="space-y-4">
         <input
           type="text"
-          name="nombre"
+          name="nombres"
           placeholder="Nombre"
-          value={formData.nombre}
+          value={formData.nombres}
           onChange={handleChange}
           className="w-full p-2 border rounded-md"
           required
         />
         <input
           type="text"
-          name="apellido"
+          name="apellidos"
           placeholder="Apellido"
-          value={formData.apellido}
+          value={formData.apellidos}
           onChange={handleChange}
           className="w-full p-2 border rounded-md"
           required
@@ -64,7 +64,7 @@ export const RegisterForm = () => {
           type="text"
           name="direccion"
           placeholder="Dirección"
-          value={formData.Direction}
+          value={formData.direccion}
           onChange={handleChange}
           className="w-full p-2 border rounded-md"
           required
@@ -73,7 +73,7 @@ export const RegisterForm = () => {
           type="email"
           name="correo"
           placeholder="Correo"
-          value={formData.email}
+          value={formData.correo}
           onChange={handleChange}
           className="w-full p-2 border rounded-md"
           required
@@ -82,7 +82,7 @@ export const RegisterForm = () => {
           type="password"
           name="contraseña"
           placeholder="Contraseña"
-          value={formData.password}
+          value={formData.contraseña}
           onChange={handleChange}
           className="w-full p-2 border rounded-md"
           required
