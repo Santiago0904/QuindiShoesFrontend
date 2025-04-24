@@ -24,7 +24,7 @@ export const NewProductForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/productos", producto);
+      const response = await axios.post("http://localhost:3000/producto", producto);
       console.log("Producto registrado:", response.data);
       alert("¡Producto registrado con éxito!");
     } catch (error) {

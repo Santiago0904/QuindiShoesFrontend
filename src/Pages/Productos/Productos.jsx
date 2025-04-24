@@ -5,14 +5,14 @@ import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 const ProductoCard = ({ producto, onDelete, onUpdate }) => {
   return (
     <div className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start">
-      <img src={producto.imagenProducto} alt={producto.nombreProducto} className="w-full h-40 object-cover rounded-md mb-3" />
-      <h3 className="text-lg font-bold">{producto.nombreProducto}</h3>
-      <p>Tipo: {producto.tipoProducto}</p>
-      <p>Género: {producto.generoProducto}</p>
-      <p>Color: {producto.colorProducto}</p>
-      <p>Talla: {producto.tallaProducto}</p>
-      <p>Stock: {producto.stockProducto}</p>
-      <p>Precio: ${producto.precioProducto}</p>
+      <img src={producto.imagen_producto} alt={producto.nombre_producto} className="w-full h-40 object-cover rounded-md mb-3" />
+      <h3 className="text-lg font-bold">{producto.nombre_producto}</h3>
+      <p>Tipo: {producto.tipo_producto}</p>
+      <p>Género: {producto.genero_producto}</p>
+      <p>Color: {producto.colores_producto}</p>
+      <p>Talla: {producto.tallas_producto}</p>
+      <p>Stock: {producto.stock}</p>
+      <p>Precio: ${producto.precio_producto}</p>
       <div className="flex gap-3 mt-3">
         <button onClick={onUpdate} className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 flex items-center gap-1">
           <FaEdit /> Actualizar
@@ -29,14 +29,14 @@ export const ListaProductos = () => {
   const [productos, setProductos] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:3000/productos")
+    axios.get("http://localhost:3000/producto")
       .then(res => setProductos(res.data))
       .catch(err => console.error("Error al cargar productos:", err));
   }, []);
 
   const handleEliminar = (id) => {
-    axios.delete(`http://localhost:3000/productos/${id}`)
-      .then(() => setProductos(productos.filter(p => p.id !== id)))
+    axios.delete(`http://localhost:3000/producto/${id}`)
+      .then(() => setProductos(productos.filter(p => p.id_producto !== id)))
       .catch(err => console.error("Error al eliminar producto:", err));
   };
 
@@ -46,7 +46,7 @@ export const ListaProductos = () => {
   };
 
   const redirigirFormulario = () => {
-    window.location.href = "/agregar-producto";
+    window.location.href = "/nuevoProducto";
   };
 
   return (
@@ -55,8 +55,8 @@ export const ListaProductos = () => {
         <ProductoCard
           key={producto.id}
           producto={producto}
-          onDelete={() => handleEliminar(producto.id)}
-          onUpdate={() => handleActualizar(producto.id)}
+          onDelete={() => handleEliminar(producto.id_producto)}
+          onUpdate={() => handleActualizar(producto.id_producto)}
         />
       ))}
 
