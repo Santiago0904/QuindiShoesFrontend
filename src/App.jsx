@@ -23,6 +23,7 @@ function App() {
         <Route path='/reiniciarContrasena' element={<PasswordPage/>}/>
         <Route path='/nuevoProducto' element={<NewProduct/>}/>
         <Route path='/productos' element={<ListaProductos/>}/>
+        <Route path='/productos' element={<ListaProductos/>}/>
       </Routes>
     </>
   )
