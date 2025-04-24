@@ -8,6 +8,8 @@ import { EmailPage } from './Pages/EmailPage/EmailPage'
 import { PasswordPage } from './Pages/PasswordPage/PasswordPage'
 import { NewProduct } from './Pages/NewProduct/NewProduct'
 import { ListaProductos } from './Pages/Productos/Productos'
+import { AddEmpleado } from './Pages/AddEmpleado/AddEmpleado'
+import { Empleados } from './Pages/Empleados/Empleados'
 
 function App() {
 
@@ -23,6 +25,8 @@ function App() {
         <Route path='/reiniciarContrasena' element={<PasswordPage/>}/>
         <Route path='/nuevoProducto' element={<NewProduct/>}/>
         <Route path='/productos' element={<ListaProductos/>}/>
+        <Route path='/AddEmpleados' element={<AddEmpleado/>}/>
+        <Route path='/empleados' element={<Empleados/>}/>
       </Routes>
     </>
   )
