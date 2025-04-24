@@ -8,6 +8,9 @@ import { EmailPage } from './Pages/EmailPage/EmailPage'
 import { PasswordPage } from './Pages/PasswordPage/PasswordPage'
 import { NewProduct } from './Pages/NewProduct/NewProduct'
 import { ListaProductos } from './Pages/Productos/Productos'
+import {MaterialNewForm} from './Components/MaterialNewForm/MaterialNewForm'
+import { ColorNewForm } from './Components/ColorNewForm/ColorNewForm'
+import { ZonaNewForm } from './Components/ZonaNewForm/ZonaNewFrom'
 
 function App() {
 
@@ -23,6 +26,9 @@ function App() {
         <Route path='/reiniciarContrasena' element={<PasswordPage/>}/>
         <Route path='/nuevoProducto' element={<NewProduct/>}/>
         <Route path='/productos' element={<ListaProductos/>}/>
+        <Route path='/material' element={<MaterialNewForm/>}/>
+        <Route path='/color' element={<ColorNewForm/>}/>
+        <Route path='/zona' element={<ZonaNewForm/>}/>
         <Route path='/productos' element={<ListaProductos/>}/>
       </Routes>
     </>
