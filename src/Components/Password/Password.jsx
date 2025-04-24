@@ -50,7 +50,7 @@ export const Password = () => {
           type="submit"
           className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
         >
-          Restablecer contraseña
+          Restablecer contraseñas
         </button>
       </form>
     </div>
