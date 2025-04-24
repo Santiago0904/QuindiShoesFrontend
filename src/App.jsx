@@ -11,7 +11,7 @@ import { ListaProductos } from './Pages/Productos/Productos'
 import {MaterialNewForm} from './Components/MaterialNewForm/MaterialNewForm'
 import { ColorNewForm } from './Components/ColorNewForm/ColorNewForm'
 import { ZonaNewForm } from './Components/ZonaNewForm/ZonaNewFrom'
-
+import { RegisterEmpledos } from './Pages/Empleados/Empleadospages'
 function App() {
 
   return (
@@ -30,6 +30,7 @@ function App() {
         <Route path='/color' element={<ColorNewForm/>}/>
         <Route path='/zona' element={<ZonaNewForm/>}/>
         <Route path='/productos' element={<ListaProductos/>}/>
+        <Route path='/Empleados' element={<RegisterEmpledos/>}/>
       </Routes>
     </>
   )
