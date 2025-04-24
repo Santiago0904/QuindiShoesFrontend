@@ -1,5 +1,4 @@
 import './App.css'
-import { RegisterForm } from './Components/RegisterForm/RegisterForm'
 import { Routes, Route} from 'react-router-dom' 
 import { Register } from './Pages/Register/Register'
 import { Login } from './Pages/Login/Login'
@@ -7,6 +6,8 @@ import { Home } from './Pages/Home/Home'
 import { Header } from './Layouts/Header/Header'
 import { EmailPage } from './Pages/EmailPage/EmailPage'
 import { PasswordPage } from './Pages/PasswordPage/PasswordPage'
+import { NewProduct } from './Pages/NewProduct/NewProduct'
+import { ListaProductos } from './Pages/Productos/Productos'
 
 function App() {
 
@@ -20,6 +21,8 @@ function App() {
         <Route path='/Login' element={<Login/>}/>
         <Route path='/recuperarContrasena' element={<EmailPage/>}/>
         <Route path='/reiniciarContrasena' element={<PasswordPage/>}/>
+        <Route path='/nuevoProducto' element={<NewProduct/>}/>
+        <Route path='/productos' element={<ListaProductos/>}/>
       </Routes>
     </>
   )
