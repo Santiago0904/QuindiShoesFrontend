@@ -9,6 +9,7 @@ export const RegisterForm = () => {
     direccion: "",
     correo: "",
     contraseña: "",
+    rol:"cliente",
   });
 
   const handleChange = (e) => {

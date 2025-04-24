@@ -29,6 +29,7 @@ function App() {
         <Route path='/material' element={<MaterialNewForm/>}/>
         <Route path='/color' element={<ColorNewForm/>}/>
         <Route path='/zona' element={<ZonaNewForm/>}/>
+        <Route path='/productos' element={<ListaProductos/>}/>
       </Routes>
     </>
   )
