@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const LoginForm = () => {
+    const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
     correo: "",
     contraseña: "",
@@ -22,6 +24,13 @@ export const LoginForm = () => {
       .then(response => {
         console.log('Login exitoso:', response.data);
         localStorage.setItem('token', response.data.token); 
+        localStorage.setItem('rol', response.data.rol);
+        if(response.data.rol === 'Empleado') {
+          navigate('/PanelControl')
+        }else if(response.data.rol === 'cliente') {
+            navigate('/Home')
+        }
+
         alert('Bienvenido/a!');
       })
       .catch(error => {
