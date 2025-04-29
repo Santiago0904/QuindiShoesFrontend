@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosClient from "../../../api/axion"; 
 
 const ModalActualizarProducto = ({ producto, onClose, onActualizar }) => {
   const [formData, setFormData] = useState({ ...producto });
@@ -19,12 +19,12 @@ const ModalActualizarProducto = ({ producto, onClose, onActualizar }) => {
     e.preventDefault();
     try {
       console.log("Datos a enviar:", formData);
-      await axios.put(
-        `http://localhost:3000/producto/${formData.id_producto}`,
+      await axiosClient.put(
+        `/producto/${formData.id_producto}`, 
         formData
       );
-      onActualizar();
-      onClose();
+      onActualizar(); 
+      onClose(); 
     } catch (error) {
       console.error("Error al actualizar producto:", error);
       alert("Error al actualizar producto");

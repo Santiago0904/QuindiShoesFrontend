@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import axiosClient from "../../api/axion";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import ModalActualizarProducto from "./Modal/ModalActualizarProducto"; // Ajusta la ruta si la tienes en otra carpeta
 
@@ -41,24 +42,38 @@ export const ListaProductos = () => {
   const [productoEditar, setProductoEditar] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
 
-  // Carga inicial de productos
+  
   useEffect(() => {
     cargarProductos();
   }, []);
 
   const cargarProductos = () => {
-    axios
-      .get("http://localhost:3000/producto")
+    const token = localStorage.getItem("token");
+    
+    axiosClient
+      .get("/producto", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((res) => setProductos(res.data))
       .catch((err) => console.error("Error al cargar productos:", err));
   };
+  
 
   const handleEliminar = (id) => {
-    axios
-      .delete(`http://localhost:3000/producto/${id}`)
+    const token = localStorage.getItem("token");
+  
+    axiosClient
+      .delete(`/producto/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then(() => cargarProductos())
       .catch((err) => console.error("Error al eliminar producto:", err));
   };
+  
 
   const handleActualizar = (producto) => {
     // Mapea snake_case → camelCase para el modal

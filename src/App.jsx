@@ -12,6 +12,7 @@ import {MaterialNewForm} from './Components/MaterialNewForm/MaterialNewForm'
 import { ColorNewForm } from './Components/ColorNewForm/ColorNewForm'
 import { ZonaNewForm } from './Components/ZonaNewForm/ZonaNewFrom'
 import { RegisterEmpledos } from './Pages/Empleados/Empleadospages'
+import { ListaEmpleados } from './Pages/Empleados/Empleados'
 function App() {
 
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path='/zona' element={<ZonaNewForm/>}/>
         <Route path='/productos' element={<ListaProductos/>}/>
         <Route path='/Empleados' element={<RegisterEmpledos/>}/>
+        <Route path='/TodosEmpleados' element={<ListaEmpleados/>}/>
       </Routes>
     </>
   )

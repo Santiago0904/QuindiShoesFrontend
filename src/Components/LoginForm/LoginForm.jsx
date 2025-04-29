@@ -17,18 +17,19 @@ export const LoginForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
     axios.post('http://localhost:3000/auth', loginData)
       .then(response => {
         console.log('Login exitoso:', response.data);
-        alert('Bienvenido/a' + '!');
-     
+        localStorage.setItem('token', response.data.token); 
+        alert('Bienvenido/a!');
       })
       .catch(error => {
         console.error('Error al iniciar sesión:', error);
         alert('Correo o contraseña incorrectos');
       });
   };
+  
 
   return (
     <div className="max-w-sm mx-auto mt-10 bg-white p-6 rounded-2xl shadow-md">

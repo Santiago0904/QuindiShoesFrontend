@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosClient from "../../api/axion";
 
 export const NewProductForm = () => {
   const [producto, setProducto] = useState({
@@ -24,14 +24,29 @@ export const NewProductForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/producto", producto);
+      const token = localStorage.getItem("token");
+  
+      const response = await axiosClient.post("/producto", producto, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
       console.log("Producto registrado:", response.data);
       alert("¡Producto registrado con éxito!");
+  
+      // Actualiza el token si fue renovado
+      const nuevoToken = response.headers["x-renewed-token"];
+      if (nuevoToken) {
+        localStorage.setItem("token", nuevoToken);
+      }
+  
     } catch (error) {
       console.error("Error al registrar producto:", error);
       alert("Hubo un error al registrar el producto.");
     }
   };
+  
 
   return (
     <div className="max-w-lg mx-auto mt-10 bg-white p-6 rounded-2xl shadow-md">

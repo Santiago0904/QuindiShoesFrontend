@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import axiosClient from "../../api/axion";
 
 export const FormEmpleados = () => {
   const [formData, setFormData] = useState({
@@ -22,7 +23,7 @@ export const FormEmpleados = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/register", formData);
+      const response = await axiosClient.post("/register", formData);
       console.log("Empleado registrado:", response.data);
   
     } catch (error) {
