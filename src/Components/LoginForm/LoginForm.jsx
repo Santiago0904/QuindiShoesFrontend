@@ -25,7 +25,7 @@ export const LoginForm = () => {
         console.log('Login exitoso:', response.data);
         localStorage.setItem('token', response.data.token); 
         localStorage.setItem('rol', response.data.rol);
-        if(response.data.rol === 'Empleado') {
+        if(response.data.rol === 'Empleado' || response.data.rol === 'domiciliario' || response.data.rol === 'vendedor') {
           navigate('/PanelControl')
         }else if(response.data.rol === 'cliente') {
             navigate('/Home')

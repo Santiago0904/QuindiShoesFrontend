@@ -10,7 +10,7 @@ export const FormEmpleados = () => {
     direccion: "",
     correo: "",
     contraseña: "",
-    rol:"Empleado",
+    rol:"",
   });
 
   const handleChange = (e) => {

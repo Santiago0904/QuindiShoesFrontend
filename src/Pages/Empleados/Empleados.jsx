@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from "react-icons/fa";
-import axiosClient from "../../api/axion"; // Asegúrate que el nombre del archivo esté bien
+import axiosClient from "../../api/axion";
+import ModalActualizarEmpleado from "./Modal/Modal"; // Ajusta la ruta si la tienes en otra carpeta
 
 const EmpleadoCard = ({ empleado, onUpdate, onDelete }) => (
   <div className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start">
-    <h3 className="text-lg font-bold">{empleado.nombres} {empleado.apellidos}</h3>
+    <h3 className="text-lg font-bold">
+      {empleado.nombres} {empleado.apellidos}
+    </h3>
     <p>Teléfono: {empleado.telefono}</p>
     <p>Dirección: {empleado.direccion}</p>
     <p>Correo: {empleado.correo}</p>
@@ -28,16 +31,20 @@ const EmpleadoCard = ({ empleado, onUpdate, onDelete }) => (
 
 export const ListaEmpleados = () => {
   const [empleados, setEmpleados] = useState([]);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [empleadoEditar, setEmpleadoEditar] = useState(null);
 
   useEffect(() => {
     cargarEmpleados();
   }, []);
 
-
   const cargarEmpleados = () => {
     axiosClient
       .get("/empleado")
-      .then((res) => setEmpleados(res.data))
+      .then((res) => {
+        console.log("Empleados recibidos:", res.data);
+        setEmpleados(res.data);
+      })
       .catch((err) => {
         console.error("Error al cargar empleados:", err);
         if (err.response?.status === 401) {
@@ -47,14 +54,30 @@ export const ListaEmpleados = () => {
   };
 
   const handleEliminar = (id) => {
+    const token = localStorage.getItem("token");
     axiosClient
-      .delete(`/empleado/${id}`)
+      .delete(`/empleado/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then(() => cargarEmpleados())
       .catch((err) => console.error("Error al eliminar empleado:", err));
   };
 
-  const handleActualizar = (id) => {
-    console.log("Actualizar empleado con ID:", id);
+  const handleActualizar = (empleado) => {
+    const empleadoActualizado = {
+      id: empleado.id_usuario, 
+      nombres: empleado.nombre,
+      apellidos: empleado.apellido,
+      telefono: empleado.telefono,
+      direccion: empleado.direccion,
+      correo: empleado.correo,
+      rol: empleado.rol,
+    };
+
+    setEmpleadoEditar(empleadoActualizado);
+    setMostrarModal(true);
   };
 
   return (
@@ -63,10 +86,18 @@ export const ListaEmpleados = () => {
         <EmpleadoCard
           key={empleado.id}
           empleado={empleado}
-          onUpdate={() => handleActualizar(empleado.id)}
+          onUpdate={() => handleActualizar(empleado)}
           onDelete={() => handleEliminar(empleado.id)}
         />
       ))}
+
+      {mostrarModal && empleadoEditar && (
+        <ModalActualizarEmpleado
+          empleado={empleadoEditar}
+          onClose={() => setMostrarModal(false)}
+          onActualizar={cargarEmpleados}
+        />
+      )}
     </div>
   );
 };
