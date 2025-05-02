@@ -19,6 +19,7 @@ const ModalActualizarEmpleado = ({ empleado, onClose, onActualizar }) => {
     e.preventDefault();
     try {
       console.log("Datos a enviar:", formData);
+      console.log("ID del empleado:", formData.id);
       await axiosClient.put(`/empleado/${formData.id}`, formData);
       onActualizar();
       onClose();

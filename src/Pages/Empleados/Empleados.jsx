@@ -4,10 +4,10 @@ import axiosClient from "../../api/axion";
 import ModalActualizarEmpleado from "./Modal/Modal"; // Ajusta la ruta si la tienes en otra carpeta
 
 const EmpleadoCard = ({ empleado, onUpdate, onDelete }) => (
-  <div className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start">
-    <h3 className="text-lg font-bold">
-      {empleado.nombres} {empleado.apellidos}
-    </h3>
+  <div className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start ">
+    <h2 className="text-lg font-bold ">
+      {empleado.nombre} {empleado.apellido}
+    </h2>
     <p>Teléfono: {empleado.telefono}</p>
     <p>Dirección: {empleado.direccion}</p>
     <p>Correo: {empleado.correo}</p>
@@ -87,7 +87,7 @@ export const ListaEmpleados = () => {
           key={empleado.id}
           empleado={empleado}
           onUpdate={() => handleActualizar(empleado)}
-          onDelete={() => handleEliminar(empleado.id)}
+          onDelete={() => handleEliminar(empleado.id_usuario)}
         />
       ))}
 
