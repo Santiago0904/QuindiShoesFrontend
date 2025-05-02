@@ -1,8 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { BtnAgregarCarrito } from '../BtnAgregarCarrito/BtnAgregarCarrito';
+import { FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
 
-// Tarjeta individual de producto
 export const CartaProducto = ({ producto }) => {
+
+    const navigate = useNavigate();
+
+  const handleAgregarAlCarrito = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/carrito/${producto.id_producto}`);
+      console.log(producto.id_producto)
+      const productoObtenido = response.data;
+
+      const carritoActual = JSON.parse(localStorage.getItem("carrito") || "[]");
+
+   
+      const existe = carritoActual.some(p => p.id_producto === productoObtenido.id_producto);
+      if (!existe) {
+        carritoActual.push(productoObtenido);
+        localStorage.setItem("carrito", JSON.stringify(carritoActual));
+      }
+
+      navigate("/carrito");
+    } catch (error) {
+      console.error("Error al agregar al carrito:", error);
+    }
+  };
   return (
     <div className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start">
       <img
@@ -17,6 +42,12 @@ export const CartaProducto = ({ producto }) => {
       <p>Talla: {producto.tallas_producto}</p>
       <p>Stock: {producto.stock}</p>
       <p>Precio: ${producto.precio_producto}</p>
+      
+      <BtnAgregarCarrito
+  contenido="Agregar al carrito"
+  icono={FaShoppingCart}
+  onClick={handleAgregarAlCarrito}
+/>
     </div>
   );
 };
