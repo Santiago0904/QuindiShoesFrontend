@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import { BtnAgregarCarrito } from '../BtnAgregarCarrito/BtnAgregarCarrito';
+import { FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
 // Tarjeta individual de producto
 export const CartaProducto = ({ producto }) => {
   return (
@@ -17,6 +18,12 @@ export const CartaProducto = ({ producto }) => {
       <p>Talla: {producto.tallas_producto}</p>
       <p>Stock: {producto.stock}</p>
       <p>Precio: ${producto.precio_producto}</p>
+      
+      <BtnAgregarCarrito
+  contenido="Agregar al carrito"
+  icono={FaShoppingCart}
+  onClick={() => console.log("Agregado!")}
+/>
     </div>
   );
 };
