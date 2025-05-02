@@ -14,6 +14,7 @@ import { ZonaNewForm } from './Components/ZonaNewForm/ZonaNewFrom'
 import { RegisterEmpledos } from './Pages/Empleados/Empleadospages'
 import {PanelControl} from './Pages/PanelControl/PanelControl'
 import { ListaEmpleados } from './Pages/Empleados/Empleados'
+import Carrito from './Pages/Carrito/Carrito'
 function App() {
 
   return (
@@ -35,6 +36,8 @@ function App() {
         <Route path='/Empleados' element={<RegisterEmpledos/>}/>
         <Route path='/ListaEmpleados' element={<ListaEmpleados/>}/>
         <Route path='/PanelControl' element={<PanelControl/>}/>
+        <Route path='/carrito' element={<Carrito/>}/>
+
       </Routes>
     </>
   )
