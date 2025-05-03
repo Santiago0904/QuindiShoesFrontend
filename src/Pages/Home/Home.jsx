@@ -1,9 +1,10 @@
 import React from 'react'
-import { MostrarProducto } from '../../Components/CartaProducto/CartaProducto'
+import { BuscadorProductos } from '../../Components/BuscadorProducto.ts/BuscadorProducto'
 export const Home = () => {
   return (
     <div>
-      <div><MostrarProducto /></div>
+      <BuscadorProductos />
+      
     </div>
   )
 }

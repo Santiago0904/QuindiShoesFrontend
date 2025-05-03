@@ -4,6 +4,7 @@ import { BtnAgregarCarrito } from '../BtnAgregarCarrito/BtnAgregarCarrito';
 import { FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
 import { ContadorCarritoContext } from '../../Contexts/ContadorCarritoContext';
 import { useContext } from 'react';
+
 export const CartaProducto = ({ producto }) => {
 
   const { incrementarContador } = useContext(ContadorCarritoContext);
@@ -53,25 +54,34 @@ export const CartaProducto = ({ producto }) => {
 };
 
 // Componente que muestra todos los productos
-export const MostrarProducto = () => {
-  const [productos, setProductos] = useState([]);
+// Componente que muestra todos los productos (modificado para aceptar productos por props)
+
+export const MostrarProducto = ({ productosProp }) => {
+  const [productos, setProductos] = useState([]); // Estado para productos cargados desde el backend
 
   useEffect(() => {
-    cargarProductos();
-  }, []);
+    // Solo cargamos los productos desde el backend si productosProp está vacío.
+    if (!productosProp || productosProp.length === 0) {
+      cargarProductos(); // Cargar todos los productos si no hay productos filtrados
+    }
+  }, [productosProp]); // Se ejecuta cada vez que productosProp cambia
 
+  // Función para cargar los productos desde el backend
   const cargarProductos = () => {
-    axios.get("http://localhost:3000/producto/public",{
-    })
-      .then((res) => { 
+    axios.get("http://localhost:3000/producto/public")
+      .then((res) => {
         console.log("Respuesta del backend:", res.data);
-        setProductos(res.data)})
+        setProductos(res.data); // Establecemos los productos obtenidos
+      })
       .catch((err) => console.error("Error al cargar productos:", err));
   };
 
+  // Mostrar productos filtrados si productosProp tiene datos, de lo contrario usar los productos cargados desde el backend
+  const productosMostrar = productosProp && productosProp.length > 0 ? productosProp : productos;
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
-      {productos.map((producto) => (
+      {productosMostrar.map((producto) => (
         <CartaProducto key={producto.id_producto} producto={producto} />
       ))}
     </div>
