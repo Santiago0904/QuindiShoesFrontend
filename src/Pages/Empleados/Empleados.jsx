@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import axiosClient from "../../api/axion";
 import ModalActualizarEmpleado from "./Modal/Modal"; // Ajusta la ruta si la tienes en otra carpeta
 
@@ -80,24 +80,39 @@ export const ListaEmpleados = () => {
     setMostrarModal(true);
   };
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {empleados.map((empleado) => (
-        <EmpleadoCard
-          key={empleado.id}
-          empleado={empleado}
-          onUpdate={() => handleActualizar(empleado)}
-          onDelete={() => handleEliminar(empleado.id_usuario)}
-        />
-      ))}
+  const redirigirFormulario = () => {
+    window.location.href = "/Empleados";
+  };
 
-      {mostrarModal && empleadoEditar && (
-        <ModalActualizarEmpleado
-          empleado={empleadoEditar}
-          onClose={() => setMostrarModal(false)}
-          onActualizar={cargarEmpleados}
-        />
-      )}
-    </div>
+  return (
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {empleados.map((empleado) => (
+          <EmpleadoCard
+            key={empleado.id}
+            empleado={empleado}
+            onUpdate={() => handleActualizar(empleado)}
+            onDelete={() => handleEliminar(empleado.id_usuario)}
+          />
+        ))}
+
+        {mostrarModal && empleadoEditar && (
+          <ModalActualizarEmpleado
+            empleado={empleadoEditar}
+            onClose={() => setMostrarModal(false)}
+            onActualizar={cargarEmpleados}
+          />
+        )}
+      </div>
+
+      <button
+        onClick={redirigirFormulario}
+        className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600"
+        title="Agregar Empleado"
+      >
+        <FaPlus size={20} />
+      </button>
+    </>
+    
   );
 };

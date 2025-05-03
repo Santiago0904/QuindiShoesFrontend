@@ -18,6 +18,7 @@ import Carrito from './Pages/Carrito/Carrito'
 import { ListaMateriales } from './Pages/MostrarMateriales/MostrarMateriales'
 import { ListaColores } from './Pages/MostrarColores/MostrarColores'
 import { ListaZonas } from './Pages/MostrarZonaProductos/MostrarZonaProductos'
+import { Footer } from './Layouts/Footer/Footer'
 
 function App() {
 
@@ -45,6 +46,9 @@ function App() {
         <Route path='/ListaColores' element={<ListaColores/>}/>
         <Route path='/ListaZonas' element={<ListaZonas/>}/>
       </Routes>
+
+      <Footer/>
+
     </>
   )
 }

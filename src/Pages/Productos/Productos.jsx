@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import axiosClient from "../../api/axion";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
-import ModalActualizarProducto from "./Modal/ModalActualizarProducto"; // Ajusta la ruta si la tienes en otra carpeta
+import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
+import { FiltrosProductos } from "../../Components/FiltrosProducto/FiltrosProducto";
 
 const ProductoCard = ({ producto, onDelete, onUpdate }) => {
   return (
@@ -39,17 +39,16 @@ const ProductoCard = ({ producto, onDelete, onUpdate }) => {
 
 export const ListaProductos = () => {
   const [productos, setProductos] = useState([]);
+  const [filtros, setFiltros] = useState({});
   const [productoEditar, setProductoEditar] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
 
-  
   useEffect(() => {
     cargarProductos();
   }, []);
 
   const cargarProductos = () => {
     const token = localStorage.getItem("token");
-    
     axiosClient
       .get("/producto", {
         headers: {
@@ -59,11 +58,9 @@ export const ListaProductos = () => {
       .then((res) => setProductos(res.data))
       .catch((err) => console.error("Error al cargar productos:", err));
   };
-  
 
   const handleEliminar = (id) => {
     const token = localStorage.getItem("token");
-  
     axiosClient
       .delete(`/producto/${id}`, {
         headers: {
@@ -73,10 +70,8 @@ export const ListaProductos = () => {
       .then(() => cargarProductos())
       .catch((err) => console.error("Error al eliminar producto:", err));
   };
-  
 
   const handleActualizar = (producto) => {
-    // Mapea snake_case → camelCase para el modal
     const productoFormateado = {
       id_producto: producto.id_producto,
       tipoProducto: producto.tipo_producto,
@@ -88,9 +83,31 @@ export const ListaProductos = () => {
       colorProducto: producto.colores_producto,
       imagenProducto: producto.imagen_producto,
     };
-
     setProductoEditar(productoFormateado);
     setMostrarModal(true);
+  };
+
+  const filtrarProductos = () => {
+    return productos
+      .filter((p) =>
+        filtros.nombre
+          ? p.nombre_producto.toLowerCase().includes(filtros.nombre.toLowerCase())
+          : true
+      )
+      .filter((p) => (filtros.tipo ? p.tipo_producto === filtros.tipo : true))
+      .filter((p) => (filtros.genero ? p.genero_producto === filtros.genero : true))
+      .filter((p) => (filtros.talla ? p.tallas_producto === filtros.talla : true))
+      .filter((p) => (filtros.color ? p.colores_producto === filtros.color : true))
+      .sort((a, b) => {
+        if (filtros.stock === "asc") return a.stock - b.stock;
+        if (filtros.stock === "desc") return b.stock - a.stock;
+        return 0;
+      })
+      .sort((a, b) => {
+        if (filtros.precio === "asc") return a.precio_producto - b.precio_producto;
+        if (filtros.precio === "desc") return b.precio_producto - a.precio_producto;
+        return 0;
+      });
   };
 
   const redirigirFormulario = () => {
@@ -99,8 +116,10 @@ export const ListaProductos = () => {
 
   return (
     <>
+      <FiltrosProductos onFilterChange={setFiltros} />
+
       <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative">
-        {productos.map((prod) => (
+        {filtrarProductos().map((prod) => (
           <ProductoCard
             key={prod.id_producto}
             producto={prod}
