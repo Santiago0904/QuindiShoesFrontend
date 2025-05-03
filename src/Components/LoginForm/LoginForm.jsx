@@ -28,7 +28,7 @@ export const LoginForm = () => {
         if(response.data.rol === 'Empleado' || response.data.rol === 'domiciliario' || response.data.rol === 'vendedor') {
           navigate('/PanelControl')
         }else if(response.data.rol === 'cliente') {
-            navigate('/Home')
+            navigate('/')
         }
 
         alert('Bienvenido/a!');

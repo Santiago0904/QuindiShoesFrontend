@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import { BtnAgregarCarrito } from '../BtnAgregarCarrito/BtnAgregarCarrito';
 import { FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
-
+import { ContadorCarritoContext } from '../../Contexts/ContadorCarritoContext';
+import { useContext } from 'react';
 export const CartaProducto = ({ producto }) => {
 
-    const navigate = useNavigate();
-
+  const { incrementarContador } = useContext(ContadorCarritoContext);
   const handleAgregarAlCarrito = async () => {
     try {
       const response = await axios.get(`http://localhost:3000/carrito/${producto.id_producto}`);
       console.log(producto.id_producto)
       const productoObtenido = response.data;
+      
 
       const carritoActual = JSON.parse(localStorage.getItem("carrito") || "[]");
 
    
-      const existe = carritoActual.some(p => p.id_producto === productoObtenido.id_producto);
+      const existe = carritoActual.some(p => String(p.id_producto) === productoObtenido.id_producto);
       if (!existe) {
         carritoActual.push(productoObtenido);
         localStorage.setItem("carrito", JSON.stringify(carritoActual));
+        incrementarContador()
       }
 
-      navigate("/carrito");
     } catch (error) {
       console.error("Error al agregar al carrito:", error);
     }
