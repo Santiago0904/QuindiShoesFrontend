@@ -16,6 +16,9 @@ import {PanelControl} from './Pages/PanelControl/PanelControl'
 import { ListaEmpleados } from './Pages/Empleados/Empleados'
 import Carrito from './Pages/Carrito/Carrito'
 import { ListaMateriales } from './Pages/MostrarMateriales/MostrarMateriales'
+import { ListaColores } from './Pages/MostrarColores/MostrarColores'
+import { ListaZonas } from './Pages/MostrarZonaProductos/MostrarZonaProductos'
+
 function App() {
 
   return (
@@ -39,6 +42,8 @@ function App() {
         <Route path='/PanelControl' element={<PanelControl/>}/>
         <Route path='/carrito' element={<Carrito/>}/>
         <Route path='/ListaMateriales' element={<ListaMateriales/>}/>
+        <Route path='/ListaColores' element={<ListaColores/>}/>
+        <Route path='/ListaZonas' element={<ListaZonas/>}/>
       </Routes>
     </>
   )
