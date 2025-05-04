@@ -19,6 +19,7 @@ import { ListaMateriales } from './Pages/MostrarMateriales/MostrarMateriales'
 import { ListaColores } from './Pages/MostrarColores/MostrarColores'
 import { ListaZonas } from './Pages/MostrarZonaProductos/MostrarZonaProductos'
 import { Footer } from './Layouts/Footer/Footer'
+import  Perfil  from './Pages/Perfil/Perfil'
 
 function App() {
 
@@ -45,6 +46,7 @@ function App() {
         <Route path='/ListaMateriales' element={<ListaMateriales/>}/>
         <Route path='/ListaColores' element={<ListaColores/>}/>
         <Route path='/ListaZonas' element={<ListaZonas/>}/>
+        <Route path='/Perfil' element={<Perfil/>}/>
       </Routes>
 
       <Footer/>
