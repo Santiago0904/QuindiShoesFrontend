@@ -4,9 +4,11 @@ import { BtnAgregarCarrito } from '../BtnAgregarCarrito/BtnAgregarCarrito';
 import { FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
 import { ContadorCarritoContext } from '../../Contexts/ContadorCarritoContext';
 import { useContext } from 'react';
+import { useNavigate } from "react-router-dom";
+
 
 export const CartaProducto = ({ producto }) => {
-
+  const navigate = useNavigate();
   const { incrementarContador } = useContext(ContadorCarritoContext);
   const handleAgregarAlCarrito = async () => {
     try {
@@ -29,8 +31,26 @@ export const CartaProducto = ({ producto }) => {
       console.error("Error al agregar al carrito:", error);
     }
   };
+
+  
+  const MostrarDetalle = () => {
+   
+    navigate('/ProductoDetalladoPages', {
+      state: {
+        imagen: producto.imagen_producto,
+        nombre: producto.nombre_producto,
+        marca: "Quemado",
+        precio: "$ "+producto.precio_producto,
+        descripcion: "QuemadoPor el momento",
+        contenido : "Agregar al carrito"
+        
+      },
+      
+    });
+  };
+  
   return (
-    <div className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start">
+    <div className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start" onClick={MostrarDetalle} >
       <img
         src={producto.imagen_producto}
         alt={producto.nombre_producto}

@@ -19,7 +19,7 @@ import { ListaMateriales } from './Pages/MostrarMateriales/MostrarMateriales'
 import { ListaColores } from './Pages/MostrarColores/MostrarColores'
 import { ListaZonas } from './Pages/MostrarZonaProductos/MostrarZonaProductos'
 import { Footer } from './Layouts/Footer/Footer'
-
+import { ProductoDetalladoPages } from './Pages/ProductoDetalladoPages/ProductoDetalladoPages'
 function App() {
 
   return (
@@ -45,6 +45,8 @@ function App() {
         <Route path='/ListaMateriales' element={<ListaMateriales/>}/>
         <Route path='/ListaColores' element={<ListaColores/>}/>
         <Route path='/ListaZonas' element={<ListaZonas/>}/>
+        <Route path='/ProductoDetalladoPages' element={<ProductoDetalladoPages/>}/>
+        
       </Routes>
 
       <Footer/>
