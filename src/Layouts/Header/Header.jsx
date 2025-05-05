@@ -6,7 +6,7 @@ import { useContext } from "react";
 export const Header = () => {
   const { contador} = useContext(ContadorCarritoContext);
   return (
-    <header className="bg-gray-800 text-white px-6 py-4 shadow-md">
+    <header className="bg-gray-800 text-white px-6 py-4 shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <h1 className="text-2xl font-bold">QuindiShoes</h1>
         <div className="flex items-center space-x-10">

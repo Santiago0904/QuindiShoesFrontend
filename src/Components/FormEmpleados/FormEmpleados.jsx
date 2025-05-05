@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import axiosClient from "../../api/axion";
 
 export const FormEmpleados = () => {
@@ -10,7 +9,7 @@ export const FormEmpleados = () => {
     direccion: "",
     correo: "",
     contraseña: "",
-    rol:"",
+    rol:"vendedor",
   });
 
   const handleChange = (e) => {

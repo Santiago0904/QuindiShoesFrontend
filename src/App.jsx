@@ -20,11 +20,20 @@ import { ListaColores } from './Pages/MostrarColores/MostrarColores'
 import { ListaZonas } from './Pages/MostrarZonaProductos/MostrarZonaProductos'
 import { Footer } from './Layouts/Footer/Footer'
 import { ProductoDetalladoPages } from './Pages/ProductoDetalladoPages/ProductoDetalladoPages'
-function App() {
 
+import  Perfil  from './Pages/Perfil/Perfil'
+import { useLocation } from 'react-router-dom'
+
+
+function App() {
+  const location = useLocation();
+
+  const ocultarHeaderYFooterEn = [ "/panelcontrol"];
+
+  const mostrarHeaderYFooter = !ocultarHeaderYFooterEn.includes(location.pathname.toLowerCase());
   return (
     <>
-    <Header/>
+    {mostrarHeaderYFooter && <Header/>}
 
       <Routes>
         <Route path='/' element={<Home/>}/>
@@ -45,11 +54,15 @@ function App() {
         <Route path='/ListaMateriales' element={<ListaMateriales/>}/>
         <Route path='/ListaColores' element={<ListaColores/>}/>
         <Route path='/ListaZonas' element={<ListaZonas/>}/>
+
         <Route path='/ProductoDetalladoPages' element={<ProductoDetalladoPages/>}/>
         
+
+        <Route path='/Perfil' element={<Perfil/>}/>
+
       </Routes>
 
-      <Footer/>
+      {mostrarHeaderYFooter && <Footer/>}
 
     </>
   )

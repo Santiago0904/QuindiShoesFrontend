@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export const LoginForm = () => {
     const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
     correo: "",
     contraseña: "",
+    recaptchaToken:""
   });
 
   const handleChange = (e) => {
@@ -17,8 +19,20 @@ export const LoginForm = () => {
     });
   };
 
+  const handleRecaptchaChange = (token) => {
+    setLoginData({
+      ...loginData,
+      recaptchaToken: token,
+    });
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!loginData.recaptchaToken) {
+      alert("Por favor, completa el reCAPTCHA.");
+      return;
+    }
   
     axios.post('http://localhost:3000/auth', loginData)
       .then(response => {
@@ -61,6 +75,11 @@ export const LoginForm = () => {
           onChange={handleChange}
           className="w-full p-2 border rounded-md"
           required
+        />
+        <ReCAPTCHA
+          sitekey="6LfVFi4rAAAAAB6uL2mfebBzOhH5ua9lburpWMBn"
+          onChange={handleRecaptchaChange}
+          className="mb-4"
         />
         <NavLink className="hover:underline" to="/recuperarContrasena">Recuperar contraseña</NavLink>
         <button
