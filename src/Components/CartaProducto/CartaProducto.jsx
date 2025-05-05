@@ -50,7 +50,8 @@ export const CartaProducto = ({ producto }) => {
   };
   
   return (
-    <div className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start" onClick={MostrarDetalle} >
+    <div className=""  >
+      <div className='"bg-white rounded-xl shadow-md p-4 flex flex-col items-start"'  onClick={MostrarDetalle}>
       <img
         src={producto.imagen_producto}
         alt={producto.nombre_producto}
@@ -63,7 +64,7 @@ export const CartaProducto = ({ producto }) => {
       <p>Talla: {producto.tallas_producto}</p>
       <p>Stock: {producto.stock}</p>
       <p>Precio: ${producto.precio_producto}</p>
-      
+      </div>
       <BtnAgregarCarrito
   contenido="Agregar al carrito"
   icono={FaShoppingCart}

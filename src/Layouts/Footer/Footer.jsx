@@ -6,7 +6,7 @@ import { EnlacesFooter } from "../../Components/EnlacesFooter/EnlacesFooter";
 
 export const Footer = () => {
   return (
-    <footer className="bg-[#1a1a1a] text-white py-10 px-6 mt-10">
+    <footer className="bg-[#1a1a1a] text-white py-10 px-6 mt-10 ">
       <TituloFooter />
       <FormularioContacto />
       <RedesFooter />

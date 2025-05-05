@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
+import {RespuestaPagos} from "../RespuestaPagos/RespuestaPagos"
 const Carrito = () => {
   const [carrito, setCarrito] = useState([]);
   const navigate = useNavigate();
@@ -13,8 +14,39 @@ const Carrito = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.epayco.co/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
+  const handlePSEPayment = () => {
+    const handler = window.ePayco.checkout.configure({
+      key: "76018558cee4255d423b4753fee3fdf1",
+      test: true, // Cambia a false en producción
+    });
+  
+    const data = {
+      name: "Pago de productos",
+      description: "Compra en QuindiShoes",
+      invoice: "ORD-1234518", // Genera esto desde el backend idealmente
+      currency: "cop",
+      amount: "5000",
+      tax_base: "0",
+      tax: "0",
+      country: "co",
+      method: "PSE",
+      response: <RespuestaPagos />,
+      confirmation: "https://tu-backend.com/api/pagos/confirmacion",
+      external: "false",
+      extra1: "ID_USUARIO", // opcional, para enviar info
+    };
+  
+    handler.open(data);
+  };
   const irAProductos = () => {
-    navigate("/");
+  navigator('/')
   };
 
   const vaciarCarrito = () => {
@@ -83,7 +115,7 @@ const Carrito = () => {
                 Vaciar carrito
               </button>
               <button
-                onClick={irAProductos}
+                onClick={handlePSEPayment}
                 className="px-6 py-2 bg-green-400 text-white rounded-lg hover:bg-green-500 transition"
               >
                 Seguir comprando
