@@ -29,15 +29,15 @@ const Carrito = () => {
     const data = {
       name: "Pago de productos",
       description: "Compra en QuindiShoes",
-      invoice: "ORD-12345634", // Genera esto desde el backend idealmente
+      invoice: "ORD-12345641", // Genera esto desde el backend idealmente
       currency: "cop",
       amount: "15000",
       tax_base: "0",
       tax: "0",
-      country: "co",
+      country: "co",  
       method: "PSE",
-      response: "http://localhost:5173/respuesta-pago",
-      confirmation: "https://698d-2800-484-6884-2400-78ec-67c6-8dcd-1966.ngrok-free.app/api/pagos/confirmacion",
+      response: "http://localhost:5173/RespuestaPagos",
+      confirmation: "https://a95a-179-1-217-68.ngrok-free.app/api/pagos/confirmacion",
       external: "false",
     
     };
