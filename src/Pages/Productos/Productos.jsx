@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axion";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
-import { FiltrosProductos } from "../../Components/FiltrosProducto/FiltrosProducto";
 
 const STOCK_MINIMO = 5;
 
@@ -39,6 +38,15 @@ const ProductoCard = ({ producto, onDelete, onUpdate }) => (
 
 export const ListaProductos = () => {
   const [productos, setProductos] = useState([]);
+  const [filtro, setFiltro] = useState({
+    nombre: "",
+    tipo: "",
+    genero: "",
+    color: "",
+    talla: "",
+    stock: "",
+    precio: "",
+  });
   const [productoEditar, setProductoEditar] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [alertasStock, setAlertasStock] = useState([]);
@@ -52,18 +60,13 @@ export const ListaProductos = () => {
 
     axiosClient
       .get("/producto", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
         setProductos(res.data);
 
-        // Detectar productos con bajo stock
-        const productosBajoStock = res.data.filter(
-          (prod) => prod.stock <= STOCK_MINIMO
-        );
-        setAlertasStock(productosBajoStock);
+        const bajoStock = res.data.filter((p) => p.stock <= STOCK_MINIMO);
+        setAlertasStock(bajoStock);
       })
       .catch((err) => console.error("Error al cargar productos:", err));
   };
@@ -73,9 +76,7 @@ export const ListaProductos = () => {
 
     axiosClient
       .delete(`/producto/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => cargarProductos())
       .catch((err) => console.error("Error al eliminar producto:", err));
@@ -102,25 +103,112 @@ export const ListaProductos = () => {
     window.location.href = "/nuevoProducto";
   };
 
+  const productosFiltrados = productos
+    .filter((p) =>
+      p.nombre_producto.toLowerCase().includes(filtro.nombre.toLowerCase())
+    )
+    .filter((p) =>
+      filtro.tipo ? p.tipo_producto.toLowerCase() === filtro.tipo : true
+    )
+    .filter((p) =>
+      filtro.genero ? p.genero_producto.toLowerCase() === filtro.genero : true
+    )
+    .filter((p) =>
+      filtro.color ? p.colores_producto.toLowerCase() === filtro.color : true
+    )
+    .filter((p) =>
+      filtro.talla ? String(p.tallas_producto) === parseInt(filtro.talla): true
+    )
+    .sort((a, b) => {
+      if (filtro.stock === "asc") return a.stock - b.stock;
+      if (filtro.stock === "desc") return b.stock - a.stock;
+      return 0;
+    })
+    .sort((a, b) => {
+      if (filtro.precio === "asc") return a.precio_producto - b.precio_producto;
+      if (filtro.precio === "desc") return b.precio_producto - a.precio_producto;
+      return 0;
+    });
+
   return (
     <>
-      {/* Alerta de stock bajo */}
+      {/* Alertas */}
       {alertasStock.length > 0 && (
         <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 m-6 rounded-lg shadow">
           <p className="font-semibold mb-2">⚠️ Productos con bajo stock:</p>
           <ul className="list-disc list-inside">
-            {alertasStock.map((prod) => (
-              <li key={prod.id_producto}>
-                {prod.nombre_producto} – Stock: {prod.stock}
+            {alertasStock.map((p) => (
+              <li key={p.id_producto}>
+                {p.nombre_producto} – Stock: {p.stock}
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      {/* Lista de productos */}
+      {/* Filtros */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-6 mb-6">
+        <input
+          type="text"
+          placeholder="Buscar por nombre"
+          value={filtro.nombre}
+          onChange={(e) => setFiltro({ ...filtro, nombre: e.target.value })}
+          className="p-2 border rounded"
+        />
+        <input
+          type="text"
+          placeholder="Filtrar por tipo"
+          value={filtro.tipo}
+          onChange={(e) => setFiltro({ ...filtro, tipo: e.target.value })}
+          className="p-2 border rounded"
+        />
+        <select
+          value={filtro.genero}
+          onChange={(e) => setFiltro({ ...filtro, genero: e.target.value })}
+          className="p-2 border rounded"
+        >
+          <option value="">Género</option>
+          <option value="Hombre">Hombre</option>
+          <option value="Mujer">Mujer</option>
+          <option value="Unisex">Unisex</option>
+        </select>
+        <input
+          type="text"
+          placeholder="Color"
+          value={filtro.color}
+          onChange={(e) => setFiltro({ ...filtro, color: e.target.value })}
+          className="p-2 border rounded"
+        />
+        <input
+          type="number"
+          placeholder="Talla"
+          value={filtro.talla}
+          onChange={(e) => setFiltro({ ...filtro, talla: e.target.value })}
+          className="p-2 border rounded"
+        />
+        <select
+          value={filtro.stock}
+          onChange={(e) => setFiltro({ ...filtro, stock: e.target.value })}
+          className="p-2 border rounded"
+        >
+          <option value="">Stock</option>
+          <option value="asc">Menor a mayor</option>
+          <option value="desc">Mayor a menor</option>
+        </select>
+        <select
+          value={filtro.precio}
+          onChange={(e) => setFiltro({ ...filtro, precio: e.target.value })}
+          className="p-2 border rounded"
+        >
+          <option value="">Precio</option>
+          <option value="asc">Menor a mayor</option>
+          <option value="desc">Mayor a menor</option>
+        </select>
+      </div>
+
+      {/* Productos */}
       <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative">
-        {productos.map((prod) => (
+        {productosFiltrados.map((prod) => (
           <ProductoCard
             key={prod.id_producto}
             producto={prod}
@@ -138,7 +226,6 @@ export const ListaProductos = () => {
         </button>
       </div>
 
-      {/* Modal para actualizar */}
       {mostrarModal && productoEditar && (
         <ModalActualizarProducto
           producto={productoEditar}
@@ -152,4 +239,3 @@ export const ListaProductos = () => {
     </>
   );
 };
-

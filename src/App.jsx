@@ -21,7 +21,8 @@ import { ListaZonas } from './Pages/MostrarZonaProductos/MostrarZonaProductos'
 import { Footer } from './Layouts/Footer/Footer'
 import  Perfil  from './Pages/Perfil/Perfil'
 import { useLocation } from 'react-router-dom'
-
+import  VerificarCorreo  from './Layouts/VerificarCorreo/VerificarCorreo'
+import EsperandoConfirmacion from './Pages/EsperandoConfirmacion/EsperandoConfirmacion'
 function App() {
   const location = useLocation();
 
@@ -52,6 +53,8 @@ function App() {
         <Route path='/ListaColores' element={<ListaColores/>}/>
         <Route path='/ListaZonas' element={<ListaZonas/>}/>
         <Route path='/Perfil' element={<Perfil/>}/>
+        <Route path="/validarCorreo" element={<VerificarCorreo />}/>
+        <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
       </Routes>
 
       {mostrarHeaderYFooter && <Footer/>}
