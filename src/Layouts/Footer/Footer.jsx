@@ -3,10 +3,12 @@ import { TituloFooter } from "../../Components/TituloFooter/TituloFooter";
 import { RedesFooter } from "../../Components/RedesFooter/RedesFooter";
 import { FormularioContacto } from "../../Components/FormularioContacto/FormularioContacto";
 import { EnlacesFooter } from "../../Components/EnlacesFooter/EnlacesFooter";
+import { SeccionReseñas } from "../SeccionReseñas/SeccionReseñas";
 
 export const Footer = () => {
   return (
     <footer className="bg-[#1a1a1a] text-white py-10 px-6 mt-10">
+      <SeccionReseñas/>
       <TituloFooter />
       <FormularioContacto />
       <RedesFooter />
