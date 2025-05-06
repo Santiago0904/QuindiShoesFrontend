@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
-import {RespuestaPagos} from "../RespuestaPagos/RespuestaPagos"
 const Carrito = () => {
   const [carrito, setCarrito] = useState([]);
   const navigate = useNavigate();
@@ -30,17 +29,17 @@ const Carrito = () => {
     const data = {
       name: "Pago de productos",
       description: "Compra en QuindiShoes",
-      invoice: "ORD-1234518", // Genera esto desde el backend idealmente
+      invoice: "ORD-12345634", // Genera esto desde el backend idealmente
       currency: "cop",
-      amount: "5000",
+      amount: "15000",
       tax_base: "0",
       tax: "0",
       country: "co",
       method: "PSE",
-      response: <RespuestaPagos />,
-      confirmation: "https://tu-backend.com/api/pagos/confirmacion",
+      response: "http://localhost:5173/respuesta-pago",
+      confirmation: "https://698d-2800-484-6884-2400-78ec-67c6-8dcd-1966.ngrok-free.app/api/pagos/confirmacion",
       external: "false",
-      extra1: "ID_USUARIO", // opcional, para enviar info
+    
     };
   
     handler.open(data);
