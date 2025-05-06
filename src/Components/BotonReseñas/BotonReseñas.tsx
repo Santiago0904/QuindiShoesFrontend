@@ -1,17 +1,15 @@
 import React from 'react';
 
-interface Props {
+type Props = {
   onClick: () => void;
-}
+};
 
-export const BotonReseñas: React.FC<Props> = ({ onClick }) => {
+export const BotonReseñas = ({ onClick }: Props) => {
   return (
-    <button
-      onClick={onClick}
-      className="fixed bottom-4 right-4 bg-yellow-400 text-black p-3 rounded-full shadow-lg hover:bg-yellow-500 transition"
-    >
-      ⭐⭐⭐⭐⭐ Reseñas
-    </button>
+    <div className="cursor-pointer flex items-center" onClick={onClick}>
+      <span className="text-xl mr-2">⭐️⭐️⭐️⭐️⭐️</span>
+      <span className="font-semibold">Reseñas</span>
+    </div>
   );
 };
 

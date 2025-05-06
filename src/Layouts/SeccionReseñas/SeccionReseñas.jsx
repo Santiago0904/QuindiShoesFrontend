@@ -9,19 +9,14 @@ export const SeccionReseñas = () => {
 
   return (
     <div className="p-6">
-      <BotonReseñas onClick={() => setMostrar(true)} />
+      <BotonReseñas onClick={() => {
+      console.log("Click en botón reseñas");
+      setMostrar(true);
+      }} />
 
-      {/* Mostrar modal solo si mostrar es true */}
-      {mostrar && (
-        <ModalReseñas onClose={() => setMostrar(false)} />
-      )}
-
-      {/* Mostrar formulario solo si hay idUsuario */}
-      {idUsuario && mostrar && (
-        <FormularioReseña
-          idUsuario={parseInt(idUsuario)} // Parseo si lo necesitas como número
-          onPublicado={() => setMostrar(false)}
-        />
+      <ModalReseñas abierto={mostrar} cerrar={() => setMostrar(false)} />
+      {idUsuario && (
+        <FormularioReseña idUsuario={idUsuario} onPublicado={() => setMostrar(false)} />
       )}
     </div>
   );

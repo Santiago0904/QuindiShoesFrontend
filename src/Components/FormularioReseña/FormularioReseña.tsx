@@ -13,15 +13,21 @@ export const FormularioReseña: React.FC<Props> = ({ onClose }) => {
     try {
       const fecha = new Date().toISOString();
 
-      await axios.post('http://localhost:3000/reseñas/agregar', {
-        mensaje,
-        fecha,
-        usuario_id: Number(usuario_id)
+      await axios.post('http://localhost:3000/resenas/agregar', {
+        mensaje: mensaje,
+        fecha: new Date().toISOString().slice(0, 10),
+        usuario_id: usuario_id
       });
 
       alert('Reseña enviada correctamente');
       setMensaje('');
       onClose();
+
+      console.log('📤 Enviando reseña:', {
+        mensaje: mensaje,
+        fecha: new Date().toISOString().slice(0, 10),
+        usuario_id: usuario_id
+      });
     } catch (error) {
       console.error(error);
       alert('Error al enviar la reseña');
@@ -31,7 +37,7 @@ export const FormularioReseña: React.FC<Props> = ({ onClose }) => {
   return (
     <div className="flex flex-col gap-4">
       <textarea
-        className="border border-gray-300 p-3 rounded-md"
+        className="border border-gray-300 p-3 rounded-md text-black"
         rows={4}
         value={mensaje}
         onChange={(e) => setMensaje(e.target.value)}
