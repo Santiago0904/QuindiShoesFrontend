@@ -55,6 +55,7 @@ function App() {
         <Route path='/Perfil' element={<Perfil/>}/>
         <Route path="/validarCorreo" element={<VerificarCorreo />}/>
         <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
+        
 
       </Routes>
 
