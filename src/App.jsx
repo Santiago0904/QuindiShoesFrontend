@@ -20,10 +20,11 @@ import { ListaColores } from './Pages/MostrarColores/MostrarColores'
 import { ListaZonas } from './Pages/MostrarZonaProductos/MostrarZonaProductos'
 import { Footer } from './Layouts/Footer/Footer'
 import { ProductoDetalladoPages } from './Pages/ProductoDetalladoPages/ProductoDetalladoPages'
-import { RespuestaPagos } from './Pages/RespuestaPagos/RespuestaPagos'
 import  Perfil  from './Pages/Perfil/Perfil'
 import { useLocation } from 'react-router-dom'
 import { HistorialFacturas } from './Pages/HistorialFacturas/HistorialFacturas'
+import { Aceptada } from './Pages/RespuestaPagos/Aceptada'
+import { Rechazada } from './Pages/RespuestaPagos/Rechazada'
 
 function App() {
   const location = useLocation();
@@ -56,8 +57,11 @@ function App() {
         <Route path='/ListaZonas' element={<ListaZonas/>}/>
 
         <Route path='/ProductoDetalladoPages' element={<ProductoDetalladoPages/>}/>
-        <Route path='/RespuestaPagos' element={<RespuestaPagos />}/>
         <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
+
+        <Route path='/PagoAceptado' element={<Aceptada />}/>
+        <Route path='/PagoRechazado' element={<Rechazada />}/>
+
 
         <Route path='/Perfil' element={<Perfil/>}/>
 
