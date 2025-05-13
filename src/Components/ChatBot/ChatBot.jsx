@@ -1,80 +1,107 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const ChatWidget = () => {
-    const [open, setOpen] = useState(false); // Estado para mostrar/ocultar el chat
-    const [messages, setMessages] = useState([]); // Mensajes del chat
-    const [input, setInput] = useState(''); // Entrada del usuario
+const ChatBot = () => {
+  const [messages, setMessages] = useState([]);
+  const [userInput, setUserInput] = useState("");
+  const [chatVisible, setChatVisible] = useState(false);
 
-    const toggleChat = () => setOpen(!open); // Alternar visibilidad del chat
+  const toggleChat = () => {
+    setChatVisible(!chatVisible);
+  };
 
-    const sendMessage = async () => {
-        if (!input.trim()) return;
+  const handleUserInput = async () => {
+  const newMessage = { role: 'user', content: userInput };
+  setMessages([...messages, newMessage]);
+  setUserInput("");
 
-        const userMessage = { sender: 'user', text: input };
-        setMessages(prev => [...prev, userMessage]); // Agregar mensaje del usuario
+  try {
+    const response = await axios.post("http://localhost:3000/api/chat", {
+      question: userInput, // Esta es la pregunta del usuario
+      history: messages,   // Esta es la historia del chat
+    });
 
-        try {
-            console.log('Enviando mensaje al microservicio...');
-            const response = await axios.post('/chatBot', {
-                question: input,
-                history: messages // Enviar el historial de mensajes
-            });
-
-            const botMessage = { sender: 'bot', text: response.data.reply };
-            setMessages(prev => [...prev, botMessage]); // Agregar mensaje del bot
-        } catch (error) {
-            setMessages(prev => [...prev, { sender: 'bot', text: 'Error al conectar con el microservicio.' }]);
-        }
-
-        setInput(''); // Limpiar input
-    };
-
-    return (
-        <div className="fixed bottom-5 right-5 z-50">
-            <button
-                onClick={toggleChat}
-                className="bg-blue-600 text-white rounded-full w-12 h-12 text-xl shadow-lg hover:bg-blue-700 transition"
-            >
-                💬
-            </button>
-
-            {open && (
-                <div className="w-[300px] h-[400px] bg-white border border-gray-300 p-3 mt-2 rounded-lg flex flex-col shadow-xl">
-                    <div className="flex-1 overflow-y-auto mb-2 space-y-2">
-                        {messages.map((msg, i) => (
-                            <div
-                                key={i}
-                                className={`text-sm px-3 py-2 rounded-md max-w-[80%] ${
-                                    msg.sender === 'user'
-                                        ? 'bg-blue-100 text-right self-end'
-                                        : 'bg-gray-100 text-left self-start'
-                                }`}
-                            >
-                                {msg.text}
-                            </div>
-                        ))}
-                    </div>
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            placeholder="Escribe tu mensaje..."
-                            className="flex-1 px-3 py-1 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <button
-                            onClick={sendMessage}
-                            disabled={!input.trim()}
-                            className="bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 disabled:opacity-50"
-                        >
-                            Enviar
-                        </button>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
+    const assistantMessage = { role: 'assistant', content: response.data.reply };
+    setMessages([...messages, newMessage, assistantMessage]);
+  } catch (error) {
+    console.error('Error en la comunicación con el backend:', error);
+  }
 };
 
-export default ChatWidget;
+  return (
+    <div>
+      {/* Botón flotante */}
+      <button 
+        onClick={toggleChat}
+        style={{
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          backgroundColor: '#007BFF',
+          color: 'white',
+          border: 'none',
+          borderRadius: '50%',
+          padding: '15px',
+          fontSize: '20px',
+          boxShadow: '0px 4px 6px rgba(0,0,0,0.2)',
+          cursor: 'pointer',
+        }}
+      >
+        Chat
+      </button>
+
+      {/* Ventana de chat */}
+      {chatVisible && (
+        <div style={{
+          position: 'fixed',
+          bottom: '80px',
+          right: '20px',
+          width: '300px',
+          height: '400px',
+          backgroundColor: 'white',
+          border: '1px solid #ccc',
+          borderRadius: '10px',
+          padding: '10px',
+          boxShadow: '0px 4px 10px rgba(0,0,0,0.1)',
+        }}>
+          <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+            {messages.map((message, index) => (
+              <div key={index} style={{ margin: '10px 0' }}>
+                <strong>{message.role === 'user' ? 'Tú' : 'Asistente'}:</strong>
+                <p>{message.content}</p>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <input
+              type="text"
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              style={{
+                width: '80%',
+                padding: '8px',
+                border: '1px solid #ccc',
+                borderRadius: '5px',
+              }}
+            />
+            <button 
+              onClick={handleUserInput}
+              style={{
+                backgroundColor: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                padding: '8px 12px',
+                cursor: 'pointer',
+              }}
+            >
+              Enviar
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ChatBot;

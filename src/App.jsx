@@ -23,6 +23,7 @@ import  Perfil  from './Pages/Perfil/Perfil'
 import { useLocation } from 'react-router-dom'
 import  VerificarCorreo  from './Layouts/VerificarCorreo/VerificarCorreo'
 import EsperandoConfirmacion from './Pages/EsperandoConfirmacion/EsperandoConfirmacion'
+import Chat from './Components/ChatBot/ChatBot'
 function App() {
   const location = useLocation();
 
@@ -58,7 +59,7 @@ function App() {
         
 
       </Routes>
-
+        {mostrarHeaderYFooter && <Chat/>}
       {mostrarHeaderYFooter && <Footer/>}
 
     </>
