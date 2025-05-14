@@ -1,104 +1,99 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+    import React, { useState } from 'react';
+    import { useNavigate } from 'react-router-dom';
+    import axios from 'axios';
 
-export const RegisterForm = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    nombres: "",
-    apellidos: "",
-    telefono: "",
-    direccion: "",
-    correo: "",
-    contraseña: "",
-    rol:"cliente",
-  });
+    export function RegisterForm() {
+    const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+    const [formulario, setFormulario] = useState({
+        nombres: '',
+        apellidos: '',
+        correo: '',
+        telefono: '',
+        direccion: '',
+        contrasena: '',
+        rol: 'cliente'
     });
-  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post("http://localhost:3000/register", formData);
-      console.log("Usuario registrado:", response.data);
-      navigate('/Login')
-    } catch (error) {
-      console.error("Error al registrar usuario:", error);
+    const [errores, setErrores] = useState({});
+    const [errorServidor, setErrorServidor] = useState('');
+
+    const manejarCambio = (e) => {
+        setFormulario(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
+    const manejarEnvio = async (e) => {
+        e.preventDefault();
+        const nuevosErrores = {};
+
+        if (!formulario.nombres) nuevosErrores.nombres = 'El nombre es obligatorio.';
+        if (!formulario.apellidos) nuevosErrores.apellidos = 'El apellido es obligatorio.';
+        if (!formulario.correo) nuevosErrores.correo = 'El correo es obligatorio.';
+        if (!formulario.telefono) nuevosErrores.telefono = 'El teléfono es obligatorio.';
+        if (!formulario.direccion) nuevosErrores.direccion = 'La dirección es obligatoria.';
+        if (!formulario.contrasena) nuevosErrores.contrasena = 'La contraseña es obligatoria.';
+
+        if (Object.keys(nuevosErrores).length > 0) {
+        setErrores(nuevosErrores);
+        return;
+        }
+
+        try {
+            console.log('Formulario a enviar:', formulario);
+        await axios.post('http://localhost:3000/register', formulario);
+        navigate('/esperando-confirmacion'); // Redirige a componente de confirmación
+        } catch (error) {
+        console.error('Error al registrar:', error);
+        const mensaje = error.response?.data?.mensaje || 'Error en el registro. Intenta nuevamente.';
+        setErrorServidor(mensaje);
+        }
+    };
+
+    return (
+        <div className="max-w-md mx-auto mt-10 bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <h2 className="text-2xl font-bold mb-4">Registro de Usuario</h2>
+        {errorServidor && (
+            <p className="text-red-500 text-sm mb-4">{errorServidor}</p>
+        )}
+        <form onSubmit={manejarEnvio}>
+            {[
+            { id: 'nombres', label: 'Nombres', tipo: 'text' },
+            { id: 'apellidos', label: 'Apellidos', tipo: 'text' },
+            { id: 'correo', label: 'Correo electrónico', tipo: 'email' },
+            { id: 'telefono', label: 'Teléfono', tipo: 'text' },
+            { id: 'direccion', label: 'Dirección', tipo: 'text' },
+            { id: 'contrasena', label: 'Contraseña', tipo: 'password' }
+            ].map(campo => (
+            <div className="mb-4" key={campo.id}>
+                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={campo.id}>
+                {campo.label}
+                </label>
+                <input
+                id={campo.id}
+                name={campo.id}
+                type={campo.tipo}
+                value={formulario[campo.id]}
+                onChange={manejarCambio}
+                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errores[campo.id] ? 'border-red-500' : ''}`}
+                placeholder={campo.label}
+                />
+                {errores[campo.id] && (
+                <p className="text-red-500 text-xs italic mt-1">{errores[campo.id]}</p>
+                )}
+            </div>
+            ))}
+
+            <div className="flex items-center justify-between">
+            <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+                Registrar
+            </button>
+            </div>
+        </form>
+        </div>
+    );
     }
-  };
 
-  return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded-2xl shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-center">Registro de Usuario</h2>
-      <form className="space-y-4">
-        <input
-          type="text"
-          name="nombres"
-          placeholder="Nombre"
-          value={formData.nombres}
-          onChange={handleChange}
-          className="w-full p-2 border rounded-md"
-          required
-        />
-        <input
-          type="text"
-          name="apellidos"
-          placeholder="Apellido"
-          value={formData.apellidos}
-          onChange={handleChange}
-          className="w-full p-2 border rounded-md"
-          required
-        />
-        <input
-          type="tel"
-          name="telefono"
-          placeholder="Teléfono"
-          value={formData.telefono}
-          onChange={handleChange}
-          className="w-full p-2 border rounded-md"
-          required
-        />
-        <input
-          type="text"
-          name="direccion"
-          placeholder="Dirección"
-          value={formData.direccion}
-          onChange={handleChange}
-          className="w-full p-2 border rounded-md"
-          required
-        />
-        <input
-          type="email"
-          name="correo"
-          placeholder="Correo"
-          value={formData.correo}
-          onChange={handleChange}
-          className="w-full p-2 border rounded-md"
-          required
-        />
-        <input
-          type="password"
-          name="contraseña"
-          placeholder="Contraseña"
-          value={formData.contraseña}
-          onChange={handleChange}
-          className="w-full p-2 border rounded-md"
-          required
-        />
-        <button
-          onClick={handleSubmit}
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-        >
-          Registrarse
-        </button>
-      </form>
-    </div>
-  );
-};
-
+    export default RegisterForm;
