@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+.pipe_sprite {
+  position: fixed;
+  height: 70vh;
+  width: 6vw;
+  background: radial-gradient(lightgreen 50%, green);
+  border: 5px solid black;
+  z-index: 10;
+}

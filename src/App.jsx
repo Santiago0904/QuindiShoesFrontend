@@ -24,6 +24,8 @@ import { useLocation } from 'react-router-dom'
 import  VerificarCorreo  from './Layouts/VerificarCorreo/VerificarCorreo'
 import EsperandoConfirmacion from './Pages/EsperandoConfirmacion/EsperandoConfirmacion'
 import Chat from './Components/ChatBot/ChatBot'
+import { Juego } from './Pages/Juego/Juego'
+
 function App() {
   const location = useLocation();
 
@@ -56,6 +58,7 @@ function App() {
         <Route path='/Perfil' element={<Perfil/>}/>
         <Route path="/validarCorreo" element={<VerificarCorreo />}/>
         <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
+        <Route path="/juego" element={<Juego />} />
         
 
       </Routes>
