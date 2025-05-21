@@ -3,6 +3,9 @@ import FlappyBirdGame from '../../Layouts/Juego/Juego'
 
 export const Juego = () => {
   return (
-    <FlappyBirdGame/>
+    
+      <FlappyBirdGame/>
+    
+    
   )
 }
