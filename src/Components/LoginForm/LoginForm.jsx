@@ -29,24 +29,6 @@ export const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (localStorage.getItem("correoVerificado") !== "true") {
-        alert("Por favor, verifica tu correo antes de iniciar sesión.");
-        return; // Detenemos el proceso de login
-      }
-  
-      try {
-        // Enviar solicitud de inicio de sesión
-        const response = await axios.post("http://localhost:3000/login", { correo: email, contraseña: password });
-        console.log("Usuario logueado:", response.data);
-        history.push('/');
-      } catch (error) {
-        console.error("Error al iniciar sesión:", error);
-        alert("Credenciales incorrectas");
-      }
-   
-  
-     
-
     if (!loginData.recaptchaToken) {
       alert("Por favor, completa el reCAPTCHA.");
       return;
