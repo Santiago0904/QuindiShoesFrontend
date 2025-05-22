@@ -25,6 +25,7 @@ import  VerificarCorreo  from './Layouts/VerificarCorreo/VerificarCorreo'
 import EsperandoConfirmacion from './Pages/EsperandoConfirmacion/EsperandoConfirmacion'
 import Chat from './Components/ChatBot/ChatBot'
 import { Juego } from './Pages/Juego/Juego'
+import { DetalleProducto } from './Pages/ProductoDetalle/ProductoDetalle'
 
 function App() {
   const location = useLocation();
@@ -59,6 +60,8 @@ function App() {
         <Route path="/validarCorreo" element={<VerificarCorreo />}/>
         <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
         <Route path="/juego" element={<Juego />} />
+        <Route path="/producto/:id" element={<DetalleProducto />} />
+
         
 
       </Routes>

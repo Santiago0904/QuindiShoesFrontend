@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
+
 const Carrito = () => {
   const [carrito, setCarrito] = useState([]);
   const navigate = useNavigate();
   const { resetear } = useContext(ContadorCarritoContext);
+
   useEffect(() => {
     const datosGuardados = localStorage.getItem("carrito");
     if (datosGuardados) {
@@ -48,7 +50,7 @@ const Carrito = () => {
                 className="flex flex-col sm:flex-row items-center gap-6 bg-white border border-gray-200 rounded-2xl shadow-md p-6"
               >
                 <img
-                  src={producto.imagen_producto}
+                  src={producto.imagen}
                   alt={producto.nombre_producto}
                   className="w-32 h-32 object-cover rounded-xl border border-gray-100 shadow-sm"
                 />
@@ -56,20 +58,22 @@ const Carrito = () => {
                   <h4 className="text-2xl font-semibold text-gray-800 mb-1">
                     {producto.nombre_producto}
                   </h4>
-                  <p className="text-lg  font-medium mb-2">
-                    Precio:   <span className="text-green-500"> ${producto.precio_producto}</span>
+                  <p className="text-lg font-medium mb-2">
+                    Precio: <span className="text-green-500">${producto.precio_producto}</span>
                   </p>
                   <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-gray-600">
                     <p>
-                      <span className="font-medium text-gray-700">Color:</span> {producto.colores_producto}
+                      <span className="font-medium text-gray-700">Color:</span> {producto.color}
                     </p>
                     <p>
-                      <span className="font-medium text-gray-700">Talla:</span> {producto.tallas_producto}
+                      <span className="font-medium text-gray-700">Talla:</span> {producto.talla}
                     </p>
                     <p>
-                      <span className="font-medium text-gray-700">Género:</span> {producto.genero_producto}
+                      <span className="font-medium text-gray-700">Cantidad:</span> {producto.cantidad}
                     </p>
-                    
+                    <p>
+                      <span className="font-medium text-gray-700">Stock disponible:</span> {producto.stock}
+                    </p>
                   </div>
                 </div>
               </div>
