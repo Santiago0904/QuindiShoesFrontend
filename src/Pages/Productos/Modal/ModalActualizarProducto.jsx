@@ -1,30 +1,33 @@
 import React, { useState } from "react";
-import axiosClient from "../../../api/axion"; 
+import axiosClient from "../../../api/axion";
 
 const ModalActualizarProducto = ({ producto, onClose, onActualizar }) => {
-  const [formData, setFormData] = useState({ ...producto });
+  // Solo los campos principales del producto
+  const [formData, setFormData] = useState({
+    tipoProducto: producto.tipo_producto,
+    nombreProducto: producto.nombre_producto,
+    generoProducto: producto.genero_producto,
+    precioProducto: producto.precio_producto,
+    id_producto: producto.id_producto,
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]:
-        name === "stockProducto" || name === "precioProducto"
-          ? Number(value)
-          : value,
+      [name]: name === "precioProducto" ? Number(value) : value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("Datos a enviar:", formData);
       await axiosClient.put(
-        `/producto/${formData.id_producto}`, 
+        `/producto/${formData.id_producto}`,
         formData
       );
-      onActualizar(); 
-      onClose(); 
+      onActualizar();
+      onClose();
     } catch (error) {
       console.error("Error al actualizar producto:", error);
       alert("Error al actualizar producto");
@@ -32,7 +35,7 @@ const ModalActualizarProducto = ({ producto, onClose, onActualizar }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black opacity-98 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-lg">
         <h2 className="text-xl font-bold mb-4 text-center">
           Actualizar Producto
@@ -63,23 +66,6 @@ const ModalActualizarProducto = ({ producto, onClose, onActualizar }) => {
             className="w-full p-2 border rounded"
           />
           <input
-            name="stockProducto"
-            type="number"
-            value={formData.stockProducto}
-            onChange={handleChange}
-            placeholder="Stock"
-            required
-            className="w-full p-2 border rounded"
-          />
-          <input
-            name="tallaProducto"
-            value={formData.tallaProducto}
-            onChange={handleChange}
-            placeholder="Talla"
-            required
-            className="w-full p-2 border rounded"
-          />
-          <input
             name="precioProducto"
             type="number"
             value={formData.precioProducto}
@@ -88,23 +74,6 @@ const ModalActualizarProducto = ({ producto, onClose, onActualizar }) => {
             required
             className="w-full p-2 border rounded"
           />
-          <input
-            name="colorProducto"
-            value={formData.colorProducto}
-            onChange={handleChange}
-            placeholder="Color"
-            required
-            className="w-full p-2 border rounded"
-          />
-          <input
-            name="imagenProducto"
-            value={formData.imagenProducto}
-            onChange={handleChange}
-            placeholder="URL de imagen"
-            required
-            className="w-full p-2 border rounded"
-          />
-
           <div className="flex justify-between mt-4">
             <button
               type="submit"
