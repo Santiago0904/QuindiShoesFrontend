@@ -22,6 +22,9 @@ import { Footer } from './Layouts/Footer/Footer'
 import  Perfil  from './Pages/Perfil/Perfil'
 import { useLocation } from 'react-router-dom'
 import  VerificarCorreo  from './Layouts/VerificarCorreo/VerificarCorreo'
+import EsperandoConfirmacion from './Pages/EsperandoConfirmacion/EsperandoConfirmacion'
+import Chat from './Components/ChatBot/ChatBot'
+import { Juego } from './Pages/Juego/Juego'
 
 function App() {
   const location = useLocation();
@@ -54,8 +57,12 @@ function App() {
         <Route path='/ListaZonas' element={<ListaZonas/>}/>
         <Route path='/Perfil' element={<Perfil/>}/>
         <Route path="/validarCorreo" element={<VerificarCorreo />}/>
-      </Routes>
+        <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
+        <Route path="/juego" element={<Juego />} />
+        
 
+      </Routes>
+        {mostrarHeaderYFooter && <Chat/>}
       {mostrarHeaderYFooter && <Footer/>}
 
     </>

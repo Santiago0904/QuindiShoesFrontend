@@ -43,6 +43,9 @@ export const LoginForm = () => {
         console.error("Error al iniciar sesión:", error);
         alert("Credenciales incorrectas");
       }
+   
+  
+     
 
     if (!loginData.recaptchaToken) {
       alert("Por favor, completa el reCAPTCHA.");
