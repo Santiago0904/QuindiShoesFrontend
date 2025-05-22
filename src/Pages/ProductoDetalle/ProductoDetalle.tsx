@@ -2,6 +2,8 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
+import Swal from "sweetalert2";
+import "sweetalert2/src/sweetalert2.scss";
 
 interface Variante {
   id_variantes: number;
@@ -51,48 +53,77 @@ export function DetalleProducto() {
   const stockDisponible = varianteSeleccionada ? varianteSeleccionada.stock : 0;
 
   const handleAgregarCarrito = () => {
-    if (!colorSeleccionado || !tallaSeleccionada) {
-      alert("Selecciona un color y una talla");
-      return;
-    }
-    if (cantidad > stockDisponible) {
-      alert("No hay suficiente stock disponible");
-      return;
-    }
+  if (!colorSeleccionado || !tallaSeleccionada) {
+    Swal.fire({
+      icon: "warning",
+      title: "Selecciona color y talla",
+      text: "Por favor selecciona un color y una talla antes de agregar al carrito.",
+      confirmButtonColor: "#2563eb"
+    });
+    return;
+  }
+  if (cantidad > stockDisponible) {
+    Swal.fire({
+      icon: "error",
+      title: "Stock insuficiente",
+      text: "No hay suficiente stock disponible para la cantidad seleccionada.",
+      confirmButtonColor: "#2563eb"
+    });
+    return;
+  }
 
-    // Guardar en localStorage el producto seleccionado
-    const carritoActual = JSON.parse(localStorage.getItem("carrito") || "[]");
-    const nuevaEntrada = {
-      id_producto: producto.id_producto,
-      nombre_producto: producto.nombre_producto,
-      precio_producto: producto.precio_producto,
-      imagen: producto.imagenes[0],
-      color: producto.colores.find(c => c.id_color === colorSeleccionado)?.color,
-      talla: producto.tallas.find(t => t.id_talla === tallaSeleccionada)?.talla,
-      id_color: colorSeleccionado,
-      id_talla: tallaSeleccionada,
-      cantidad,
-      id_variante: varianteSeleccionada?.id_variantes,
-      stock: varianteSeleccionada?.stock
-    };
-
-    // Si ya existe el mismo producto con misma variante, suma la cantidad
-    const idx = carritoActual.findIndex(
-      (item: any) =>
-        item.id_producto === nuevaEntrada.id_producto &&
-        item.id_color === nuevaEntrada.id_color &&
-        item.id_talla === nuevaEntrada.id_talla
-    );
-    if (idx >= 0) {
-      carritoActual[idx].cantidad += cantidad;
-    } else {
-      carritoActual.push(nuevaEntrada);
-    }
-
-    localStorage.setItem("carrito", JSON.stringify(carritoActual));
-    incrementarContador();
-    alert("Producto añadido al carrito");
+  const carritoActual = JSON.parse(localStorage.getItem("carrito") || "[]");
+  const nuevaEntrada = {
+    id_producto: producto.id_producto,
+    nombre_producto: producto.nombre_producto,
+    precio_producto: producto.precio_producto,
+    imagen: producto.imagenes[0],
+    color: producto.colores.find(c => c.id_color === colorSeleccionado)?.color,
+    talla: producto.tallas.find(t => t.id_talla === tallaSeleccionada)?.talla,
+    id_color: colorSeleccionado,
+    id_talla: tallaSeleccionada,
+    cantidad,
+    id_variante: varianteSeleccionada?.id_variantes,
+    stock: varianteSeleccionada?.stock
   };
+
+  const idx = carritoActual.findIndex(
+    (item: any) =>
+      item.id_producto === nuevaEntrada.id_producto &&
+      item.id_color === nuevaEntrada.id_color &&
+      item.id_talla === nuevaEntrada.id_talla
+  );
+  if (idx >= 0) {
+    carritoActual[idx].cantidad += cantidad;
+  } else {
+    carritoActual.push(nuevaEntrada);
+  }
+
+  localStorage.setItem("carrito", JSON.stringify(carritoActual));
+  incrementarContador();
+
+  Swal.fire({
+    icon: "success",
+    title: "¡Agregado al carrito!",
+    html: `
+      <div class="flex flex-col items-center">
+        <img src="${producto.imagenes[0]}" alt="${producto.nombre_producto}" class="mx-auto rounded-xl shadow mb-3" style="width:90px;height:90px;object-fit:cover"/>
+        <div class="font-bold text-lg mb-1">${producto.nombre_producto}</div>
+        <div class="text-base text-gray-700 mb-1">Color: <span style="display:inline-block;width:18px;height:18px;border-radius:50%;background:${producto.colores.find(c => c.id_color === colorSeleccionado)?.color};border:1px solid #ccc;vertical-align:middle"></span></div>
+        <div class="text-base text-gray-700 mb-1">Talla: <span class="font-semibold">${producto.tallas.find(t => t.id_talla === tallaSeleccionada)?.talla}</span></div>
+        <div class="text-base text-gray-700">Cantidad: <span class="font-semibold">${cantidad}</span></div>
+      </div>
+    `,
+    showConfirmButton: true,
+    confirmButtonText: "Seguir comprando",
+    confirmButtonColor: "#2563eb",
+    timer: 1800,
+    timerProgressBar: true,
+    customClass: {
+      popup: "rounded-2xl shadow-2xl p-6"
+    }
+  });
+};
 
   return (
     <div className="flex flex-col md:flex-row gap-10 max-w-6xl mx-auto my-10 bg-white rounded-2xl shadow-2xl p-8 animate-fade-in">
