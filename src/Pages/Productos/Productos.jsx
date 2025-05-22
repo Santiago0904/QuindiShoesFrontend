@@ -2,19 +2,22 @@ import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axion";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
+import { useNavigate } from "react-router-dom";
 
 const STOCK_MINIMO = 5;
 
 // Componente de carta para cada producto (panel de control)
 const ProductoCard = ({ producto, onDelete, onUpdate }) => {
   // Imagen principal
+  const navigate = useNavigate();
+
   const imagenPrincipal =
     producto.imagenes && producto.imagenes.length > 0
       ? producto.imagenes[0]
       : "https://via.placeholder.com/300x200?text=Sin+Imagen";
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start w-full max-w-xs mx-auto">
+    <div className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start w-full max-w-xs mx-auto" onClick={() => navigate(`/producto/${producto.id_producto}`)}>
       <img
         src={imagenPrincipal}
         alt={producto.nombre_producto}

@@ -59,7 +59,7 @@ const Carrito = () => {
                     {producto.nombre_producto}
                   </h4>
                   <p className="text-lg font-medium mb-2">
-                    Precio: <span className="text-green-500">${producto.precio}</span>
+                    Precio: <span className="text-green-500">${producto.precio_producto}</span>
                   </p>
                   <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-gray-600">
                     <p>
