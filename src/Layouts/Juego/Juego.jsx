@@ -1,13 +1,10 @@
+// [IMPORTS]
 import { useEffect, useRef, useState } from 'react';
 import birdImg from '../../assets/images/crocodilo.png';
 import birdFlapImg from '../../assets/images/sprite-up.png';
-import pointSoundFile from '../../assets/sounds/point.mp3';
 import dieSoundFile from '../../assets/sounds/die.mp3';
 import fondoVideo from '../../assets/images/FONDOMP4.mp4';
-import coffeePlantImg from '../../assets/images/coffee-plant.png';
-
-
-// ... [importaciones iguales que antes]
+import Ecos_Freneticos from '../../assets/sounds/Ecos_Freneticos.mp3';
 
 export default function FlappyBirdGame() {
   const [gameState, setGameState] = useState('Start');
@@ -16,8 +13,6 @@ export default function FlappyBirdGame() {
   const [score, setScore] = useState(0);
   const [birdSrc, setBirdSrc] = useState(birdImg);
   const [videoReverse, setVideoReverse] = useState(false);
-  const reverseIntervalRef = useRef(null);
-  const videoTimeoutRef = useRef(null); // NUEVO: referencia para timeout de espera
 
   const velocityRef = useRef(0);
   const birdYRef = useRef(40);
@@ -25,32 +20,58 @@ export default function FlappyBirdGame() {
   const animationFrameRef = useRef();
   const pipeTimerRef = useRef(0);
   const gameStateRef = useRef(gameState);
-  const pointSound = useRef(new Audio(pointSoundFile));
   const dieSound = useRef(new Audio(dieSoundFile));
   const videoRef = useRef(null);
+  const reverseIntervalRef = useRef(null);
+  const videoTimeoutRef = useRef(null);
+  const ecosFreneticosAudio = useRef(new Audio(Ecos_Freneticos));
+  const gameOverRef = useRef(false);
+  useEffect(() => {
+  dieSound.current.load();
+  ecosFreneticosAudio.current.load();
+}, []);
+
+ 
+
+
 
   const gravity = 0.1;
   const flapPower = -1.5;
-  const moveSpeed = 0.3;
-  const pipeGap = 30;
+  const moveSpeedRef = useRef(0.3);
+  const [_, setDummy] = useState(0); // para forzar re-render si quieres mostrar velocidad (opcional)
 
-  const birdHeight = 11.5;
-  const birdWidth = 3.5;
+
+  const pipeGap = 30;
+  const PIPE_SCALE = 13;
+
+  const birdHeight = 10.5;
+  const birdWidth = 7;
 
   useEffect(() => {
     gameStateRef.current = gameState;
   }, [gameState]);
 
   const handleKeyDown = (e) => {
-    if ((e.key === 'Enter' || e.key === 'ArrowUp') && gameStateRef.current !== 'Play') {
-      startGame();
-    }
-    if ((e.key === ' ' || e.key === 'ArrowUp') && gameStateRef.current === 'Play') {
-      velocityRef.current = flapPower;
-      setBirdSrc(birdFlapImg);
-      setTimeout(() => setBirdSrc(birdImg), 200);
-    }
-  };
+  const audio = ecosFreneticosAudio.current;
+
+  if ((e.key === 'Enter' || e.key === 'ArrowUp') && gameStateRef.current !== 'Play') {
+    // Reproduce la música aquí directamente tras interacción
+    audio.pause();
+    audio.currentTime = 0;
+    audio.play().catch((e) => {
+      console.warn("No se pudo reproducir Ecos_Freneticos:", e);
+    });
+
+    startGame();
+  }
+
+  if ((e.key === ' ' || e.key === 'ArrowUp') && gameStateRef.current === 'Play') {
+    velocityRef.current = flapPower;
+    setBirdSrc(birdFlapImg);
+    setTimeout(() => setBirdSrc(birdImg), 200);
+  }
+};
+
 
   const startVideoForward = () => {
     if (!videoRef.current) return;
@@ -73,8 +94,6 @@ export default function FlappyBirdGame() {
         if (videoRef.current.currentTime <= 0) {
           clearInterval(reverseIntervalRef.current);
           clearTimeout(videoTimeoutRef.current);
-
-          // Espera 3 segundos antes de volver a reproducir hacia adelante
           videoTimeoutRef.current = setTimeout(() => {
             startVideoForward();
           }, 3000);
@@ -82,7 +101,7 @@ export default function FlappyBirdGame() {
           videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 0.05);
         }
       }, 50);
-    }, 3000); // Espera 3s antes de comenzar a retroceder
+    }, 3000);
   };
 
   useEffect(() => {
@@ -99,112 +118,152 @@ export default function FlappyBirdGame() {
     };
   }, []);
 
-  const startGame = () => {
-    setScore(0);
-    const initialY = 40;
-    setBirdY(initialY);
-    birdYRef.current = initialY;
-    velocityRef.current = 0;
+ const startGame = () => {
+ gameOverRef.current = false;  // Reiniciar bandera
 
-    startVideoForward();
+  moveSpeedRef.current = 0.3;
+  setScore(0);
+  const initialY = 40;
+  setBirdY(initialY);
+  birdYRef.current = initialY;
+  velocityRef.current = 0;
 
-    // NUEVO: Generar 3 tuberías separadas adecuadamente
-    const initialPipes = Array.from({ length: 3 }, (_, i) => {
-      const top = Math.floor(Math.random() * 45) + 10;
-      return {
-        id: Date.now() + i,
-        x: 100 + i * 50, // Más separadas horizontalmente
-        top,
-        scored: false,
-      };
-    });
+  startVideoForward();
+  
 
-    pipesRef.current = initialPipes;
-    setPipes(initialPipes);
-    pipeTimerRef.current = 0;
-    setGameState('Play');
-    cancelAnimationFrame(animationFrameRef.current);
-    animationFrameRef.current = requestAnimationFrame(gameLoop);
-  };
 
-  const gameOver = () => {
-    setGameState('End');
-    dieSound.current.play();
-    cancelAnimationFrame(animationFrameRef.current);
 
-    if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-      clearInterval(reverseIntervalRef.current);
-      clearTimeout(videoTimeoutRef.current);
-    }
-  };
+  const initialPipes = [
+    { id: Date.now(),     x: 100, top: 25, scored: false },
 
-  const gameLoop = () => {
-    if (gameStateRef.current !== 'Play') return;
+  ];
 
-    velocityRef.current += gravity;
-    birdYRef.current += velocityRef.current;
+  pipesRef.current = initialPipes;
+  setPipes(initialPipes);
+  pipeTimerRef.current = 0;
+  setGameState('Play');
+  cancelAnimationFrame(animationFrameRef.current);
+  animationFrameRef.current = requestAnimationFrame(gameLoop);
+};
 
-    if (birdYRef.current < 0 || birdYRef.current > 90) {
+
+
+
+  // Dentro de `gameOver`:
+const gameOver = () => {
+  if (gameOverRef.current) return;  // Si ya hubo game over, no hacer nada
+  gameOverRef.current = true;
+
+  setGameState('End');
+  cancelAnimationFrame(animationFrameRef.current);
+
+  const audio = ecosFreneticosAudio.current;
+  audio.pause();
+  audio.currentTime = 0;
+
+  const die = dieSound.current;
+  die.pause();
+  die.currentTime = 0;
+  die.play().catch((e) => console.warn("No se pudo reproducir die.mp3:", e));
+
+  if (videoRef.current) {
+    videoRef.current.pause();
+    videoRef.current.currentTime = 0;
+    clearInterval(reverseIntervalRef.current);
+    clearTimeout(videoTimeoutRef.current);
+  }
+};
+
+
+  // ... (todo igual hasta gameLoop)
+
+const gameLoop = () => {
+  if (gameStateRef.current !== 'Play') return;
+
+  velocityRef.current += gravity;
+  birdYRef.current += velocityRef.current;
+
+  if (birdYRef.current < 0 || birdYRef.current > 90) {
+    gameOver();
+    return;
+  }
+
+  setBirdY(birdYRef.current);
+
+  pipesRef.current = pipesRef.current
+    .map(pipe => ({ ...pipe, x: pipe.x - moveSpeedRef.current }))
+    .filter(pipe => pipe.x + 8 > 0);
+
+  const hitboxWidth = birdWidth * 0.8;
+  const hitboxHeight = birdHeight * 0.8;
+  const marginX = (birdWidth - hitboxWidth) / 2;
+  const marginY = (birdHeight - hitboxHeight) / 2;
+  const verticalOffset = 2;
+
+  pipesRef.current.forEach(pipe => {
+    const birdLeft = 30 + marginX;
+    const birdRight = birdLeft + hitboxWidth;
+    const birdTop = birdYRef.current + verticalOffset + marginY;
+    const birdBottom = birdTop + hitboxHeight;
+
+    const pipeLeft = pipe.x;
+    const pipeRight = pipeLeft + 6;
+
+    const upperPipeBottom = pipe.top;
+    const lowerPipeTop = pipe.top + pipeGap;
+
+    const horizontalOverlap = birdRight > pipeLeft + 1 && birdLeft < pipeRight - 1;
+    const verticalCollision = birdTop < upperPipeBottom || birdBottom > lowerPipeTop;
+
+    if (horizontalOverlap && verticalCollision) {
       gameOver();
-      return;
     }
 
-    setBirdY(birdYRef.current);
-
-    pipesRef.current = pipesRef.current
-      .map(pipe => ({ ...pipe, x: pipe.x - moveSpeed }))
-      .filter(pipe => pipe.x + 8 > 0);
-
-    const hitboxWidth = birdWidth * 0.85;
-    const hitboxHeight = birdHeight * 0.85;
-    const marginX = (birdWidth - hitboxWidth) / 2;
-    const marginY = (birdHeight - hitboxHeight) / 2;
-    const verticalOffset = 2;
-
-    pipesRef.current.forEach(pipe => {
-      const birdLeft = 30 + marginX;
-      const birdRight = birdLeft + hitboxWidth;
-      const birdTop = birdYRef.current + verticalOffset + marginY;
-      const birdBottom = birdTop + hitboxHeight;
-
-      const pipeLeft = pipe.x;
-      const pipeRight = pipe.x + 6;
-
-      const upperPipeBottom = pipe.top;
-      const lowerPipeTop = pipe.top + pipeGap;
-
-      const horizontalOverlap = birdRight > pipeLeft + 1 && birdLeft < pipeRight - 1;
-      const verticalCollision = birdTop < upperPipeBottom || birdBottom > lowerPipeTop;
-
-      if (horizontalOverlap && verticalCollision) {
-        gameOver();
-      }
-
-      if (!pipe.scored && pipe.x + 6 < 30) {
-        setScore(prev => prev + 1);
-        pipe.scored = true;
-        pointSound.current.play();
-      }
-    });
-
-    setPipes([...pipesRef.current]);
-
-    pipeTimerRef.current++;
-    if (pipeTimerRef.current > 100) {
-      pipeTimerRef.current = 0;
-      const top = Math.floor(Math.random() * 45) + 10;
-      pipesRef.current.push({
-        id: Date.now() + Math.random(),
-        x: 100,
-        top,
-        scored: false,
+    if (!pipe.scored && pipe.x + 6 < 30) {
+      setScore(prev => {
+        const newScore = prev + 1;
+        // Eliminado el sonido aquí:
+        // if (newScore % 10 === 0) {
+        //   const point = pointSound.current;
+        //   point.pause();
+        //   point.currentTime = 0;
+        //   point.play().catch((e) => console.warn("No se pudo reproducir point.mp3:", e));
+        // }
+        return newScore;
       });
+      pipe.scored = true;
     }
+  });
 
-    animationFrameRef.current = requestAnimationFrame(gameLoop);
-  };
+  setPipes([...pipesRef.current]);
+
+  pipeTimerRef.current++;
+  if (pipeTimerRef.current > 100) {
+    pipeTimerRef.current = 0;
+    const top = Math.floor(Math.random() * 45) + 10;
+    pipesRef.current.push({
+      id: Date.now() + Math.random(),
+      x: 100,
+      top,
+      scored: false,
+    });
+  }
+
+  animationFrameRef.current = requestAnimationFrame(gameLoop);
+};
+
+// ... (el resto igual)
+
+
+  useEffect(() => {
+  if (score > 0 && score % 10 === 0) {
+    // Aumenta la velocidad ligeramente, por ejemplo +0.05
+    moveSpeedRef.current += 0.15;
+    // Opcional: forzar re-render para debug o mostrar velocidad
+    setDummy(prev => prev + 1);
+  }
+}, [score]);
+
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -213,82 +272,132 @@ export default function FlappyBirdGame() {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+  
+return (
+  <div
+  className="w-full h-full flex items-center justify-center p-8 pb-50"
+  style={{
+    background: `
+      linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%),
+      radial-gradient(circle at 30% 30%, rgba(74, 222, 128, 0.1) 0%, transparent 60%),
+      radial-gradient(circle at 70% 70%, rgba(34, 197, 94, 0.08) 0%, transparent 60%)
+    `,
+    backgroundBlendMode: 'overlay',
+  }}
+>
 
-  return (
-    <div className="w-screen h-screen flex items-center justify-center bg-black">
-      <div className="relative w-[1300px] h-[800px] overflow-hidden border-4 border-white rounded-xl shadow-lg">
-        <video
-          ref={videoRef}
-          src={fondoVideo}
-          className="absolute top-0 left-0 w-full h-full object-cover z-0"
-          muted
-          playsInline
-        />
+    <div
+      className="relative w-[1300px] h-[700px] overflow-hidden border-4 border-white rounded-xl shadow-2xl"
+      style={{
+        background: 'rgba(255, 255, 255, 0.05)',
+        backdropFilter: 'blur(6px)',
+        boxShadow: '0 0 30px rgba(72, 147, 47, 0.7)',
+      }}
+    >
+      <video
+        ref={videoRef}
+        src={fondoVideo}
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+        muted
+        playsInline
+      />
+      <img
+        src={birdSrc}
+        alt="bird"
+        className="absolute w-[80px] h-[105px] left-[390px] z-50"
+        style={{ top: `${birdY * 8}px` }}
+      />
+      {pipes.map(pipe => {
+        const pipeWidth = 80;
+        const pipeHeight = 600;
+        const pipeX = pipe.x * PIPE_SCALE;
 
-        <img
-          src={birdSrc}
-          alt="bird"
-          className="absolute w-[80px] h-[105px] left-[350px] z-50"
-          style={{ top: `${birdY * 8}px` }}
-        />
+        const topPipeBottom = pipe.top * 8;
+        const bottomPipeTop = topPipeBottom + pipeGap * 8;
 
-        {pipes.map(pipe => (
+        const palmaPattern = `
+          repeating-linear-gradient(
+            0deg,
+            #3cb371,
+            #3cb371 2px,
+            #2ea360 2px,
+            #2ea360 4px,
+            #279151 4px,
+            #279151 6px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(60, 179, 113, 0.9),
+            rgba(40, 120, 70, 0.95)
+          )
+        `;
+
+        return (
           <div key={pipe.id}>
-            {/* Parte superior */}
-            <img
-              src={coffeePlantImg}
-              alt="plant-top"
-              className="absolute image-render-pixel"
+            {/* Tubería superior */}
+            <div
+              className="absolute z-10"
               style={{
-                left: `${pipe.x * 13}px`,
-                top: '0px',
-                width: '78px',
-                height: `${pipe.top * 8}px`,
-                imageRendering: 'pixelated',
-                objectFit: 'fill',
-                transform: 'scaleY(-1)', // Volteada para arriba
+                left: `${pipeX}px`,
+                top: `${topPipeBottom - pipeHeight}px`,
+                width: `${pipeWidth}px`,
+                height: `${pipeHeight}px`,
+                backgroundColor: '#3cb371',
+                backgroundImage: palmaPattern,
+                backgroundSize: '8px 100%, auto',
+                backgroundRepeat: 'repeat-x, no-repeat',
+                border: '5px solid #1f6e3d',
+                borderBottom: 'none',
+                borderRadius: '14px 14px 0 0',
+                boxShadow: 'inset 0 0 20px rgba(50, 150, 100, 0.9), 0 6px 15px rgba(0,0,0,0.5)',
+                filter: 'drop-shadow(0 0 5px rgba(30, 120, 80, 0.6))',
+                transition: 'background-color 0.3s',
               }}
             />
 
-            {/* Parte inferior */}
-            <img
-              src={coffeePlantImg}
-              alt="plant-bottom"
-              className="absolute image-render-pixel"
+            {/* Tubería inferior */}
+            <div
+              className="absolute z-10"
               style={{
-                left: `${pipe.x * 13}px`,
-                top: `${(pipe.top + pipeGap) * 8}px`,
-                width: '78px',
-                height: `${(100 - (pipe.top + pipeGap)) * 8}px`,
-                imageRendering: 'pixelated',
-                objectFit: 'fill',
-
+                left: `${pipeX}px`,
+                top: `${bottomPipeTop}px`,
+                width: `${pipeWidth}px`,
+                height: `${pipeHeight}px`,
+                backgroundColor: '#3cb371',
+                backgroundImage: palmaPattern,
+                backgroundSize: '8px 100%, auto',
+                backgroundRepeat: 'repeat-x, no-repeat',
+                border: '5px solid #1f6e3d',
+                borderTop: 'none',
+                borderRadius: '0 0 14px 14px',
+                boxShadow: 'inset 0 0 20px rgba(50, 150, 100, 0.9), 0 -6px 15px rgba(0,0,0,0.5)',
+                filter: 'drop-shadow(0 0 5px rgba(30, 120, 80, 0.6))',
+                transition: 'background-color 0.3s',
               }}
             />
           </div>
-        ))}
+        );
+      })}
 
-
-        <div className="absolute top-6 left-6 text-white text-4xl z-50 drop-shadow-lg">
-          <span>Score: </span>
-          <span className="text-yellow-400 font-bold">{score}</span>
-        </div>
-
-        {gameState !== 'Play' && (
-          <div className="absolute text-center z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl bg-white p-8 rounded-lg shadow-lg">
-            {gameState === 'Start' && (
-              <>
-                <p>Presiona <b>↑</b> o <b>Enter</b> para comenzar</p>
-                <p>Usa <span className="text-red-600">↑</span> o espacio para volar</p>
-              </>
-            )}
-            {gameState === 'End' && (
-              <p className="text-red-600">Game Over<br />Presiona ↑ o Enter para reiniciar</p>
-            )}
-          </div>
-        )}
+      <div className="absolute top-6 left-6 text-white text-4xl z-50 drop-shadow-lg">
+        <span>Score: </span>
+        <span className="text-yellow-400 font-bold">{score}</span>
       </div>
+      {gameState !== 'Play' && (
+        <div className="absolute text-center z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl bg-white bg-opacity-80 p-8 rounded-lg shadow-lg">
+          {gameState === 'Start' && (
+            <>
+              <p>Presiona <b>↑</b> o <b>Enter</b> para comenzar</p>
+              <p>Usa <span className="text-red-600">↑</span> o espacio para volar</p>
+            </>
+          )}
+          {gameState === 'End' && (
+            <p className="text-red-600">Game Over<br />Presiona ↑ o Enter para reiniciar</p>
+          )}
+        </div>
+      )}
     </div>
-  );
-}
+  </div>
+);
 
+}
