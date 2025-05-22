@@ -5,7 +5,6 @@ export const Home = () => {
   return (
     <div>
       <BuscadorProductos />
-      <p>HOLAAA</p>
       <ChatWidget/> 
     </div>
   )
