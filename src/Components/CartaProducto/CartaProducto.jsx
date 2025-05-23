@@ -1,8 +1,17 @@
 import React, { useContext } from 'react';
 import { ContadorCarritoContext } from '../../Contexts/ContadorCarritoContext';
+
+import { useContext } from 'react';
+import { useNavigate } from "react-router-dom";
+
+
+export const CartaProducto = ({ producto }) => {
+  const navigate = useNavigate();
+
 import { useNavigate } from 'react-router-dom';
 
 export const CartaProducto = ({ producto }) => {
+
   const { incrementarContador } = useContext(ContadorCarritoContext);
   const navigate = useNavigate();
 
@@ -17,11 +26,34 @@ export const CartaProducto = ({ producto }) => {
     navigate(`/producto/${producto.id_producto}`);
   };
 
+
+  
+  const MostrarDetalle = () => {
+   
+    navigate('/ProductoDetalladoPages', {
+      state: {
+        imagen: producto.imagen_producto,
+        nombre: producto.nombre_producto,
+        marca: "Quemado",
+        precio: "$ "+producto.precio_producto,
+        descripcion: "QuemadoPor el momento",
+        contenido : "Agregar al carrito"
+        
+      },
+      
+    });
+  };
+  
+  return (
+    <div className=""  >
+      <div className='"bg-white rounded-xl shadow-md p-4 flex flex-col items-start"'  onClick={MostrarDetalle}>
+
   return (
     <div
       className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start hover:shadow-lg transition cursor-pointer"
       onClick={irADetalle}
     >
+
       <img
         src={imagenPrincipal}
         alt={producto.nombre_producto}
@@ -31,6 +63,14 @@ export const CartaProducto = ({ producto }) => {
       <p>Tipo: {producto.tipo_producto}</p>
       <p>Género: {producto.genero_producto}</p>
       <p>Precio: ${producto.precio_producto}</p>
+
+      </div>
+      <BtnAgregarCarrito
+  contenido="Agregar al carrito"
+  icono={FaShoppingCart}
+  onClick={handleAgregarAlCarrito}
+/>
+
     </div>
   );
 };
