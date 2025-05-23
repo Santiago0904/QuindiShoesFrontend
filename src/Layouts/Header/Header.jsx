@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
 import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
@@ -31,6 +31,7 @@ export const Header = () => {
           <NavLink to="/perfil" className="text-xl text-gray-600 hover:text-blue-400">
             <FaUser />
           </NavLink>
+
         </div>
       </div>
     </header>

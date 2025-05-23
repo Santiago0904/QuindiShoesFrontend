@@ -19,13 +19,22 @@ import { ListaMateriales } from './Pages/MostrarMateriales/MostrarMateriales'
 import { ListaColores } from './Pages/MostrarColores/MostrarColores'
 import { ListaZonas } from './Pages/MostrarZonaProductos/MostrarZonaProductos'
 import { Footer } from './Layouts/Footer/Footer'
+import { ProductoDetalladoPages } from './Pages/ProductoDetalladoPages/ProductoDetalladoPages'
 import  Perfil  from './Pages/Perfil/Perfil'
 import { useLocation } from 'react-router-dom'
+
+import { HistorialFacturas } from './Pages/HistorialFacturas/HistorialFacturas'
+
+import { Rechazada } from './Pages/RespuestaPagos/Rechazada'
+import { RespuestaPago } from './Pages/RespuestaPagos/RespuestaPago'
+import { Confirmacion } from './Pages/RespuestaPagos/Confrimacion'
+
 import  VerificarCorreo  from './Layouts/VerificarCorreo/VerificarCorreo'
 import EsperandoConfirmacion from './Pages/EsperandoConfirmacion/EsperandoConfirmacion'
 import Chat from './Components/ChatBot/ChatBot'
 import { Juego } from './Pages/Juego/Juego'
 import { DetalleProducto } from './Pages/ProductoDetalle/ProductoDetalle'
+
 
 function App() {
   const location = useLocation();
@@ -56,13 +65,27 @@ function App() {
         <Route path='/ListaMateriales' element={<ListaMateriales/>}/>
         <Route path='/ListaColores' element={<ListaColores/>}/>
         <Route path='/ListaZonas' element={<ListaZonas/>}/>
+        <Route path='/RespuestaPago' element={<RespuestaPago />}/>
+     
+        <Route path='/ProductoDetalladoPages' element={<ProductoDetalladoPages/>}/>
+        <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
+         <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
+        
+        <Route path='/Confirmacion' element={<Confirmacion />}/>
+
+
         <Route path='/Perfil' element={<Perfil/>}/>
+
+
+      </Routes>
+
         <Route path="/validarCorreo" element={<VerificarCorreo />}/>
         <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
         <Route path="/juego" element={<Juego />} />
         <Route path="/producto/:id" element={<DetalleProducto />} />
 
         
+
 
       </Routes>
         {mostrarHeaderYFooter && <Chat/>}
