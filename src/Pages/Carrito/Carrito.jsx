@@ -1,22 +1,64 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
-import PaymentBrick from "../../Components/Checkout/Checkout";
+import { jwtDecode } from "jwt-decode";
 
 const Carrito = () => {
   const [carrito, setCarrito] = useState([]);
+  const [userId, setUserId] = useState(null); // ← NUEVO
   const navigate = useNavigate();
   const { resetear } = useContext(ContadorCarritoContext);
 
   useEffect(() => {
-    const datosGuardados = localStorage.getItem("carrito");
-    if (datosGuardados) {
-      setCarrito(JSON.parse(datosGuardados));
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        console.log("Token decodificado:", decoded);
+        setUserId(decoded.data?.id); // ← Guardamos userId en el estado
+      } catch (error) {
+        console.error("Token inválido:", error);
+      }
     }
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.epayco.co/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
   }, []);
 
   const irAProductos = () => {
     navigate('/');
+  };
+
+  const handlePSEPayment = () => {
+    if (!userId) {
+      console.error("No se encontró el ID del usuario");
+      return;
+    }
+
+    const handler = window.ePayco.checkout.configure({
+      key: "76018558cee4255d423b4753fee3fdf1",
+      test: true,
+    });
+
+    const data = {
+      name: "Pago de productos",
+      description: "Compra en QuindiShoes",
+      invoice: "ORD-" + Date.now(),
+      currency: "cop",
+      amount: "5000",
+      tax_base: "0",
+      tax: "0",
+      country: "co",
+      method: "POST",
+      response: "https://www.youtube.com/?reload=9&app=desktop&hl=es",
+      confirmation: "https://e878-179-1-217-71.ngrok-free.app/api/pagos/confirmacion",
+      external: "false",
+      x_extra1: userId.toString(), // ← Ahora sí existe
+    };
+
+    handler.open(data);
   };
 
   const vaciarCarrito = () => {
@@ -41,34 +83,16 @@ const Carrito = () => {
             >
               Ir a productos
             </button>
+            <button
+              onClick={handlePSEPayment}
+              className="px-6 py-2 bg-green-400 text-white rounded-lg hover:bg-green-500 transition"
+            >
+              Comprar
+            </button>
           </div>
         ) : (
-          <div className="space-y-6">
-            {carrito.map((producto, index) => (
-              <div
-                key={index}
-                className="flex flex-col sm:flex-row items-center gap-6 bg-white border border-gray-200 rounded-2xl shadow-md p-6"
-              >
-                {/* ... (renderizado de la información del producto) ... */}
-              </div>
-            ))}
-
-            <div className="flex flex-col sm:flex-row justify-between items-center mt-8 gap-4">
-              <button
-                onClick={vaciarCarrito}
-                className="px-6 py-2 bg-red-400 text-white rounded-lg hover:bg-red-500 transition"
-              >
-                Vaciar carrito
-              </button>
-              <PaymentBrick /> {/* El PaymentBrick ahora siempre se renderiza */}
-              <button
-                onClick={irAProductos}
-                className="px-6 py-2 bg-green-400 text-white rounded-lg hover:bg-green-500 transition"
-              >
-                Seguir comprando
-              </button>
-            </div>
-          </div>
+          // Tu lógica de carrito con productos llenos
+          <></>
         )}
       </div>
     </div>

@@ -23,8 +23,10 @@ import { ProductoDetalladoPages } from './Pages/ProductoDetalladoPages/ProductoD
 import  Perfil  from './Pages/Perfil/Perfil'
 import { useLocation } from 'react-router-dom'
 import { HistorialFacturas } from './Pages/HistorialFacturas/HistorialFacturas'
-import { Aceptada } from './Pages/RespuestaPagos/Aceptada'
+
 import { Rechazada } from './Pages/RespuestaPagos/Rechazada'
+import { RespuestaPago } from './Pages/RespuestaPagos/RespuestaPago'
+import { Confirmacion } from './Pages/RespuestaPagos/Confrimacion'
 
 function App() {
   const location = useLocation();
@@ -55,12 +57,13 @@ function App() {
         <Route path='/ListaMateriales' element={<ListaMateriales/>}/>
         <Route path='/ListaColores' element={<ListaColores/>}/>
         <Route path='/ListaZonas' element={<ListaZonas/>}/>
-
+        <Route path='/RespuestaPago' element={<RespuestaPago />}/>
+     
         <Route path='/ProductoDetalladoPages' element={<ProductoDetalladoPages/>}/>
         <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
-
-        <Route path='/PagoAceptado' element={<Aceptada />}/>
-        <Route path='/PagoRechazado' element={<Rechazada />}/>
+         <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
+        
+        <Route path='/Confirmacion' element={<Confirmacion />}/>
 
 
         <Route path='/Perfil' element={<Perfil/>}/>
