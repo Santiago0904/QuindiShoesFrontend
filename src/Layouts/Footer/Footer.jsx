@@ -8,7 +8,6 @@ import { SeccionReseñas } from "../SeccionReseñas/SeccionReseñas";
 export const Footer = () => {
   return (
 
-    <footer className="bg-[#1a1a1a] text-white py-10 px-6 mt-10 ">
 
     <footer className="bg-[#1a1a1a] text-white py-10 px-6 ">
       <SeccionReseñas/>
