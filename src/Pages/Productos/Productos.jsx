@@ -2,15 +2,12 @@ import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axion";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
-import { useNavigate } from "react-router-dom";
 
 const STOCK_MINIMO = 5;
 
 // Componente de carta para cada producto (panel de control)
 const ProductoCard = ({ producto, onDelete, onUpdate }) => {
   // Imagen principal
-  const navigate = useNavigate();
-
   const imagenPrincipal =
     producto.imagenes && producto.imagenes.length > 0
       ? producto.imagenes[0]
