@@ -34,6 +34,7 @@ import EsperandoConfirmacion from './Pages/EsperandoConfirmacion/EsperandoConfir
 import Chat from './Components/ChatBot/ChatBot'
 import { Juego } from './Pages/Juego/Juego'
 import { DetalleProducto } from './Pages/ProductoDetalle/ProductoDetalle'
+import { VariantesProducto } from './Pages/VariantesProducto/VariantesProducto'
 
 
 function App() {
@@ -80,6 +81,7 @@ function App() {
         <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
         <Route path="/juego" element={<Juego />} />
         <Route path="/producto/:id" element={<DetalleProducto />} />
+        <Route path="/producto/:id/variantes" element={<VariantesProducto />} />
 
       </Routes>
 
