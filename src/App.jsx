@@ -22,11 +22,19 @@ import { Footer } from './Layouts/Footer/Footer'
 import { ProductoDetalladoPages } from './Pages/ProductoDetalladoPages/ProductoDetalladoPages'
 import  Perfil  from './Pages/Perfil/Perfil'
 import { useLocation } from 'react-router-dom'
+
 import { HistorialFacturas } from './Pages/HistorialFacturas/HistorialFacturas'
 
 import { Rechazada } from './Pages/RespuestaPagos/Rechazada'
 import { RespuestaPago } from './Pages/RespuestaPagos/RespuestaPago'
 import { Confirmacion } from './Pages/RespuestaPagos/Confrimacion'
+
+import  VerificarCorreo  from './Layouts/VerificarCorreo/VerificarCorreo'
+import EsperandoConfirmacion from './Pages/EsperandoConfirmacion/EsperandoConfirmacion'
+import Chat from './Components/ChatBot/ChatBot'
+import { Juego } from './Pages/Juego/Juego'
+import { DetalleProducto } from './Pages/ProductoDetalle/ProductoDetalle'
+
 
 function App() {
   const location = useLocation();
@@ -68,8 +76,19 @@ function App() {
 
         <Route path='/Perfil' element={<Perfil/>}/>
 
+
       </Routes>
 
+        <Route path="/validarCorreo" element={<VerificarCorreo />}/>
+        <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
+        <Route path="/juego" element={<Juego />} />
+        <Route path="/producto/:id" element={<DetalleProducto />} />
+
+        
+
+
+      </Routes>
+        {mostrarHeaderYFooter && <Chat/>}
       {mostrarHeaderYFooter && <Footer/>}
 
     </>

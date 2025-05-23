@@ -1,36 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { BtnAgregarCarrito } from '../BtnAgregarCarrito/BtnAgregarCarrito';
-import { FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
+import React, { useContext } from 'react';
 import { ContadorCarritoContext } from '../../Contexts/ContadorCarritoContext';
+
 import { useContext } from 'react';
 import { useNavigate } from "react-router-dom";
 
 
 export const CartaProducto = ({ producto }) => {
   const navigate = useNavigate();
+
+import { useNavigate } from 'react-router-dom';
+
+export const CartaProducto = ({ producto }) => {
+
   const { incrementarContador } = useContext(ContadorCarritoContext);
-  const handleAgregarAlCarrito = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3000/carrito/${producto.id_producto}`);
-      console.log(producto.id_producto)
-      const productoObtenido = response.data;
-      
+  const navigate = useNavigate();
 
-      const carritoActual = JSON.parse(localStorage.getItem("carrito") || "[]");
+  // Imagen principal
+  const imagenPrincipal =
+    producto.imagenes && producto.imagenes.length > 0
+      ? producto.imagenes[0]
+      : "https://via.placeholder.com/300x200?text=Sin+Imagen";
 
-   
-      const existe = carritoActual.some(p => String(p.id_producto) === productoObtenido.id_producto);
-      if (!existe) {
-        carritoActual.push(productoObtenido);
-        localStorage.setItem("carrito", JSON.stringify(carritoActual));
-        incrementarContador()
-      }
-
-    } catch (error) {
-      console.error("Error al agregar al carrito:", error);
-    }
+  // Ir al detalle del producto
+  const irADetalle = () => {
+    navigate(`/producto/${producto.id_producto}`);
   };
+
 
   
   const MostrarDetalle = () => {
@@ -52,52 +47,54 @@ export const CartaProducto = ({ producto }) => {
   return (
     <div className=""  >
       <div className='"bg-white rounded-xl shadow-md p-4 flex flex-col items-start"'  onClick={MostrarDetalle}>
+
+  return (
+    <div
+      className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start hover:shadow-lg transition cursor-pointer"
+      onClick={irADetalle}
+    >
+
       <img
-        src={producto.imagen_producto}
+        src={imagenPrincipal}
         alt={producto.nombre_producto}
         className="w-full h-40 object-cover rounded-md mb-3"
       />
       <h3 className="text-lg font-bold">{producto.nombre_producto}</h3>
       <p>Tipo: {producto.tipo_producto}</p>
       <p>Género: {producto.genero_producto}</p>
-      <p>Color: {producto.colores_producto}</p>
-      <p>Talla: {producto.tallas_producto}</p>
-      <p>Stock: {producto.stock}</p>
       <p>Precio: ${producto.precio_producto}</p>
+
       </div>
       <BtnAgregarCarrito
   contenido="Agregar al carrito"
   icono={FaShoppingCart}
   onClick={handleAgregarAlCarrito}
 />
+
     </div>
   );
 };
 
-// Componente que muestra todos los productos
-// Componente que muestra todos los productos (modificado para aceptar productos por props)
-
+// Componente que muestra todos los productos (usuario)
 export const MostrarProducto = ({ productosProp }) => {
-  const [productos, setProductos] = useState([]); // Estado para productos cargados desde el backend
+  const [productos, setProductos] = React.useState([]);
 
-  useEffect(() => {
-    // Solo cargamos los productos desde el backend si productosProp está vacío.
+  React.useEffect(() => {
     if (!productosProp || productosProp.length === 0) {
-      cargarProductos(); // Cargar todos los productos si no hay productos filtrados
+      cargarProductos();
     }
-  }, [productosProp]); // Se ejecuta cada vez que productosProp cambia
+  }, [productosProp]);
 
-  // Función para cargar los productos desde el backend
   const cargarProductos = () => {
-    axios.get("http://localhost:3000/producto/public")
-      .then((res) => {
-        console.log("Respuesta del backend:", res.data);
-        setProductos(res.data); // Establecemos los productos obtenidos
-      })
-      .catch((err) => console.error("Error al cargar productos:", err));
+    import('axios').then(({ default: axios }) => {
+      axios.get("http://localhost:3000/producto/public")
+        .then((res) => {
+          setProductos(res.data);
+        })
+        .catch((err) => console.error("Error al cargar productos:", err));
+    });
   };
 
-  // Mostrar productos filtrados si productosProp tiene datos, de lo contrario usar los productos cargados desde el backend
   const productosMostrar = productosProp && productosProp.length > 0 ? productosProp : productos;
 
   return (
