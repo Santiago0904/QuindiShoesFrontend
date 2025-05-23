@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { FaHeart, FaShoppingCart, FaUser } from "react-icons/fa";
 import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
-import { useContext } from "react";
 
 export const Header = () => {
   const { contador } = useContext(ContadorCarritoContext);

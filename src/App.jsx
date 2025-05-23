@@ -76,18 +76,17 @@ function App() {
 
         <Route path='/Perfil' element={<Perfil/>}/>
 
-
-      </Routes>
-
         <Route path="/validarCorreo" element={<VerificarCorreo />}/>
         <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
         <Route path="/juego" element={<Juego />} />
         <Route path="/producto/:id" element={<DetalleProducto />} />
 
+      </Routes>
+
+
         
 
 
-      </Routes>
         {mostrarHeaderYFooter && <Chat/>}
       {mostrarHeaderYFooter && <Footer/>}
 
