@@ -6,7 +6,7 @@ import ventasIcon from '../../assets/images/ChatGPT_Image_26_may_2025__10_57_23_
 import mesrivasIcon from '../../assets/images/ChatGPT_Image_26_may_2025__10_50_44_a.m.-removebg-preview2.png';
 import mietasIcon from '../../assets/images/ChatGPT_Image_26_may_2025__11_07_40_a.m.-removebg-preview.png';
 import reservaIcon from '../../assets/images/ChatGPT_Image_26_may_2025__11_23_24_a.m.-removebg-preview.png';
-import { User2Icon } from 'lucide-react';
+
 
 export const LateralPanel = ({ onSelectSection }) => {
   const sections = [
@@ -19,7 +19,7 @@ export const LateralPanel = ({ onSelectSection }) => {
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-20 p-15 rounded-3xl justify-items-center ">
+    <div className="grid grid-cols-3 gap-10 p-7 justify-items-center ">
       {sections.map(({ title, icon, bgColor, key, textColor }) => (
         <BtnPanelControl
           key={key}

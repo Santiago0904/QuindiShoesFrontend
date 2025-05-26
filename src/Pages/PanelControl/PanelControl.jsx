@@ -24,7 +24,7 @@ export const PanelControl = () => {
 
   return (
     <div className="min-h-screen p-5 relative">
-      <h1 className="text-3xl font-bold mb-4">Backoffice</h1>
+      <h1 className="text-3xl font-bold mb-10">Backoffice</h1>
 
       {/* Panel de botones con animación (mostrar/ocultar) */}
       <AnimatePresence>
