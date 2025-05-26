@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 const Perfil = () => {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [usuario, setUsuario] = useState(null);
-  const [cargando, setCargando] = useState(true); // Para saber si ya verificamos login
+  const [cargando, setCargando] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,6 +34,13 @@ const Perfil = () => {
 
   const redirigirLogin = () => navigate("/Login");
 
+  // Nueva función para cerrar sesión
+  const cerrarSesion = () => {
+    localStorage.removeItem("token");
+    setUsuario(null);
+    navigate("/Login");
+  };
+
   if (cargando) {
     return (
       <div className="text-center mt-20 text-gray-600 text-lg">
@@ -43,7 +50,6 @@ const Perfil = () => {
   }
 
   if (!usuario) {
-    // No logueado
     return (
       <motion.div
         className="max-w-md mx-auto mt-20 text-center p-10 bg-white shadow-xl rounded-lg"
@@ -73,7 +79,6 @@ const Perfil = () => {
     );
   }
 
-  // ✅ Usuario logueado, renderizar perfil
   return (
     <motion.div
       className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-2xl rounded-lg"
@@ -92,7 +97,6 @@ const Perfil = () => {
       </motion.h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-6">
-        {/* Detalles del usuario */}
         <motion.div
           className="bg-gray-50 p-6 rounded-lg shadow-lg transition-all duration-300 transform hover:shadow-xl hover:scale-105 ease-in-out"
           initial={{ opacity: 0, x: -50 }}
@@ -111,6 +115,16 @@ const Perfil = () => {
           <p className="text-lg font-medium text-gray-700 mb-4">
             <strong>Dirección:</strong> {usuario.direccion}
           </p>
+
+          {/* Botón Cerrar Sesión */}
+          <div className="mb-4 text-center">
+            <button
+              onClick={cerrarSesion}
+              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg shadow-lg transition-all duration-300 ease-in-out"
+            >
+              Cerrar Sesión
+            </button>
+          </div>
 
           <div className="text-center">
             <button
@@ -144,7 +158,6 @@ const Perfil = () => {
         </motion.div>
       </div>
 
-      {/* Formulario para cambiar contraseña */}
       <AnimatePresence>
         {mostrarFormulario && (
           <motion.div
