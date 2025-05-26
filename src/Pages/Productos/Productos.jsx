@@ -2,19 +2,32 @@ import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axion";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
+import { useNavigate } from "react-router-dom";
 
 const STOCK_MINIMO = 5;
 
 // Componente de carta para cada producto (panel de control)
 const ProductoCard = ({ producto, onDelete, onUpdate }) => {
+  const navigate = useNavigate();
   // Imagen principal
   const imagenPrincipal =
     producto.imagenes && producto.imagenes.length > 0
       ? producto.imagenes[0]
       : "https://via.placeholder.com/300x200?text=Sin+Imagen";
 
+  // Nueva función para navegar solo si se hace click fuera de los botones
+  const handleCardClick = (e) => {
+    // Si el click fue en un botón, no navegar
+    if (e.target.closest("button")) return;
+    navigate(`/producto/${producto.id_producto}/variantes`);
+  };
+
   return (
-    <div className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start w-full max-w-xs mx-auto" onClick={() => navigate(`/producto/${producto.id_producto}`)}>
+    <div
+      className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start w-full max-w-xs mx-auto"
+      onClick={handleCardClick}
+      style={{ cursor: "pointer" }}
+    >
       <img
         src={imagenPrincipal}
         alt={producto.nombre_producto}
@@ -26,13 +39,19 @@ const ProductoCard = ({ producto, onDelete, onUpdate }) => {
       <p>Precio: ${producto.precio_producto}</p>
       <div className="flex gap-3 mt-3">
         <button
-          onClick={onUpdate}
+          onClick={(e) => {
+            e.stopPropagation();
+            onUpdate();
+          }}
           className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 flex items-center gap-1"
         >
           <FaEdit /> Actualizar
         </button>
         <button
-          onClick={onDelete}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
           className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 flex items-center gap-1"
         >
           <FaTrash /> Eliminar
