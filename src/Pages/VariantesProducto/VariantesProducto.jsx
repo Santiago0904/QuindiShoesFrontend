@@ -8,9 +8,13 @@ import "sweetalert2/src/sweetalert2.scss";
 export const VariantesProducto = () => {
   const { id } = useParams();
   const [variantes, setVariantes] = useState([]);
+  const [tallas, setTallas] = useState([]);
+  const [colores, setColores] = useState([]);
 
   useEffect(() => {
     cargarVariantes();
+    cargarTallas();
+    cargarColores();
     // eslint-disable-next-line
   }, [id]);
 
@@ -28,56 +32,60 @@ export const VariantesProducto = () => {
       });
   };
 
-  const handleDelete = (idVariante) => {
-    Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Esta variante se eliminará permanentemente.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#e11d48",
-      cancelButtonColor: "#64748b",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-      showClass: { popup: "animate__animated animate__fadeInDown" },
-      hideClass: { popup: "animate__animated animate__fadeOutUp" }
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const token = localStorage.getItem("token");
-        axiosClient
-          .delete(`/variantes/${idVariante}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          })
-          .then(() => {
-            setVariantes(variantes.filter(v => v.id_variantes !== idVariante));
-            Swal.fire({
-              icon: "success",
-              title: "Eliminado",
-              text: "La variante ha sido eliminada.",
-              timer: 1200,
-              showConfirmButton: false,
-              showClass: { popup: "animate__animated animate__fadeInDown" },
-              hideClass: { popup: "animate__animated animate__fadeOutUp" }
-            });
-          })
-          .catch(() => {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "No se pudo eliminar la variante.",
-              confirmButtonColor: "#2563eb",
-              showClass: { popup: "animate__animated animate__shakeX" }
-            });
-          });
-      }
-    });
+  const cargarTallas = () => {
+    axiosClient
+      .get("/producto/tallas")
+      .then((res) => {
+        const tallasData = Array.isArray(res.data[0]) ? res.data[0] : res.data;
+        setTallas(tallasData);
+      })
+      .catch(() => setTallas([]));
+  };
+
+  const cargarColores = () => {
+    axiosClient
+      .get("/producto/colores")
+      .then((res) => {
+        const coloresData = Array.isArray(res.data[0]) ? res.data[0] : res.data;
+        setColores(coloresData);
+      })
+      .catch(() => setColores([]));
+  };
+
+  // Utilidad para generar selects HTML como string
+  const getSelectHTML = (id, options, selectedValue, placeholder, isColor = false) => {
+    return `
+      <select id="${id}" class="swal2-input" style="width:95%;margin-bottom:10px;">
+        <option value="">${placeholder}</option>
+        ${options
+          .map(
+            (opt) =>
+              `<option value="${opt.id_talla || opt.id_color}" ${
+                (opt.id_talla === selectedValue || opt.id_color === selectedValue) ? "selected" : ""
+              }>${isColor ? `${opt.color} (${opt.codigo_hex})` : opt.talla}</option>`
+          )
+          .join("")}
+      </select>
+    `;
   };
 
   const handleUpdate = (variante) => {
     Swal.fire({
       title: "Editar Variante",
       html: `
-        <input id="id_talla" class="swal2-input" placeholder="ID Talla" value="${variante.id_talla}" style="margin-bottom:10px;">
-        <input id="id_color" class="swal2-input" placeholder="ID Color" value="${variante.id_color}" style="margin-bottom:10px;">
+        ${getSelectHTML(
+          "id_talla",
+          tallas,
+          variante.id_talla,
+          "Selecciona una talla"
+        )}
+        ${getSelectHTML(
+          "id_color",
+          colores,
+          variante.id_color,
+          "Selecciona un color",
+          true
+        )}
         <input id="stock" type="number" min="1" class="swal2-input" placeholder="Stock" value="${variante.stock}">
       `,
       focusConfirm: false,
@@ -143,8 +151,19 @@ export const VariantesProducto = () => {
     Swal.fire({
       title: "Agregar Variante",
       html: `
-        <input id="id_talla" class="swal2-input" placeholder="ID Talla" style="margin-bottom:10px;">
-        <input id="id_color" class="swal2-input" placeholder="ID Color" style="margin-bottom:10px;">
+        ${getSelectHTML(
+          "id_talla",
+          tallas,
+          "",
+          "Selecciona una talla"
+        )}
+        ${getSelectHTML(
+          "id_color",
+          colores,
+          "",
+          "Selecciona un color",
+          true
+        )}
         <input id="stock" type="number" min="1" class="swal2-input" placeholder="Stock">
       `,
       focusConfirm: false,
