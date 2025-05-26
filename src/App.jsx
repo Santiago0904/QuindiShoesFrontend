@@ -1,4 +1,5 @@
 import './App.css'
+ 
 import { Routes, Route} from 'react-router-dom' 
 import { Register } from './Pages/Register/Register'
 import { Login } from './Pages/Login/Login'
@@ -34,18 +35,24 @@ import EsperandoConfirmacion from './Pages/EsperandoConfirmacion/EsperandoConfir
 import Chat from './Components/ChatBot/ChatBot'
 import { Juego } from './Pages/Juego/Juego'
 import { DetalleProducto } from './Pages/ProductoDetalle/ProductoDetalle'
+import { VariantesProducto } from './Pages/VariantesProducto/VariantesProducto'
 
 
 function App() {
   const location = useLocation();
 
-  const ocultarHeaderYFooterEn = [ "/panelcontrol"];
+  // Rutas donde se ocultan header y footer
+  const ocultarHeaderYFooterEn = ["/panelcontrol"];
+  // Expresión regular para /producto/:id/variantes
+  const variantesRegex = /^\/producto\/[^/]+\/variantes$/i;
 
-  const mostrarHeaderYFooter = !ocultarHeaderYFooterEn.includes(location.pathname.toLowerCase());
+  const ocultarHeaderYFooter =
+    ocultarHeaderYFooterEn.includes(location.pathname.toLowerCase()) ||
+    variantesRegex.test(location.pathname);
+
   return (
     <>
-    {mostrarHeaderYFooter && <Header/>}
-
+      {!ocultarHeaderYFooter && <Header />}
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/Register' element={<Register/>}/>
@@ -80,18 +87,13 @@ function App() {
         <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
         <Route path="/juego" element={<Juego />} />
         <Route path="/producto/:id" element={<DetalleProducto />} />
+        <Route path="/producto/:id/variantes" element={<VariantesProducto />} />
 
       </Routes>
-
-
-        
-
-
-        {mostrarHeaderYFooter && <Chat/>}
-      {mostrarHeaderYFooter && <Footer/>}
-
+      {!ocultarHeaderYFooter && <Chat />}
+      {!ocultarHeaderYFooter && <Footer />}
     </>
-  )
+  );
 }
 
 export default App
