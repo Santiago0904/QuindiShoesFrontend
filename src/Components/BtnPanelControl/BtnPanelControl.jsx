@@ -1,21 +1,17 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
-const colorClasses = {
-  purple: 'bg-purple-50',
-  slate: 'bg-slate-300',
-  rose: 'bg-rose-50',
-  teal: 'bg-teal-100',
-};
-
-export const BtnPanelControl = ({ color, content, onClick }) => {
-  const bgColorClass = colorClasses[color] || 'bg-gray-500';
-
+export const BtnPanelControl = ({ icon, title, bgColor, onClick }) => {
   return (
-    <button
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      className={`flex flex-col items-center justify-center rounded-3xl p-1 h-[400px] w-[330px] cursor-pointer transition-all shadow-md ${bgColor}`}
       onClick={onClick}
-      className={`${bgColorClass} text-black px-4 py-2 w-40 rounded-xl shadow-md transition-all duration-300 ease-in-out transform hover:scale-105`}
     >
-      {content}
-    </button>
+      <div className="mb-2">
+        <img src={icon} alt={title} className="w-50 h-50" />
+      </div>
+      <h3 className="font-semibold text-neutral-800 text-[30px]">{title}</h3>
+    </motion.div>
   );
 };

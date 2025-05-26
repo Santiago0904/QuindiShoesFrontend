@@ -60,7 +60,7 @@ const handlePSEPayment = () => {
       country: "co",
       method: "POST",
       response: "https://www.youtube.com/?reload=9&app=desktop&hl=es",
-      confirmation: "https://e878-179-1-217-71.ngrok-free.app/api/pagos/confirmacion",
+      confirmation: "https://308d-179-1-217-71.ngrok-free.app/api/pagos/confirmacion",
       external: "false",
       x_extra1: userId.toString(), // ← Ahora sí existe
     };
