@@ -10,6 +10,11 @@ export const VariantesProducto = () => {
   const [variantes, setVariantes] = useState([]);
 
   useEffect(() => {
+    cargarVariantes();
+    // eslint-disable-next-line
+  }, [id]);
+
+  const cargarVariantes = () => {
     axiosClient
       .get(`/variantes/${id}`)
       .then((res) => setVariantes(res.data))
@@ -21,7 +26,7 @@ export const VariantesProducto = () => {
           confirmButtonColor: "#2563eb"
         });
       });
-  }, [id]);
+  };
 
   const handleDelete = (idVariante) => {
     Swal.fire({
@@ -32,18 +37,172 @@ export const VariantesProducto = () => {
       confirmButtonColor: "#e11d48",
       cancelButtonColor: "#64748b",
       confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar"
+      cancelButtonText: "Cancelar",
+      showClass: { popup: "animate__animated animate__fadeInDown" },
+      hideClass: { popup: "animate__animated animate__fadeOutUp" }
     }).then((result) => {
       if (result.isConfirmed) {
-        // Aquí iría la petición de borrado
-        setVariantes(variantes.filter(v => v.id_variantes !== idVariante));
-        Swal.fire({
-          icon: "success",
-          title: "Eliminado",
-          text: "La variante ha sido eliminada.",
-          timer: 1200,
-          showConfirmButton: false
-        });
+        const token = localStorage.getItem("token");
+        axiosClient
+          .delete(`/variantes/${idVariante}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          .then(() => {
+            setVariantes(variantes.filter(v => v.id_variantes !== idVariante));
+            Swal.fire({
+              icon: "success",
+              title: "Eliminado",
+              text: "La variante ha sido eliminada.",
+              timer: 1200,
+              showConfirmButton: false,
+              showClass: { popup: "animate__animated animate__fadeInDown" },
+              hideClass: { popup: "animate__animated animate__fadeOutUp" }
+            });
+          })
+          .catch(() => {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "No se pudo eliminar la variante.",
+              confirmButtonColor: "#2563eb",
+              showClass: { popup: "animate__animated animate__shakeX" }
+            });
+          });
+      }
+    });
+  };
+
+  const handleUpdate = (variante) => {
+    Swal.fire({
+      title: "Editar Variante",
+      html: `
+        <input id="id_talla" class="swal2-input" placeholder="ID Talla" value="${variante.id_talla}" style="margin-bottom:10px;">
+        <input id="id_color" class="swal2-input" placeholder="ID Color" value="${variante.id_color}" style="margin-bottom:10px;">
+        <input id="stock" type="number" min="1" class="swal2-input" placeholder="Stock" value="${variante.stock}">
+      `,
+      focusConfirm: false,
+      confirmButtonText: "Actualizar",
+      cancelButtonText: "Cancelar",
+      showCancelButton: true,
+      confirmButtonColor: "#2563eb",
+      cancelButtonColor: "#64748b",
+      customClass: {
+        popup: "rounded-2xl animate__animated animate__fadeInDown",
+        confirmButton: "bg-blue-600 text-white px-6 py-2 rounded-md font-semibold",
+        cancelButton: "bg-gray-300 text-gray-700 px-6 py-2 rounded-md font-semibold"
+      },
+      preConfirm: () => {
+        const id_talla = document.getElementById('id_talla').value.trim();
+        const id_color = document.getElementById('id_color').value.trim();
+        const stock = document.getElementById('stock').value.trim();
+        if (!id_talla || !id_color || !stock || isNaN(stock) || Number(stock) < 1) {
+          Swal.showValidationMessage("Todos los campos son obligatorios y el stock debe ser mayor a 0.");
+          return false;
+        }
+        return { id_talla, id_color, stock };
+      },
+      showClass: { popup: "animate__animated animate__fadeInDown" },
+      hideClass: { popup: "animate__animated animate__fadeOutUp" }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        const token = localStorage.getItem("token");
+        axiosClient
+          .put(`/variantes/${variante.id_variantes}`, {
+            id_talla: result.value.id_talla,
+            id_color: result.value.id_color,
+            stock: result.value.stock
+          }, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              title: "Actualizado",
+              text: "Variante actualizada correctamente",
+              timer: 1200,
+              showConfirmButton: false,
+              showClass: { popup: "animate__animated animate__fadeInDown" },
+              hideClass: { popup: "animate__animated animate__fadeOutUp" }
+            });
+            cargarVariantes();
+          })
+          .catch(() => {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "No se pudo actualizar la variante",
+              confirmButtonColor: "#2563eb",
+              showClass: { popup: "animate__animated animate__shakeX" }
+            });
+          });
+      }
+    });
+  };
+
+  const handleAdd = () => {
+    Swal.fire({
+      title: "Agregar Variante",
+      html: `
+        <input id="id_talla" class="swal2-input" placeholder="ID Talla" style="margin-bottom:10px;">
+        <input id="id_color" class="swal2-input" placeholder="ID Color" style="margin-bottom:10px;">
+        <input id="stock" type="number" min="1" class="swal2-input" placeholder="Stock">
+      `,
+      focusConfirm: false,
+      confirmButtonText: "Agregar",
+      cancelButtonText: "Cancelar",
+      showCancelButton: true,
+      confirmButtonColor: "#22c55e",
+      cancelButtonColor: "#64748b",
+      customClass: {
+        popup: "rounded-2xl animate__animated animate__fadeInDown",
+        confirmButton: "bg-green-600 text-white px-6 py-2 rounded-md font-semibold",
+        cancelButton: "bg-gray-300 text-gray-700 px-6 py-2 rounded-md font-semibold"
+      },
+      preConfirm: () => {
+        const id_talla = document.getElementById('id_talla').value.trim();
+        const id_color = document.getElementById('id_color').value.trim();
+        const stock = document.getElementById('stock').value.trim();
+        if (!id_talla || !id_color || !stock || isNaN(stock) || Number(stock) < 1) {
+          Swal.showValidationMessage("Todos los campos son obligatorios y el stock debe ser mayor a 0.");
+          return false;
+        }
+        return { id_talla, id_color, stock };
+      },
+      showClass: { popup: "animate__animated animate__fadeInDown" },
+      hideClass: { popup: "animate__animated animate__fadeOutUp" }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        const token = localStorage.getItem("token");
+        axiosClient
+          .post(`/variantes`, {
+            id_producto: id,
+            id_talla: result.value.id_talla,
+            id_color: result.value.id_color,
+            stock: result.value.stock
+          }, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              title: "Agregado",
+              text: "Variante agregada correctamente",
+              timer: 1200,
+              showConfirmButton: false,
+              showClass: { popup: "animate__animated animate__fadeInDown" },
+              hideClass: { popup: "animate__animated animate__fadeOutUp" }
+            });
+            cargarVariantes();
+          })
+          .catch(() => {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "No se pudo agregar la variante",
+              confirmButtonColor: "#2563eb",
+              showClass: { popup: "animate__animated animate__shakeX" }
+            });
+          });
       }
     });
   };
@@ -98,6 +257,7 @@ export const VariantesProducto = () => {
                     <button
                       className="p-2 rounded-full bg-blue-100 hover:bg-blue-200 text-blue-700 transition"
                       title="Editar"
+                      onClick={() => handleUpdate(v)}
                     >
                       <FaEdit />
                     </button>
@@ -118,14 +278,7 @@ export const VariantesProducto = () => {
       <div className="flex justify-end mt-8">
         <button
           className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg transition-all animate-fade-in-up"
-          onClick={() =>
-            Swal.fire({
-              icon: "info",
-              title: "Funcionalidad pendiente",
-              text: "Aquí puedes agregar la lógica para crear una nueva variante.",
-              confirmButtonColor: "#2563eb"
-            })
-          }
+          onClick={handleAdd}
         >
           <FaPlus /> Agregar Variante
         </button>
