@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import birdImg from '../../assets/images/crocodilo.png';
 import birdFlapImg from '../../assets/images/sprite-up.png';
 import dieSoundFile from '../../assets/sounds/die.mp3';
-import fondoVideo from '../../assets/images/FONDOMP4.mp4';
+import fondoVideo from '../../assets/images/202505231554.mp4';
 import Ecos_Freneticos from '../../assets/sounds/Ecos_Freneticos.mp3';
 
 export default function FlappyBirdGame() {
@@ -56,6 +56,7 @@ export default function FlappyBirdGame() {
 
   if ((e.key === 'Enter' || e.key === 'ArrowUp') && gameStateRef.current !== 'Play') {
     // Reproduce la música aquí directamente tras interacción
+    e.preventDefault()
     audio.pause();
     audio.currentTime = 0;
     audio.play().catch((e) => {
@@ -66,6 +67,7 @@ export default function FlappyBirdGame() {
   }
 
   if ((e.key === ' ' || e.key === 'ArrowUp') && gameStateRef.current === 'Play') {
+    e.preventDefault();
     velocityRef.current = flapPower;
     setBirdSrc(birdFlapImg);
     setTimeout(() => setBirdSrc(birdImg), 200);
@@ -80,29 +82,10 @@ export default function FlappyBirdGame() {
     videoRef.current.playbackRate = 1;
     videoRef.current.currentTime = 0;
     videoRef.current.play();
-    setVideoReverse(false);
+   
   };
 
-  const startVideoReverse = () => {
-    if (!videoRef.current) return;
-    videoRef.current.pause();
-    setVideoReverse(true);
-
-    videoTimeoutRef.current = setTimeout(() => {
-      reverseIntervalRef.current = setInterval(() => {
-        if (!videoRef.current) return;
-        if (videoRef.current.currentTime <= 0) {
-          clearInterval(reverseIntervalRef.current);
-          clearTimeout(videoTimeoutRef.current);
-          videoTimeoutRef.current = setTimeout(() => {
-            startVideoForward();
-          }, 3000);
-        } else {
-          videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 0.05);
-        }
-      }, 50);
-    }, 3000);
-  };
+ 
 
   useEffect(() => {
     const video = videoRef.current;
@@ -161,10 +144,10 @@ const gameOver = () => {
   audio.pause();
   audio.currentTime = 0;
 
-  const die = dieSound.current;
-  die.pause();
-  die.currentTime = 0;
-  die.play().catch((e) => console.warn("No se pudo reproducir die.mp3:", e));
+  // const die = dieSound.current;
+  // die.pause();
+  // die.currentTime = 0;
+  // die.play().catch((e) => console.warn("No se pudo reproducir die.mp3:", e));
 
   if (videoRef.current) {
     videoRef.current.pause();
@@ -273,25 +256,15 @@ const gameLoop = () => {
     };
   }, []);
   
+ 
 return (
-  <div
-  className="w-full h-full flex items-center justify-center p-8 pb-50"
-  style={{
-    background: `
-      linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%),
-      radial-gradient(circle at 30% 30%, rgba(74, 222, 128, 0.1) 0%, transparent 60%),
-      radial-gradient(circle at 70% 70%, rgba(34, 197, 94, 0.08) 0%, transparent 60%)
-    `,
-    backgroundBlendMode: 'overlay',
-  }}
->
 
     <div
       className="relative w-[1300px] h-[700px] overflow-hidden border-4 border-white rounded-xl shadow-2xl"
       style={{
         background: 'rgba(255, 255, 255, 0.05)',
         backdropFilter: 'blur(6px)',
-        boxShadow: '0 0 30px rgba(72, 147, 47, 0.7)',
+
       }}
     >
       <video
@@ -300,6 +273,7 @@ return (
         className="absolute top-0 left-0 w-full h-full object-cover z-0"
         muted
         playsInline
+        loop
       />
       <img
         src={birdSrc}
@@ -397,7 +371,6 @@ return (
         </div>
       )}
     </div>
-  </div>
 );
 
 }
