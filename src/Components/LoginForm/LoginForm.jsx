@@ -83,7 +83,7 @@ export const LoginForm = () => {
     <>
       <ParticlesBackground />
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-full max-w-md bg-white p-8 rounded-3xl shadow-lg border border-pink-100 mt-[-50px]">
+        <div className="w-full max-w-md bg-white p-8 rounded-3xl shadow-lg border border-green-100 mt-[-50px]">
           <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-6">
             Iniciar Sesión
           </h2>
@@ -94,7 +94,7 @@ export const LoginForm = () => {
               placeholder="Correo electrónico"
               value={loginData.correo}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300"
+              className="w-full px-4 py-2 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300"
               required
             />
             <input
@@ -103,7 +103,7 @@ export const LoginForm = () => {
               placeholder="Contraseña"
               value={loginData.contraseña}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300"
+              className="w-full px-4 py-2 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300"
               required
             />
             <ReCAPTCHA
@@ -113,14 +113,14 @@ export const LoginForm = () => {
             <div className=" flex justify-between ">
 
                 <NavLink
-                className="text-sm text-pink-600 hover:underline"
+                className="text-sm text-green-600 hover:underline"
                 to="/Register"
               >
                 Registrarse
               </NavLink>
 
               <NavLink
-                className="text-sm text-pink-600 hover:underline"
+                className="text-sm text-green-600 hover:underline"
                 to="/recuperarContrasena"
               >
                 Recuperar contraseña
@@ -129,7 +129,7 @@ export const LoginForm = () => {
             <button
               onClick={handleSubmit}
               type="submit"
-              className="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 rounded-lg transition-colors font-semibold"
+              className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg transition-colors font-semibold"
             >
               Iniciar Sesión
             </button>
