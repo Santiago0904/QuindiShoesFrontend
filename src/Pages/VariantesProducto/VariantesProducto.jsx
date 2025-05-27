@@ -69,6 +69,59 @@ export const VariantesProducto = () => {
     `;
   };
 
+  const handleDelete = (idVariante) => {
+    Swal.fire({
+    title: "¿Estás seguro?",
+      text: "Esta variante se eliminará permanentemente.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#e11d48",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+      showClass: { popup: "animate__animated animate__fadeInDown" },
+      hideClass: { popup: "animate__animated animate__fadeOutUp" }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Aquí iría la petición de borrado
+        setVariantes(variantes.filter(v => v.id_variantes !== idVariante));
+        Swal.fire({
+          icon: "success",
+          title: "Eliminado",
+          text: "La variante ha sido eliminada.",
+          timer: 1200,
+          showConfirmButton: false
+        });
+        const token = localStorage.getItem("token");
+        axiosClient
+          .delete(`/variantes/${idVariante}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          .then(() => {
+            setVariantes(variantes.filter(v => v.id_variantes !== idVariante));
+            Swal.fire({
+              icon: "success",
+              title: "Eliminado",
+              text: "La variante ha sido eliminada.",
+              timer: 1200,
+              showConfirmButton: false,
+              showClass: { popup: "animate__animated animate__fadeInDown" },
+              hideClass: { popup: "animate__animated animate__fadeOutUp" }
+            });
+          })
+          .catch(() => {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "No se pudo eliminar la variante.",
+              confirmButtonColor: "#2563eb",
+              showClass: { popup: "animate__animated animate__shakeX" }
+            });
+          });
+      }
+    });
+  };
+
   const handleUpdate = (variante) => {
     Swal.fire({
       title: "Editar Variante",
