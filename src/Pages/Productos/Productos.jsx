@@ -3,6 +3,7 @@ import axiosClient from "../../api/axion";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const STOCK_MINIMO = 5;
 
@@ -81,16 +82,48 @@ export const ListaProductos = () => {
       .catch((err) => console.error("Error al cargar productos:", err));
   };
 
-  const handleEliminar = (id) => {
-    const token = localStorage.getItem("token");
-    if (window.confirm("¿Seguro que deseas eliminar este producto?")) {
-      axiosClient
-        .delete(`/producto/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then(() => cargarProductos())
-        .catch((err) => console.error("Error al eliminar producto:", err));
-    }
+  const handleEliminar = (idProducto) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "El producto se eliminará permanentemente.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#e11d48",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+      showClass: { popup: "animate__animated animate__fadeInDown" },
+      hideClass: { popup: "animate__animated animate__fadeOutUp" }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const token = localStorage.getItem("token");
+        axiosClient
+          .delete(`/producto/${idProducto}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          .then(() => {
+            setProductos(productos.filter(p => p.id_producto !== idProducto));
+            Swal.fire({
+              icon: "success",
+              title: "Eliminado",
+              text: "El producto ha sido eliminado.",
+              timer: 1200,
+              showConfirmButton: false,
+              showClass: { popup: "animate__animated animate__fadeInDown" },
+              hideClass: { popup: "animate__animated animate__fadeOutUp" }
+            });
+          })
+          .catch(() => {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "No se pudo eliminar el producto.",
+              confirmButtonColor: "#2563eb",
+              showClass: { popup: "animate__animated animate__shakeX" }
+            });
+          });
+      }
+    });
   };
 
   const handleActualizar = (producto) => {
