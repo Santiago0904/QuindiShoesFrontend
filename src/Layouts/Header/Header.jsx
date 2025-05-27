@@ -12,7 +12,7 @@ export const Header = () => {
         <nav className="hidden md:flex space-x-10 font-semibold text-gray-700">
           <NavLink to="/" className="hover:text-black">Pcruitas</NavLink>
           <NavLink to="/" className="hover:text-black">Eotsacies</NavLink>
-          <NavLink to="/" className="hover:text-black">Viodeeades</NavLink>
+          <NavLink to="/juego" className="hover:text-black">Viodeeades</NavLink>
           <NavLink to="/" className="hover:text-black">Pegcuaias</NavLink>
         </nav>
         <div className="flex items-center space-x-6">
