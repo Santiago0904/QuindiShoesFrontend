@@ -62,7 +62,8 @@ export const LoginForm = () => {
         if (
           response.data.rol === "Empleado" ||
           response.data.rol === "domiciliario" ||
-          response.data.rol === "vendedor"
+          response.data.rol === "vendedor"||
+          response.data.rol === "administrador"
         ) {
           navigate("/PanelControl");
         } else if (response.data.rol === "cliente") {

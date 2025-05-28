@@ -24,7 +24,6 @@ import { ProductoDetalladoPages } from './Pages/ProductoDetalladoPages/ProductoD
 import  Perfil  from './Pages/Perfil/Perfil'
 import { useLocation } from 'react-router-dom'
 
-import { HistorialFacturas } from './Pages/HistorialFacturas/HistorialFacturas'
 
 import { Rechazada } from './Pages/RespuestaPagos/Rechazada'
 import { RespuestaPago } from './Pages/RespuestaPagos/RespuestaPago'
@@ -37,7 +36,7 @@ import { Juego } from './Pages/Juego/Juego'
 import { DetalleProducto } from './Pages/ProductoDetalle/ProductoDetalle'
 import { VariantesProducto } from './Pages/VariantesProducto/VariantesProducto'
 import { WavesBackground } from './Components/Particulas2/Particulas2'
-
+import { HistorialFacturas } from './Pages/HistorialVentas/historialventas'
 
 function App() {
   const location = useLocation();
@@ -79,7 +78,7 @@ function App() {
          
             <Route path='/ProductoDetalladoPages' element={<ProductoDetalladoPages/>}/>
             <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
-             <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
+            
             
             <Route path='/Confirmacion' element={<Confirmacion />}/>
 

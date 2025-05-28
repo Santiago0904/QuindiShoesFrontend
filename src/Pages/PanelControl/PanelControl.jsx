@@ -5,16 +5,18 @@ import { LateralPanel } from '../../Layouts/LateralPanel/LateralPanel';
 import { ListaProductos } from '../Productos/Productos';
 import { ListaEmpleados } from '../Empleados/Empleados';
 import { MetricasPages } from '../MetricasPage/MetricasPages';
-
+import { HistorialFacturas } from '../HistorialVentas/historialventas';
+import { ParticlesBackground } from '../../Components/Particulas/ParticlesBackground';
 export const PanelControl = () => {
   const [seccionSeleccionada, setSeccionSeleccionada] = useState('');
   const [mostrarPanel, setMostrarPanel] = useState(true);
 
   const renderContenido = () => {
+    <ParticlesBackground />
     switch (seccionSeleccionada) {
       case 'usuarios': return <ListaEmpleados />;
       case 'inventario': return <ListaProductos />;
-      case 'ventas': return <MetricasPages />;
+      case 'ventas': return <HistorialFacturas />;
       case 'domicilios': return <div>Módulo de domicilios</div>;
       case 'reservas': return <div>Gestión de reservas</div>;
       case 'mesrivas': return <div>Mesrivas en desarrollo</div>;
@@ -23,6 +25,8 @@ export const PanelControl = () => {
   };
 
   return (
+    <>
+    <ParticlesBackground />
     <div className="min-h-screen p-5 relative">
       <h1 className="text-3xl font-bold mb-10">Backoffice</h1>
 
@@ -54,7 +58,7 @@ export const PanelControl = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 30 }}
           transition={{ duration: 0.4 }}
-          className="mt-10 p-6 bg-white rounded-2xl"
+          className="mt-10 p-6 rounded-2xl"
         >
           {renderContenido()}
         </motion.div>
@@ -78,5 +82,6 @@ export const PanelControl = () => {
   </motion.button>
 )}
     </div>
+    </>
   );
 };

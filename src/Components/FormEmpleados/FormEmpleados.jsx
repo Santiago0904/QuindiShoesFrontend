@@ -8,7 +8,7 @@ export const FormEmpleados = () => {
     telefono: "",
     direccion: "",
     correo: "",
-    contraseña: "",
+    contrasena: "",
     rol:"vendedor",
   });
 
@@ -81,9 +81,9 @@ export const FormEmpleados = () => {
         />
         <input
           type="password"
-          name="contraseña"
+          name="contrasena"
           placeholder="Contraseña"
-          value={formData.contraseña}
+          value={formData.contrasena}
           onChange={handleChange}
           className="w-full p-2 border rounded-md"
           required
