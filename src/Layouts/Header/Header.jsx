@@ -8,12 +8,11 @@ export const Header = () => {
   return (
     <header className="bg-white shadow-md sticky top-0 z-50 py-6 px-8">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <h1 className="text-3xl font-black text-gray-800">baloo</h1>
+        <h1 className="text-3xl font-black text-gray-800">QuindiShoes</h1>
         <nav className="hidden md:flex space-x-10 font-semibold text-gray-700">
-          <NavLink to="/" className="hover:text-black">Pcruitas</NavLink>
-          <NavLink to="/" className="hover:text-black">Eotsacies</NavLink>
-          <NavLink to="/juego" className="hover:text-black">Viodeeades</NavLink>
-          <NavLink to="/" className="hover:text-black">Pegcuaias</NavLink>
+          <NavLink to="/" className="hover:text-black">Inicio</NavLink>
+          <NavLink to="/" className="hover:text-black">Productos</NavLink>
+          <NavLink to="/juego" className="hover:text-black">VideoJuego</NavLink>
         </nav>
         <div className="flex items-center space-x-6">
           <NavLink to="/favoritos" className="text-xl text-gray-600 hover:text-pink-400">

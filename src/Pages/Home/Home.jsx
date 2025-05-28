@@ -1,12 +1,11 @@
 import React from 'react';
 import { BuscadorProductos } from '../../Components/BuscadorProducto.ts/BuscadorProducto';
 import ChatWidget from '../../Components/ChatBot/ChatBot';
-import indexWoman from '../../assets/images/indexWoman.jpeg'; // Asegúrate de tener esta imagen
+import indexWoman from '../../assets/images/women2.webp'; // Asegúrate de tener esta imagen
 
 export const Home = () => {
   return (
     <div className="px-6 md:px-12 lg:px-20 py-10 space-y-12">
-      {/* Hero Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-10">
         <img
           src={indexWoman}
@@ -34,7 +33,7 @@ export const Home = () => {
       {/* Productos Destacados */}
       <div>
         <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-4">
-          Coductos pegunaclos
+          Productos Destacados
         </h2>
         <BuscadorProductos />
       </div>

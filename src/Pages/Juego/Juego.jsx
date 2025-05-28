@@ -44,7 +44,7 @@ export const Juego = () => {
           <h2 className="text-2xl font-semibold text-center text-orange-400 mb-4">
             🏆 ¡Top Aventureros!
           </h2>
-          <ul className="space-y-3 max-h-[520px] overflow-y-auto scrollbar-thin scrollbar-thumb-amber-300 scrollbar-track-transparent">
+          <ul className="space-y-3 max-h-[520px] overflow-y-auto scroll-invisible">
             {topJugadores.length === 0 ? (
               <li className="text-center text-gray-400">No hay puntajes aún.</li>
             ) : (
