@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BuscadorProductos } from '../../Components/BuscadorProducto.ts/BuscadorProducto';
 import ChatWidget from '../../Components/ChatBot/ChatBot';
-import indexWoman from '../../assets/images/women2.webp'; // Asegúrate de tener esta imagen
+import indexWoman from '../../assets/images/women2.webp'; 
+import { BotonReseñas } from '../../Components/BotonReseñas/BotonReseñas';
+import { ModalReseñas } from '../../Components/ModalReseñas/ModalReseñas';
 
 export const Home = () => {
+  const [modalAbierto, setModalAbierto] = useState(false);
+
   return (
-    <div className="px-6 md:px-12 lg:px-20 py-10 space-y-12">
+    <div className="px-6 md:px-12 lg:px-20 py-10 space-y-12 relative">
       <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-10">
         <img
           src={indexWoman}
@@ -39,6 +43,14 @@ export const Home = () => {
       </div>
 
       <ChatWidget />
+
+      {/* BOTÓN DE RESEÑAS */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <BotonReseñas onClick={() => setModalAbierto(true)} />
+      </div>
+
+      {/* MODAL DE RESEÑAS */}
+      <ModalReseñas abierto={modalAbierto} cerrar={() => setModalAbierto(false)} />
     </div>
   );
 };

@@ -1,36 +1,100 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 interface Props {
   onClose: () => void;
 }
 
-export const FormularioReseña: React.FC<Props> = ({ onClose }) => {
+export const FormularioResena: React.FC<Props> = ({ onClose }) => {
   const [mensaje, setMensaje] = useState('');
-  const usuario_id = localStorage.getItem('id'); // Ajusta según tu método de autenticación
+  const [fecha, setFecha] = useState('');
+  const [tieneResena, setTieneResena] = useState(false);
+  const [mensajeOriginal, setMensajeOriginal] = useState('');
 
-  const enviarReseña = async () => {
+  const usuario_id_raw = localStorage.getItem('id');
+  const usuario_id = usuario_id_raw && !isNaN(Number(usuario_id_raw)) ? Number(usuario_id_raw) : null;
+
+  useEffect(() => {
+    if (!usuario_id) return;
+    axios.get(`http://localhost:3000/usuario/${usuario_id}`)
+      .then(res => {
+        if (res.data?.resena) {
+          setMensaje(res.data.resena);
+          setMensajeOriginal(res.data.resena);
+          setFecha(res.data.fecha_resena || '');
+          setTieneResena(true);
+        } else {
+          setMensaje('');
+          setMensajeOriginal('');
+          setFecha('');
+          setTieneResena(false);
+        }
+      })
+      .catch(() => {
+        setMensaje('');
+        setMensajeOriginal('');
+        setFecha('');
+        setTieneResena(false);
+      });
+  }, [usuario_id]);
+
+  const enviarResena = async () => {
+    if (!usuario_id) return alert('Inicia sesión nuevamente.');
+
+    const fecha_resena = new Date().toISOString().slice(0, 19).replace('T', ' ');
     try {
-      const fecha = new Date().toISOString();
-
-      await axios.post('http://localhost:3000/resenas/agregar', {
-        mensaje: mensaje,
-        fecha: new Date().toISOString().slice(0, 10),
-        usuario_id: usuario_id
+      await axios.post('http://localhost:3000/resena/agregar', {
+        resena: mensaje,
+        fecha_resena,
+        id_usuario: usuario_id
       });
-
       alert('Reseña enviada correctamente');
-      setMensaje('');
+      setTieneResena(true);
+      setMensajeOriginal(mensaje);
+      setFecha(fecha_resena);
       onClose();
-
-      console.log('📤 Enviando reseña:', {
-        mensaje: mensaje,
-        fecha: new Date().toISOString().slice(0, 10),
-        usuario_id: usuario_id
-      });
     } catch (error) {
       console.error(error);
       alert('Error al enviar la reseña');
+    }
+  };
+
+  const editarResena = async () => {
+    if (!usuario_id) return alert('Inicia sesión nuevamente.');
+    if (mensaje === mensajeOriginal) return alert('No hiciste cambios en la reseña.');
+
+    const fecha_resena = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    try {
+      await axios.put('http://localhost:3000/resena/editar', {
+        resena: mensaje,
+        fecha_resena,
+        id_usuario: usuario_id
+      });
+      alert('Reseña editada correctamente');
+      setFecha(fecha_resena);
+      setMensajeOriginal(mensaje);
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert('Error al editar la reseña');
+    }
+  };
+
+  const eliminarResena = async () => {
+    if (!usuario_id) return alert('Inicia sesión nuevamente.');
+    try {
+      await axios.delete('http://localhost:3000/resena/eliminar', {
+        data: { id_usuario: usuario_id }
+      });
+      alert('Reseña eliminada correctamente');
+      setMensaje('');
+      setMensajeOriginal('');
+      setFecha('');
+      setTieneResena(false);
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert('Error al eliminar la reseña');
     }
   };
 
@@ -43,12 +107,34 @@ export const FormularioReseña: React.FC<Props> = ({ onClose }) => {
         onChange={(e) => setMensaje(e.target.value)}
         placeholder="Escribe tu reseña aquí..."
       />
-      <button
-        onClick={enviarReseña}
-        className="bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-      >
-        Enviar reseña
-      </button>
+      {!tieneResena ? (
+        <button
+          onClick={enviarResena}
+          className="bg-pink-400 text-white py-2 rounded-md hover:bg-pink-500 transition-all"
+        >
+          Enviar reseña
+        </button>
+      ) : (
+        <div className="flex gap-2">
+          <button
+            onClick={editarResena}
+            className="bg-green-400 text-white py-2 px-4 rounded-md hover:bg-green-500 transition-all"
+          >
+            Editar reseña
+          </button>
+          <button
+            onClick={eliminarResena}
+            className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-all"
+          >
+            Eliminar reseña
+          </button>
+        </div>
+      )}
+      {fecha && (
+        <div className="text-xs text-gray-500">
+          Última edición: {new Date(fecha).toLocaleString()}
+        </div>
+      )}
     </div>
   );
 };

@@ -97,29 +97,43 @@ export const CartaProducto = ({ producto }) => {
   }, [imagenPrincipal]);
 
   return (
-    <div
-      onClick={irADetalle}
-      style={{ backgroundColor: bgColor }}
-      className="rounded-3xl p-6 shadow-lg cursor-pointer transition-all hover:shadow-xl"
-    >
+  <div
+    onClick={irADetalle}
+    style={{ backgroundColor: bgColor }}
+    className="rounded-3xl p-6 shadow-md cursor-pointer transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl group"
+  >
+    <div className="relative">
       <img
         ref={imgRef}
         src={imagenPrincipal}
         alt={producto.nombre_producto}
         crossOrigin="anonymous"
-        className="w-full h-48 object-contain mb-4 rounded-2xl bg-white"
+        className="w-full h-48 object-contain mb-4 rounded-2xl bg-white transition-transform duration-300 group-hover:scale-105"
       />
-      <h3 className="text-lg font-semibold text-gray-800 mb-1 truncate">
+      <span className="absolute top-3 right-3 bg-white text-gray-600 text-xs font-medium px-2 py-1 rounded-full shadow">
+        {producto.genero_producto}
+      </span>
+    </div>
+
+    <div className="space-y-1">
+      <h3 className="text-xl font-bold text-gray-900 truncate">
         {producto.nombre_producto}
       </h3>
-      <p className="text-sm text-gray-500">{producto.tipo_producto}</p>
-      <p className="text-sm text-gray-500">{producto.genero_producto}</p>
-      <p className="text-lg font-bold text-gray-900 mt-2">
-        ${producto.precio_producto}
-      </p>
+
+      <p className="text-sm text-gray-600 italic">Tipo: {producto.tipo_producto}</p>
+
+      <div className="flex items-center justify-between mt-2">
+        <p className="text-lg font-semibold text-green-600 transition-colors duration-300 group-hover:text-green-700">
+          ${producto.precio_producto}
+        </p>
+        <span className="text-xs text-gray-400 group-hover:text-gray-500 transition duration-300">
+          Click para ver más
+        </span>
+      </div>
     </div>
+  </div>
   );
-};
+}
 
 export const MostrarProducto = ({ productosProp }) => {
   const [productos, setProductos] = React.useState([]);
