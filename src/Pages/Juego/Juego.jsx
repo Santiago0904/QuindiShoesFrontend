@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import FlappyBirdGame from '../../Layouts/Juego/Juego';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import axiosClient from '../../api/axion';
 
 export const Juego = () => {
@@ -45,21 +45,36 @@ export const Juego = () => {
             🏆 ¡Top Aventureros!
           </h2>
           <ul className="space-y-3 max-h-[520px] overflow-y-auto scroll-invisible">
-            {topJugadores.length === 0 ? (
-              <li className="text-center text-gray-400">No hay puntajes aún.</li>
-            ) : (
-              topJugadores.map((player, idx) => (
-                <li
-                  key={player.usuarioId || idx}
-                  className="flex justify-between items-center px-5 py-3 rounded-xl bg-amber-50 hover:bg-amber-100 transition border border-amber-200"
+            <AnimatePresence>
+              {topJugadores.length === 0 ? (
+                <motion.li
+                  key="no-score"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-center text-gray-400"
                 >
-                  <span className="font-medium text-amber-700 text-lg">
-                    {idx + 1}. {player.nombre || player.username || 'Jugador'}
-                  </span>
-                  <span className="text-amber-500 font-bold">{player.record} pts</span>
-                </li>
-              ))
-            )}
+                  No hay puntajes aún.
+                </motion.li>
+              ) : (
+                topJugadores.map((player, idx) => (
+                  <motion.li
+                    layout
+                    key={player.usuarioId || idx}
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.95, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    className="flex justify-between items-center px-5 py-3 rounded-xl bg-amber-50 hover:bg-amber-100 transition border border-amber-200"
+                  >
+                    <span className="font-medium text-amber-700 text-lg">
+                      {idx + 1}. {player.nombre || player.username || 'Jugador'}
+                    </span>
+                    <span className="text-amber-500 font-bold">{player.record} pts</span>
+                  </motion.li>
+                ))
+              )}
+            </AnimatePresence>
           </ul>
         </motion.div>
       </div>
