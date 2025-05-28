@@ -39,12 +39,12 @@ export const Juego = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className="w-full max-w-xl h-[700px] bg-white rounded-xl shadow-lg border-2 border-amber-300 p-6"
+          className="w-full max-w-xl bg-white rounded-xl shadow-lg border-2 border-amber-300 p-6"
         >
           <h2 className="text-2xl font-semibold text-center text-orange-400 mb-4">
             🏆 ¡Top Aventureros!
           </h2>
-          <ul className="space-y-3 overflow-y-auto h-full scrollbar-thin scrollbar-thumb-amber-300 scrollbar-track-transparent">
+          <ul className="space-y-3 max-h-[520px] overflow-y-auto scrollbar-thin scrollbar-thumb-amber-300 scrollbar-track-transparent">
             {topJugadores.length === 0 ? (
               <li className="text-center text-gray-400">No hay puntajes aún.</li>
             ) : (
