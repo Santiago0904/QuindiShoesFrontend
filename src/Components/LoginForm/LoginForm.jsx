@@ -14,7 +14,7 @@ export const LoginForm = () => {
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
     correo: "",
-    contraseña: "",
+    contrasena: "",
     recaptchaToken: "",
   });
 
