@@ -5,12 +5,14 @@ import birdFlapImg from '../../assets/images/sprite-up.png';
 import dieSoundFile from '../../assets/sounds/die.mp3';
 import fondoVideo from '../../assets/images/202505231554.mp4';
 import Ecos_Freneticos from '../../assets/sounds/Ecos_Freneticos.mp3';
+import axiosClient from '../../api/axion';
 
-export default function FlappyBirdGame() {
+export default function FlappyBirdGame({onGameOver}) {
   const [gameState, setGameState] = useState('Start');
   const [birdY, setBirdY] = useState(40);
   const [pipes, setPipes] = useState([]);
   const [score, setScore] = useState(0);
+  const scoreRef = useRef(0);
   const [birdSrc, setBirdSrc] = useState(birdImg);
   const [videoReverse, setVideoReverse] = useState(false);
 
@@ -26,14 +28,31 @@ export default function FlappyBirdGame() {
   const videoTimeoutRef = useRef(null);
   const ecosFreneticosAudio = useRef(new Audio(Ecos_Freneticos));
   const gameOverRef = useRef(false);
+
   useEffect(() => {
-  dieSound.current.load();
-  ecosFreneticosAudio.current.load();
-}, []);
+    dieSound.current.load();
+    ecosFreneticosAudio.current.load();
+  }, []);
 
- 
+  useEffect(() => {
+    scoreRef.current = score;
+  }, [score]);
 
+const guardarPuntuacion = async (puntuacion) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return;
 
+    // Decodifica el payload del JWT para obtener el usuarioId
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const usuarioId = payload.id || payload.data?.id;
+    if (!usuarioId) return;
+
+    await axiosClient.post("/juego", { usuarioId, puntuacion });
+  } catch (error) {
+    console.error("Error al guardar puntuación:", error);
+  }
+};
 
   const gravity = 0.1;
   const flapPower = -1.5;
@@ -155,7 +174,11 @@ const gameOver = () => {
     clearInterval(reverseIntervalRef.current);
     clearTimeout(videoTimeoutRef.current);
   }
-};
+
+  guardarPuntuacion(scoreRef.current);    
+  if (typeof onGameOver === 'function') {
+      onGameOver();
+    }};
 
 
   // ... (todo igual hasta gameLoop)
@@ -205,6 +228,7 @@ const gameLoop = () => {
     if (!pipe.scored && pipe.x + 6 < 30) {
       setScore(prev => {
         const newScore = prev + 1;
+        scoreRef.current = newScore;
         // Eliminado el sonido aquí:
         // if (newScore % 10 === 0) {
         //   const point = pointSound.current;

@@ -13,3 +13,10 @@
   image-rendering: pixelated;
 }
 
+.scroll-invisible::-webkit-scrollbar {
+  display: none;
+}
+.scroll-invisible {
+  -ms-overflow-style: none;  /* IE y Edge */
+  scrollbar-width: none;     /* Firefox */
+}
