@@ -12,7 +12,7 @@ export const LoginForm = () => {
   const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
     correo: "",
-    contraseña: "",
+    contrasena: "", // Cambiado de "contraseña" a "contrasena"
     recaptchaToken: "",
   });
 
@@ -38,7 +38,7 @@ export const LoginForm = () => {
         icon: "warning",
         title: "¡reCAPTCHA requerido!",
         text: "Por favor, completa el reCAPTCHA.",
-        confirmButtonColor: "#f472b6", // rosa pastel
+        confirmButtonColor: "#f472b6",
       });
       return;
     }
@@ -53,7 +53,7 @@ export const LoginForm = () => {
           icon: "success",
           title: "¡Bienvenido/a!",
           text: "Inicio de sesión exitoso.",
-          confirmButtonColor: "#a7f3d0", // verde pastel
+          confirmButtonColor: "#a7f3d0",
           background: "#fff0f5",
         });
 
@@ -73,7 +73,7 @@ export const LoginForm = () => {
           icon: "error",
           title: "Error de autenticación",
           text: "Correo o contraseña incorrectos.",
-          confirmButtonColor: "#fda4af", // rojo pastel
+          confirmButtonColor: "#fda4af",
           background: "#fff1f2",
         });
       });
@@ -99,9 +99,9 @@ export const LoginForm = () => {
             />
             <input
               type="password"
-              name="contraseña"
+              name="contrasena" // Actualizado el atributo name
               placeholder="Contraseña"
-              value={loginData.contraseña}
+              value={loginData.contrasena}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300"
               required
@@ -110,15 +110,13 @@ export const LoginForm = () => {
               sitekey="6LfVFi4rAAAAAB6uL2mfebBzOhH5ua9lburpWMBn"
               onChange={handleRecaptchaChange}
             />
-            <div className=" flex justify-between ">
-
-                <NavLink
+            <div className="flex justify-between">
+              <NavLink
                 className="text-sm text-pink-600 hover:underline"
                 to="/Register"
               >
                 Registrarse
               </NavLink>
-
               <NavLink
                 className="text-sm text-pink-600 hover:underline"
                 to="/recuperarContrasena"
