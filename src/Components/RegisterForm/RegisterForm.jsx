@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ParticlesBackground } from "../Particulas/ParticlesBackground";
+import { WavesBackground } from "../Particulas2/Particulas2";
+import { motion } from "framer-motion"; // Import motion for animations
 
 export function RegisterForm() {
   const navigate = useNavigate();
@@ -51,10 +52,15 @@ export function RegisterForm() {
 
   return (
     <>
-      <ParticlesBackground />
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="w-full max-w-md bg-white p-8 rounded-3xl shadow-xl border border-pink-100">
-          <h2 className="text-3xl font-extrabold text-center text-gray-800 mb-6">
+      <WavesBackground />
+      <div className="min-h-screen flex z-1  items-center justify-center px-4 "> {/* Added pastel background */}
+        <motion.div // Added motion for animations
+          className="w-full max-w-md bg-white p-8 rounded-3xl shadow-xl border border-pink-100" // Pastel border
+          initial={{ opacity: 0, y: -50, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
+          <h2 className="text-3xl font-extrabold text-center text-purple-700 mb-6 drop-shadow-sm"> {/* Pastel purple heading */}
             Registro de Usuario
           </h2>
 
@@ -79,10 +85,10 @@ export function RegisterForm() {
                   placeholder={campo.label}
                   value={formulario[campo.id]}
                   onChange={manejarCambio}
-                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 placeholder:text-pink-400 ${
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-300 placeholder:text-pink-400 ${ // Pastel pink/purple inputs
                     errores[campo.id]
                       ? "border-red-400"
-                      : "border-pink-200"
+                      : "border-pink-200" // Pastel border for non-error
                   }`}
                 />
                 {errores[campo.id] && (
@@ -93,14 +99,22 @@ export function RegisterForm() {
               </div>
             ))}
 
-            <button
+            <motion.button // Added motion to the button
               type="submit"
-              className="w-full bg-gradient-to-r from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white py-3 rounded-full shadow-md transition duration-300 font-semibold"
+              className="w-full inline-flex items-center justify-center
+                         bg-gradient-to-r from-purple-400 to-pink-500 {/* Pastel pink gradient */}
+                         hover:from-purple-500 hover:to-pink-600
+                         text-white font-semibold text-lg py-3 rounded-full
+                         shadow-lg hover:shadow-xl
+                         transform hover:scale-105 transition-all duration-300 ease-out
+                         focus:outline-none focus:ring-2 focus:ring-purple-300 focus:ring-opacity-75" // Pastel focus ring
+              whileHover={{ scale: 1.05, boxShadow: "0 8px 24px rgba(0,0,0,0.15)" }}
+              whileTap={{ scale: 0.97 }}
             >
               Registrar
-            </button>
+            </motion.button>
           </form>
-        </div>
+        </motion.div>
       </div>
     </>
   );

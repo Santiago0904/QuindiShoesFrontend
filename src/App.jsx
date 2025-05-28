@@ -36,6 +36,7 @@ import Chat from './Components/ChatBot/ChatBot'
 import { Juego } from './Pages/Juego/Juego'
 import { DetalleProducto } from './Pages/ProductoDetalle/ProductoDetalle'
 import { VariantesProducto } from './Pages/VariantesProducto/VariantesProducto'
+import { WavesBackground } from './Components/Particulas2/Particulas2'
 
 
 function App() {
@@ -53,45 +54,48 @@ function App() {
   return (
     <>
       {!ocultarHeaderYFooter && <Header />}
-      <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/Register' element={<Register/>}/>
-        <Route path='/Login' element={<Login/>}/>
-        <Route path='/recuperarContrasena' element={<EmailPage/>}/>
-        <Route path='/reiniciarContrasena' element={<PasswordPage/>}/>
-        <Route path='/nuevoProducto' element={<NewProduct/>}/>
-        <Route path='/productos' element={<ListaProductos/>}/>
-        <Route path='/material' element={<MaterialNewForm/>}/>
-        <Route path='/color' element={<ColorNewForm/>}/>
-        <Route path='/zona' element={<ZonaNewForm/>}/>
-        <Route path='/productos' element={<ListaProductos/>}/>
-        <Route path='/Empleados' element={<RegisterEmpledos/>}/>
-        <Route path='/ListaEmpleados' element={<ListaEmpleados/>}/>
-        <Route path='/PanelControl' element={<PanelControl/>}/>
-        <Route path='/carrito' element={<Carrito/>}/>
-        <Route path='/ListaMateriales' element={<ListaMateriales/>}/>
-        <Route path='/ListaColores' element={<ListaColores/>}/>
-        <Route path='/ListaZonas' element={<ListaZonas/>}/>
-        <Route path='/RespuestaPago' element={<RespuestaPago />}/>
-     
-        <Route path='/ProductoDetalladoPages' element={<ProductoDetalladoPages/>}/>
-        <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
-         <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
-        
-        <Route path='/Confirmacion' element={<Confirmacion />}/>
+      <div className="relative min-h-screen flex flex-col">
+        <div className="flex-1 flex flex-col">
+          <Routes>
+            <Route path='/' element={<Home/>}/>
+            <Route path='/Register' element={<Register/>}/>
+            <Route path='/Login' element={<Login/>}/>
+            <Route path='/recuperarContrasena' element={<EmailPage/>}/>
+            <Route path='/reiniciarContrasena' element={<PasswordPage/>}/>
+            <Route path='/nuevoProducto' element={<NewProduct/>}/>
+            <Route path='/productos' element={<ListaProductos/>}/>
+            <Route path='/material' element={<MaterialNewForm/>}/>
+            <Route path='/color' element={<ColorNewForm/>}/>
+            <Route path='/zona' element={<ZonaNewForm/>}/>
+            <Route path='/productos' element={<ListaProductos/>}/>
+            <Route path='/Empleados' element={<RegisterEmpledos/>}/>
+            <Route path='/ListaEmpleados' element={<ListaEmpleados/>}/>
+            <Route path='/PanelControl' element={<PanelControl/>}/>
+            <Route path='/carrito' element={<Carrito/>}/>
+            <Route path='/ListaMateriales' element={<ListaMateriales/>}/>
+            <Route path='/ListaColores' element={<ListaColores/>}/>
+            <Route path='/ListaZonas' element={<ListaZonas/>}/>
+            <Route path='/RespuestaPago' element={<RespuestaPago />}/>
+         
+            <Route path='/ProductoDetalladoPages' element={<ProductoDetalladoPages/>}/>
+            <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
+             <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
+            
+            <Route path='/Confirmacion' element={<Confirmacion />}/>
 
 
-        <Route path='/Perfil' element={<Perfil/>}/>
+            <Route path='/Perfil' element={<Perfil/>}/>
 
-        <Route path="/validarCorreo" element={<VerificarCorreo />}/>
-        <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
-        <Route path="/juego" element={<Juego />} />
-        <Route path="/producto/:id" element={<DetalleProducto />} />
-        <Route path="/producto/:id/variantes" element={<VariantesProducto />} />
+            <Route path="/validarCorreo" element={<VerificarCorreo />}/>
+            <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
+            <Route path="/juego" element={<Juego />} />
+            <Route path="/producto/:id" element={<DetalleProducto />} />
+            <Route path="/producto/:id/variantes" element={<VariantesProducto />} />
 
-      </Routes>
-      {!ocultarHeaderYFooter && <Chat />}
-      {!ocultarHeaderYFooter && <Footer />}
+          </Routes>
+        </div>
+       
+      </div>
     </>
   );
 }
