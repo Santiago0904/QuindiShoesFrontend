@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export const WavesBackground = () => {
   return (
-    <div className="fixed left-0 w-full h-[500px] bottom-[-120px] pointer-events-none z-0">
+    <div className="absolute left-0 w-full h-[580px] bottom-[-117px] pointer-events-none z-0">
       <motion.svg
         className="w-full h-full"
         viewBox="0 0 1440 400"

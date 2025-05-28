@@ -39,34 +39,47 @@ const Carrito = () => {
   };
 
 const handlePSEPayment = () => {
-    if (!userId) {
-      console.error("No se encontró el ID del usuario");
-      return;
-    }
+  if (!userId) {
+    console.error("No se encontró el ID del usuario");
+    return;
+  }
 
-    const handler = window.ePayco.checkout.configure({
-      key: "76018558cee4255d423b4753fee3fdf1",
-      test: true,
-    });
+  const carritoReducido = carrito.map(({ id_producto, nombre_producto, precio_producto, talla, cantidad,imagen }) => ({
+    id_producto,
+    nombre_producto,
+    precio_producto,
+    talla,
+    cantidad,
+    imagen
+  }));
 
-    const data = {
-      name: "Pago de productos",
-      description: "Compra en QuindiShoes",
-      invoice: "ORD-" + Date.now(),
-      currency: "cop",
-      amount: "5000",
-      tax_base: "0",
-      tax: "0",
-      country: "co",
-      method: "POST",
-      response: "https://www.youtube.com/?reload=9&app=desktop&hl=es",
-      confirmation: "https://308d-179-1-217-71.ngrok-free.app/api/pagos/confirmacion",
-      external: "false",
-      x_extra1: userId.toString(), // ← Ahora sí existe
-    };
+  const total = carrito.reduce((acc, producto) => acc + (producto.cantidad * producto.precio_producto), 0);
 
-    handler.open(data);
+  const handler = window.ePayco.checkout.configure({
+    key: "76018558cee4255d423b4753fee3fdf1",
+    test: true,
+  });
+
+  const data = {
+    name: "Pago de productos",
+    description: "Compra en QuindiShoes",
+    invoice: "ORD-" + Date.now(),
+    currency: "cop",
+    amount: total.toString(),
+    tax_base: "0",
+    tax: "0",
+    country: "co",
+    method: "POST",
+    response: "https://www.youtube.com/?reload=9&app=desktop&hl=es",
+    confirmation: "https://8925-2803-1800-4209-e6a3-c26-c169-a154-de7e.ngrok-free.app/api/pagos/confirmacion",
+    external: "false",
+    x_extra1: userId.toString(),
+    x_extra2: JSON.stringify(carritoReducido),
   };
+
+  handler.open(data);
+};
+
 
 
   const vaciarCarrito = () => {
@@ -74,7 +87,7 @@ const handlePSEPayment = () => {
     setCarrito([]);
     resetear();
   };
-
+ console.log("Carrito:", carrito);
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-12 px-4 sm:px-8">
       <div className="max-w-4xl mx-auto bg-white shadow-2xl rounded-3xl p-8">
@@ -95,6 +108,7 @@ const handlePSEPayment = () => {
           </div>
         ) : (
           <div className="space-y-6">
+           
             {carrito.map((producto, index) => (
               <div
                 key={index}
@@ -129,6 +143,9 @@ const handlePSEPayment = () => {
                 </div>
               </div>
             ))}
+            <div className="text-right text-2xl font-semibold text-gray-800">
+              Total a pagar: <span className="text-green-600">${carrito.reduce((acc, p) => acc + (p.cantidad * p.precio_producto), 0)}</span>
+            </div>
 
             <div className="flex flex-col sm:flex-row justify-between items-center mt-8 gap-4">
               <button
