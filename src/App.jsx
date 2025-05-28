@@ -96,6 +96,8 @@ function App() {
         </div>
        
       </div>
+      {!ocultarHeaderYFooter && <Footer />}
+
     </>
   );
 }
