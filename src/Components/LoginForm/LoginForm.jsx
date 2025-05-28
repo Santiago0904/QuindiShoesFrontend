@@ -46,18 +46,21 @@ export const LoginForm = () => {
     }
 
     axios
-      .post("http://localhost:3000/auth", loginData)
-      .then((response) => {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("rol", response.data.rol);
+  .post("http://localhost:3000/auth", loginData)
+  .then((response) => {
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem("rol", response.data.rol);
+    if (response.data.id) {
+      localStorage.setItem("id", response.data.id); // <-- Guarda el id del usuario
+    }
 
-        MySwal.fire({
-          icon: "success",
-          title: "¡Bienvenido/a!",
-          text: "Inicio de sesión exitoso.",
-          confirmButtonColor: "#a7f3d0", // verde pastel
-          background: "#fff0f5",
-        });
+    MySwal.fire({
+      icon: "success",
+      title: "¡Bienvenido/a!",
+      text: "Inicio de sesión exitoso.",
+      confirmButtonColor: "#a7f3d0",
+      background: "#fff0f5",
+    });
 
         if (
           response.data.rol === "Empleado" ||
@@ -80,6 +83,26 @@ export const LoginForm = () => {
           background: "#fff1f2",
         });
       });
+    if (
+      response.data.rol === "Empleado" ||
+      response.data.rol === "domiciliario" ||
+      response.data.rol === "vendedor"
+    ) {
+      navigate("/PanelControl");
+    } else if (response.data.rol === "cliente") {
+      navigate("/");
+    }
+  })
+  .catch((error) => {
+    console.error("Error al iniciar sesión:", error);
+    MySwal.fire({
+      icon: "error",
+      title: "Error de autenticación",
+      text: "Correo o contraseña incorrectos.",
+      confirmButtonColor: "#fda4af",
+      background: "#fff1f2",
+    });
+  });
   };
 
   return (
