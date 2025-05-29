@@ -18,7 +18,7 @@ const CambiarContraseñaForm = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axiosClient.post(
-        "/cambiarContrasenaR", // URL sin el http://localhost:3000 porque ya lo tienes en axiosClient
+        "/cambiarContrasenaR",
         {
           contraseñaActual: contraseñaActual,
           nuevaContraseña: nuevaContraseña,
