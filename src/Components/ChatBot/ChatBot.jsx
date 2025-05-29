@@ -30,7 +30,7 @@ const ChatBot = () => {
     setUserInput("");
 
     try {
-      const response = await axios.post("http://localhost:3000/api/chat", {
+      const response = await axios.post("http://localhost:3000/apiChat/chat", {
         question: userInput,
         history: updatedMessages,
       });
