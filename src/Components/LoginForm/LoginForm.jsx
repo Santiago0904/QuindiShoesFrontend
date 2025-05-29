@@ -61,26 +61,47 @@ export const LoginForm = () => {
         background: "#fff0f5",
       });
 
-      if (
-        response.data.rol === "Empleado" ||
-        response.data.rol === "domiciliario" ||
-        response.data.rol === "vendedor" ||
-        response.data.rol === "administrador"
-      ) {
-        navigate("/PanelControl");
-      } else if (response.data.rol === "cliente") {
-        navigate("/");
-      }
-    } catch (error) {
-      console.error("Error al iniciar sesión:", error);
-      MySwal.fire({
-        icon: "error",
-        title: "Error de autenticación",
-        text: "Correo o contraseña incorrectos.",
-        confirmButtonColor: "#fda4af", // rojo pastel
-        background: "#fff1f2",
+        if (
+          response.data.rol === "Empleado" ||
+          response.data.rol === "domiciliario" ||
+          response.data.rol === "vendedor"||
+          response.data.rol === "administrador"
+        ) {
+          navigate("/PanelControl");
+        } else if (response.data.rol === "cliente") {
+          navigate("/");
+        }
+      })
+      .catch((error) => {
+        console.error("Error al iniciar sesión:", error);
+        MySwal.fire({
+          icon: "error",
+          title: "Error de autenticación",
+          text: "Correo o contraseña incorrectos.",
+          confirmButtonColor: "#fda4af", // rojo pastel
+          background: "#fff1f2",
+        });
       });
+    if (
+      response.data.rol === "Empleado" ||
+      response.data.rol === "domiciliario" ||
+      response.data.rol === "vendedor"
+    ) {
+      navigate("/PanelControl");
+    } else if (response.data.rol === "cliente") {
+      navigate("/");
     }
+  })
+  .catch((error) => {
+    console.error("Error al iniciar sesión:", error);
+    MySwal.fire({
+      icon: "error",
+      title: "Error de autenticación",
+      text: "Correo o contraseña incorrectos.",
+      confirmButtonColor: "#fda4af",
+      background: "#fff1f2",
+    });
+  });
   };
 
   return (
