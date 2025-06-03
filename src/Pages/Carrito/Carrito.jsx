@@ -44,11 +44,13 @@ const handlePSEPayment = () => {
     return;
   }
 
-  const carritoReducido = carrito.map(({ id_producto, nombre_producto, precio_producto, talla, cantidad,imagen }) => ({
+  const carritoReducido = carrito.map(({ id_producto, nombre_producto,precio_producto ,talla, id_color, id_talla, cantidad, imagen }) => ({
     id_producto,
     nombre_producto,
     precio_producto,
     talla,
+    id_color,
+    id_talla,
     cantidad,
     imagen
   }));
@@ -71,7 +73,7 @@ const handlePSEPayment = () => {
     country: "co",
     method: "POST",
     response: "https://www.youtube.com/?reload=9&app=desktop&hl=es",
-    confirmation: "https://8925-2803-1800-4209-e6a3-c26-c169-a154-de7e.ngrok-free.app/api/pagos/confirmacion",
+    confirmation: "https://3d64-179-1-217-70.ngrok-free.app/api/pagos/confirmacion",
     external: "false",
     x_extra1: userId.toString(),
     x_extra2: JSON.stringify(carritoReducido),
