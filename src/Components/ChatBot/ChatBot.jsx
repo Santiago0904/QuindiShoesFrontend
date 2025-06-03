@@ -30,7 +30,7 @@ const ChatBot = () => {
     setUserInput("");
 
     try {
-      const response = await axios.post("https://quindishoes-backend-3.onrender.com/api/chat", {
+      const response = await axios.post("http://localhost:3000/api/chat", {
         question: userInput,
         history: updatedMessages,
       });
