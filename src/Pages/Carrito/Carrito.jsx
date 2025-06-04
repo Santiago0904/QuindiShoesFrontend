@@ -29,6 +29,8 @@ const Carrito = () => {
     return acc + (p.cantidad * Math.max(0, precioConDescuento));
   }
   return acc + (p.cantidad * p.precio_producto);
+
+
 }, 0);
   useEffect(() => {
     const datosGuardados = localStorage.getItem("carrito");
@@ -103,6 +105,7 @@ const handlePSEPayment = () => {
     external: "false",
     x_extra1: userId.toString(),
     x_extra2: JSON.stringify(carritoReducido),
+    x_extre3: productoConDescuento !== null && descuento > 0 ? descuento : 0
   };
 
   handler.open(data);
