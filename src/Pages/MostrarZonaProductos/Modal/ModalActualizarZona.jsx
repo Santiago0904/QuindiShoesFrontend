@@ -19,7 +19,7 @@ const ModalActualizarZona = ({ zona, onClose, onActualizar }) => {
     console.log("Datos enviados:", formData);
     try {
       await axios.put(
-        `https://quindishoes-backend-3.onrender.com/zonaProducto/${formData.id_zonaProductos}`,
+        `http://localhost:5173/zonaProducto/${formData.id_zonaProductos}`,
         {
           nombre_zona: formData.nombre_zona,
         },

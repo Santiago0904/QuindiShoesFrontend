@@ -147,7 +147,7 @@ export const MostrarProducto = ({ productosProp }) => {
   const cargarProductos = () => {
     import("axios").then(({ default: axios }) => {
       axios
-        .get("https://quindishoes-backend-3.onrender.com/producto/public")
+        .get("http://localhost:5173/producto/public")
         .then((res) => setProductos(res.data))
         .catch((err) => console.error("Error al cargar productos:", err));
     });

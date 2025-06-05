@@ -15,7 +15,7 @@ export const Password = () => {
     }
 
     try {
-      await axios.post("https://quindishoes-backend-3.onrender.com/reiniciarContrasena", {
+      await axios.post("http://localhost:5173/reiniciarContrasena", {
         token,
         contraseña: nuevaContraseña,
       });
