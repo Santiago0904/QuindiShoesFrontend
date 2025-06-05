@@ -4,6 +4,7 @@ import axios from "axios";
 import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
 import Swal from "sweetalert2";
 import "sweetalert2/src/sweetalert2.scss";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 interface Variante {
   id_variantes: number;
@@ -33,6 +34,7 @@ export function DetalleProducto() {
   const [colorSeleccionado, setColorSeleccionado] = useState<number | null>(null);
   const [tallaSeleccionada, setTallaSeleccionada] = useState<number | null>(null);
   const [cantidad, setCantidad] = useState(1);
+  const [esFavorito, setEsFavorito] = useState(false);
   const { incrementarContador } = useContext(ContadorCarritoContext);
 
   useEffect(() => {
@@ -40,6 +42,12 @@ export function DetalleProducto() {
       .then(res => setProducto(res.data))
       .catch(() => setProducto(null));
   }, [id]);
+
+  useEffect(() => {
+    if (!producto) return;
+    const favoritos = JSON.parse(localStorage.getItem("favoritos") || "[]");
+    setEsFavorito(favoritos.some((p: any) => p.id_producto === producto.id_producto));
+  }, [producto]);
 
   if (!producto) return <div className="text-center mt-20 text-xl animate-pulse">Cargando...</div>;
 
@@ -125,16 +133,43 @@ export function DetalleProducto() {
     });
   };
 
+  const toggleFavorito = () => {
+    if (!producto) return;
+    const favoritos = JSON.parse(localStorage.getItem("favoritos") || "[]");
+    const yaExiste = favoritos.some((p: any) => p.id_producto === producto.id_producto);
+
+    let nuevosFavoritos;
+    if (yaExiste) {
+      nuevosFavoritos = favoritos.filter((p: any) => p.id_producto !== producto.id_producto);
+    } else {
+      nuevosFavoritos = [...favoritos, producto];
+    }
+    localStorage.setItem("favoritos", JSON.stringify(nuevosFavoritos));
+    setEsFavorito(!yaExiste);
+    window.dispatchEvent(new Event("favoritos-updated"));
+  };
+
   console.log("Colores recibidos:", producto.colores);
 
   return (
     <div className="flex flex-col md:flex-row gap-10 max-w-6xl mx-auto my-10 bg-white rounded-2xl shadow-2xl p-8 animate-fade-in">
       <div className="flex-1 flex flex-col items-center">
-        <img
-          src={producto.imagenes[0]}
-          alt={producto.nombre_producto}
-          className="w-96 h-96 object-cover rounded-xl shadow-lg transition-transform duration-300 hover:scale-105"
-        />
+        <div className="relative w-full flex flex-col items-center">
+          <img
+            src={producto.imagenes[0]}
+            alt={producto.nombre_producto}
+            className="w-96 h-96 object-cover rounded-xl shadow-lg transition-transform duration-300 hover:scale-105"
+          />
+          {/* Botón de favoritos */}
+          <button
+            onClick={toggleFavorito}
+            className="absolute top-4 right-4 bg-white/80 hover:bg-white text-pink-400 hover:text-pink-600 p-3 rounded-full shadow-md transition duration-300 z-10"
+            title={esFavorito ? "Quitar de favoritos" : "Agregar a favoritos"}
+            style={{ fontSize: 28 }}
+          >
+            {esFavorito ? <FaHeart /> : <FaRegHeart />}
+          </button>
+        </div>
         <div className="flex gap-3 mt-4">
           {producto.imagenes.slice(1).map((img, idx) => (
             <img

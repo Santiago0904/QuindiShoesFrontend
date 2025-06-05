@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
 import { useNavigate } from "react-router-dom";
-import ColorThief from "colorthief"; // ✅ ColorThief 100% compatible
+import ColorThief from "colorthief";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
-// Funciones para pastelizar
 function rgbToHsl(r, g, b) {
   r /= 255; g /= 255; b /= 255;
   const max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -49,17 +49,17 @@ function hslToRgb(h, s, l) {
 function hacerPastel(rgb) {
   let [r, g, b] = rgb;
   let [h, s, l] = rgbToHsl(r, g, b);
-  l = Math.min(l + 80, 90); // Aumentamos más la claridad (luminosidad)
-  s = Math.max(s - 20, 90); // Reducimos más la saturación
+  l = Math.min(l + 80, 90);
+  s = Math.max(s - 20, 90);
   return hslToRgb(h, s, l);
 }
-
 
 export const CartaProducto = ({ producto }) => {
   const { incrementarContador } = useContext(ContadorCarritoContext);
   const navigate = useNavigate();
 
   const [bgColor, setBgColor] = useState("#fde8f0");
+  const [esFavorito, setEsFavorito] = useState(false);
   const imgRef = useRef(null);
 
   const imagenPrincipal =
@@ -68,6 +68,28 @@ export const CartaProducto = ({ producto }) => {
       : "https://via.placeholder.com/300x200?text=Sin+Imagen";
 
   const irADetalle = () => navigate(`/producto/${producto.id_producto}`);
+
+  useEffect(() => {
+    const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+    setEsFavorito(favoritos.some((p) => p.id_producto === producto.id_producto));
+  }, [producto.id_producto]);
+
+  const toggleFavorito = (e) => {
+    e.stopPropagation();
+    const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+    const yaExiste = favoritos.some((p) => p.id_producto === producto.id_producto);
+
+    let nuevosFavoritos;
+    if (yaExiste) {
+      nuevosFavoritos = favoritos.filter((p) => p.id_producto !== producto.id_producto);
+    } else {
+      nuevosFavoritos = [...favoritos, producto];
+    }
+    localStorage.setItem("favoritos", JSON.stringify(nuevosFavoritos));
+    setEsFavorito(!yaExiste);
+
+    window.dispatchEvent(new Event("favoritos-updated"));
+  };
 
   useEffect(() => {
     const img = imgRef.current;
@@ -97,41 +119,43 @@ export const CartaProducto = ({ producto }) => {
   }, [imagenPrincipal]);
 
   return (
-  <div
-    onClick={irADetalle}
-    style={{ backgroundColor: bgColor }}
-    className="rounded-3xl p-6 shadow-md cursor-pointer transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl group"
-  >
-    <div className="relative">
-      <img
-        ref={imgRef}
-        src={imagenPrincipal}
-        alt={producto.nombre_producto}
-        crossOrigin="anonymous"
-        className="w-full h-48 object-contain mb-4 rounded-2xl bg-white transition-transform duration-300 group-hover:scale-105"
-      />
-      <span className="absolute top-3 right-3 bg-white text-gray-600 text-xs font-medium px-2 py-1 rounded-full shadow">
-        {producto.genero_producto}
-      </span>
-    </div>
+    <div
+      onClick={irADetalle}
+      style={{ backgroundColor: bgColor }}
+      className="rounded-3xl p-4 shadow-lg cursor-pointer transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl group border border-white/50 backdrop-blur-md"
+    >
+      <div className="relative">
+        <img
+          ref={imgRef}
+          src={imagenPrincipal}
+          alt={producto.nombre_producto}
+          crossOrigin="anonymous"
+          className="w-full h-48 object-contain mb-3 rounded-2xl bg-white transition-transform duration-300 group-hover:scale-105"
+        />
 
-    <div className="space-y-1">
-      <h3 className="text-xl font-bold text-gray-900 truncate">
-        {producto.nombre_producto}
-      </h3>
+        <button
+          onClick={toggleFavorito}
+          className="absolute top-3 right-3 bg-white/80 hover:bg-white text-pink-400 hover:text-pink-600 p-2 rounded-full shadow-md transition duration-300 z-10"
+          title={esFavorito ? "Quitar de favoritos" : "Agregar a favoritos"}
+        >
+          {esFavorito ? <FaHeart size={20} /> : <FaRegHeart size={20} />}
+        </button>
 
-      <p className="text-sm text-gray-600 italic">Tipo: {producto.tipo_producto}</p>
-
-      <div className="flex items-center justify-between mt-2">
-        <p className="text-lg font-semibold text-green-600 transition-colors duration-300 group-hover:text-green-700">
-          ${producto.precio_producto}
-        </p>
-        <span className="text-xs text-gray-400 group-hover:text-gray-500 transition duration-300">
-          Click para ver más
+        <span className="absolute bottom-3 left-3 bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full shadow-sm">
+          {producto.genero_producto}
         </span>
       </div>
+
+      <div className="space-y-1">
+        <h3 className="text-xl font-semibold text-pink-700 truncate">{producto.nombre_producto}</h3>
+        <p className="text-sm text-pink-400">Tipo: {producto.tipo_producto}</p>
+
+        <div className="flex items-center justify-between mt-3">
+          <p className="text-lg font-bold text-green-600">${producto.precio_producto}</p>
+          <span className="text-xs text-gray-500 group-hover:text-gray-600">Ver más</span>
+        </div>
+      </div>
     </div>
-  </div>
   );
 }
 
@@ -148,13 +172,18 @@ export const MostrarProducto = ({ productosProp }) => {
     import("axios").then(({ default: axios }) => {
       axios
         .get("http://localhost:3000/producto/public")
-        .then((res) => setProductos(res.data))
+        .then((res) => {
+          const data = Array.isArray(res.data) ? res.data : res.data.productos || [];
+          setProductos(data);
+        })
         .catch((err) => console.error("Error al cargar productos:", err));
     });
   };
 
   const productosMostrar =
-    productosProp && productosProp.length > 0 ? productosProp : productos;
+    Array.isArray(productosProp) && productosProp.length > 0
+      ? productosProp
+      : Array.isArray(productos) ? productos : [];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
