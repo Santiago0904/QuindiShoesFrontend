@@ -3,12 +3,32 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
 import { jwtDecode } from "jwt-decode";
+import axiosClient from "../../api/axion";
+
 const Carrito = () => {
   const [carrito, setCarrito] = useState([]);
   const navigate = useNavigate();
-   const [userId, setUserId] = useState(null); // ← NUEVO
+  const [userId, setUserId] = useState(null); // ← NUEVO
   const { resetear } = useContext(ContadorCarritoContext);
+  const [descuento, setDescuento] = useState(0);
+  const [productoConDescuento, setProductoConDescuento] = useState(null);
 
+  useEffect(() => {
+    axiosClient.get("/profile/recompensa")
+      .then(res => {
+        setDescuento(res.data.recompensa_juego || 0);
+      })
+      .catch(() => setDescuento(0));
+  }, []);
+  const totalVisual = carrito.reduce((acc, p, idx) => {
+  if (productoConDescuento === idx && descuento > 0) {
+    const precioConDescuento = p.precio_producto * (1 - descuento / 100);
+    return acc + (p.cantidad * Math.max(0, precioConDescuento));
+  }
+  return acc + (p.cantidad * p.precio_producto);
+
+
+}, 0);
   useEffect(() => {
     const datosGuardados = localStorage.getItem("carrito");
     if (datosGuardados) {
@@ -44,16 +64,25 @@ const handlePSEPayment = () => {
     return;
   }
 
-  const carritoReducido = carrito.map(({ id_producto, nombre_producto, precio_producto, talla, cantidad,imagen }) => ({
+  const carritoReducido = carrito.map(({ id_producto, nombre_producto,precio_producto ,talla, id_color, id_talla, cantidad, imagen }) => ({
     id_producto,
     nombre_producto,
     precio_producto,
     talla,
+    id_color,
+    id_talla,
     cantidad,
     imagen
   }));
 
-  const total = carrito.reduce((acc, producto) => acc + (producto.cantidad * producto.precio_producto), 0);
+  // Calcula el total aplicando el descuento solo al producto seleccionado
+  const total = carrito.reduce((acc, p, idx) => {
+      if (productoConDescuento === idx && descuento > 0) {
+        const precioConDescuento = p.precio_producto * (1 - descuento / 100);
+        return acc + (p.cantidad * Math.max(0, precioConDescuento));
+      }
+      return acc + (p.cantidad * p.precio_producto);
+  }, 0);
 
   const handler = window.ePayco.checkout.configure({
     key: "76018558cee4255d423b4753fee3fdf1",
@@ -70,11 +99,12 @@ const handlePSEPayment = () => {
     tax: "0",
     country: "co",
     method: "POST",
-    response: "http://localhost:5173/",
-    confirmation: "http://localhost:3000/api/pagos/confirmacion",
+    response: "https://quindi-shoes-frontend-yemj.vercel.app/",
+    confirmation: "https://4332-179-1-217-70.ngrok-free.app/api/pagos/confirmacion",
     external: "false",
     x_extra1: userId.toString(),
     x_extra2: JSON.stringify(carritoReducido),
+    x_extra3: productoConDescuento !== null && descuento > 0 ? descuento : 0
   };
 
   handler.open(data);
@@ -95,6 +125,20 @@ const handlePSEPayment = () => {
           🛒 Tu Carrito de Compras
         </h2>
 
+        {/* Mostrar el descuento solo si hay */}
+        {descuento > 0 && (
+          <div className="mb-6 text-center">
+            <span className="inline-block bg-amber-100 text-amber-700 px-4 py-2 rounded-full font-semibold text-lg">
+              Descuento disponible: <span className="text-amber-600 font-bold">%{descuento}</span>
+            </span>
+            {productoConDescuento !== null && (
+              <div className="mt-2 text-green-600 font-semibold">
+                ¡Descuento de %{descuento} aplicado al producto seleccionado!
+              </div>
+            )}
+          </div>
+        )}
+
         {carrito.length === 0 ? (
           <div className="text-center text-gray-600">
             <p className="mb-4">Tu carrito está vacío</p>
@@ -104,16 +148,26 @@ const handlePSEPayment = () => {
             >
               Ir a productos
             </button>
-            
           </div>
         ) : (
           <div className="space-y-6">
-           
             {carrito.map((producto, index) => (
               <div
                 key={index}
                 className="flex flex-col sm:flex-row items-center gap-6 bg-white border border-gray-200 rounded-2xl shadow-md p-6"
               >
+                <input
+                  type="radio"
+                  name="descuento-producto"
+                  checked={productoConDescuento === index}
+                  // Permite seleccionar y deseleccionar el radio
+                  onClick={() =>
+                    setProductoConDescuento(productoConDescuento === index ? null : index)
+                  }
+                  className="mr-2 accent-green-500 w-5 h-5"
+                  disabled={descuento === 0}
+                  title={descuento === 0 ? "No tienes descuento disponible" : "Aplicar descuento"}
+                />
                 <img
                   src={producto.imagen}
                   alt={producto.nombre_producto}
@@ -124,7 +178,16 @@ const handlePSEPayment = () => {
                     {producto.nombre_producto}
                   </h4>
                   <p className="text-lg font-medium mb-2">
-                    Precio: <span className="text-green-500">${producto.precio_producto}</span>
+                    Precio: <span className="text-green-500">
+                      {productoConDescuento === index && descuento > 0
+                        ? `$${Math.max(0, (producto.precio_producto * (1 - descuento / 100)).toFixed(2))}`
+                        : `$${producto.precio_producto}`}
+                    </span>
+                    {productoConDescuento === index && descuento > 0 && (
+                      <span className="ml-2 text-xs text-amber-500 font-bold">
+                        (Descuento aplicado: -{descuento}%)
+                      </span>
+                    )}
                   </p>
                   <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-gray-600">
                     <p>
@@ -144,7 +207,7 @@ const handlePSEPayment = () => {
               </div>
             ))}
             <div className="text-right text-2xl font-semibold text-gray-800">
-              Total a pagar: <span className="text-green-600">${carrito.reduce((acc, p) => acc + (p.cantidad * p.precio_producto), 0)}</span>
+              Total a pagar: <span className="text-green-600">${totalVisual}</span>
             </div>
 
             <div className="flex flex-col sm:flex-row justify-between items-center mt-8 gap-4">
@@ -155,11 +218,11 @@ const handlePSEPayment = () => {
                 Vaciar carrito
               </button>
               <button
-              onClick={handlePSEPayment}
-              className="px-6 py-2 bg-green-400 text-white rounded-lg hover:bg-green-500 transition"
-            >
-              Comprar
-            </button>
+                onClick={handlePSEPayment}
+                className="px-6 py-2 bg-green-400 text-white rounded-lg hover:bg-green-500 transition"
+              >
+                Comprar
+              </button>
               <button
                 onClick={irAProductos}
                 className="px-6 py-2 bg-green-400 text-white rounded-lg hover:bg-green-500 transition"
