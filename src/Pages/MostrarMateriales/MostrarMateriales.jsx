@@ -33,7 +33,7 @@ export const ListaMateriales = () => {
 
   const cargarMateriales = () => {
     axios
-      .get("http://localhost:5173/material", {
+      .get("http://localhost:3000/material", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -48,7 +48,7 @@ export const ListaMateriales = () => {
 
   const handleEliminar = (id) => {
     axios
-      .delete(`http://localhost:5173/material/${id}`, {
+      .delete(`http://localhost:3000/material/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

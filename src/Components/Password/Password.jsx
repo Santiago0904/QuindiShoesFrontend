@@ -15,7 +15,7 @@ export const Password = () => {
     }
 
     try {
-      await axios.post("http://localhost:5173/reiniciarContrasena", {
+      await axios.post("http://localhost:3000/reiniciarContrasena", {
         token,
         contraseña: nuevaContraseña,
       });

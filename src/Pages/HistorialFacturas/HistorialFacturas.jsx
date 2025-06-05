@@ -7,7 +7,7 @@ export const HistorialFacturas = () => {
 
   const CargarFacturas = () => {
     axios
-      .get(`http://localhost:5173/facturas`)
+      .get(`http://localhost:3000/facturas`)
       .then((res) => {
         setFacturas(res.data);
       })

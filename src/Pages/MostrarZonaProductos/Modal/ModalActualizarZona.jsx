@@ -19,7 +19,7 @@ const ModalActualizarZona = ({ zona, onClose, onActualizar }) => {
     console.log("Datos enviados:", formData);
     try {
       await axios.put(
-        `http://localhost:5173/zonaProducto/${formData.id_zonaProductos}`,
+        `http://localhost:3000/zonaProducto/${formData.id_zonaProductos}`,
         {
           nombre_zona: formData.nombre_zona,
         },

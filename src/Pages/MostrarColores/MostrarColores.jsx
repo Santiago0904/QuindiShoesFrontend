@@ -32,7 +32,7 @@ export const ListaColores = () => {
 
   const cargarColores = () => {
     axios
-      .get("http://localhost:5173/color", {
+      .get("http://localhost:3000/color", {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then((res) => setColores(res.data))
@@ -45,7 +45,7 @@ export const ListaColores = () => {
 
   const handleEliminar = (id) => {
     axios
-      .delete(`http://localhost:5173/color/${id}`, {
+      .delete(`http://localhost:3000/color/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(() => cargarColores())
