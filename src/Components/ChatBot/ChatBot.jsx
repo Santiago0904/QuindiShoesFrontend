@@ -45,6 +45,20 @@ const ChatBot = () => {
     }
   };
 
+  // Nuevo useEffect para enviar productos a la IA al cargar el chat
+  useEffect(() => {
+    if (chatVisible) {
+      axios.post("http://localhost:3000/enviarProductosAI")
+        .then(response => {
+          console.log('Productos enviados a la IA:', response.data);
+          // Puedes agregar un mensaje o lógica que dependa de la respuesta de la IA aquí
+        })
+        .catch(error => {
+          console.error('Error enviando productos a la IA:', error);
+        });
+    }
+  }, [chatVisible]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);

@@ -20,9 +20,6 @@ const Carrito = () => {
       })
       .catch(() => setDescuento(0));
   }, []);
-
-  const descuentoDecimal = descuento / 100;
-
   const totalVisual = carrito.reduce((acc, p, idx) => {
   if (productoConDescuento === idx && descuento > 0) {
     const precioConDescuento = p.precio_producto * (1 - descuento / 100);
@@ -102,14 +99,13 @@ const handlePSEPayment = () => {
     tax: "0",
     country: "co",
     method: "POST",
-
     response: "https://quindi-shoes-frontend-yemj.vercel.app/",
     confirmation: "https://quindishoes-backend-3.onrender.com/api/pagos/confirmacion",
 
     external: "false",
     x_extra1: userId.toString(),
     x_extra2: JSON.stringify(carritoReducido),
-    x_extre3: productoConDescuento !== null && descuento > 0 ? descuento : 0
+    x_extra3: productoConDescuento !== null && descuento > 0 ? descuento : 0
   };
 
   handler.open(data);
