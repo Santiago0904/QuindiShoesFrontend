@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
+import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
 import { ParticlesBackground } from '../../Components/Particulas/ParticlesBackground';
 
 export const HistorialFacturas = () => {
@@ -10,7 +10,7 @@ export const HistorialFacturas = () => {
   useEffect(() => {
     const fetchFacturas = async () => {
       try {
-        const res = await fetch("https://quindishoes-backend-3.onrender.com/producto/facturas");
+        const res = await fetch("http://localhost:3000/producto/facturas");
         const data = await res.json();
         const formateadas = data.map(f => ({
           ...f,

@@ -46,7 +46,7 @@ export const LoginForm = () => {
     }
 
     try {
-      const response = await axios.post("https://quindishoes-backend-3.onrender.com/auth", loginData);
+      const response = await axios.post("http://localhost:3000/auth", loginData);
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("rol", response.data.rol);
       if (response.data.id) {
