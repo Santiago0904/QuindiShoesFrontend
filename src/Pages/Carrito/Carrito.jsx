@@ -67,11 +67,13 @@ const handlePSEPayment = () => {
     return;
   }
 
-  const carritoReducido = carrito.map(({ id_producto, nombre_producto, precio_producto, talla, cantidad,imagen }) => ({
+  const carritoReducido = carrito.map(({ id_producto, nombre_producto,precio_producto ,talla, id_color, id_talla, cantidad, imagen }) => ({
     id_producto,
     nombre_producto,
     precio_producto,
     talla,
+    id_color,
+    id_talla,
     cantidad,
     imagen
   }));
@@ -100,8 +102,10 @@ const handlePSEPayment = () => {
     tax: "0",
     country: "co",
     method: "POST",
+
     response: "https://quindi-shoes-frontend-yemj.vercel.app/",
     confirmation: "http://localhost:3000/api/pagos/confirmacion",
+
     external: "false",
     x_extra1: userId.toString(),
     x_extra2: JSON.stringify(carritoReducido),
