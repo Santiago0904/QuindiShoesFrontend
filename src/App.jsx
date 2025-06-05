@@ -34,6 +34,7 @@ import { DetalleProducto } from './Pages/ProductoDetalle/ProductoDetalle'
 import { VariantesProducto } from './Pages/VariantesProducto/VariantesProducto'
 import { WavesBackground } from './Components/Particulas2/Particulas2'
 import { HistorialFacturas } from './Pages/HistorialVentas/historialventas'
+import { MetricasPages } from './Pages/MetricasPage/MetricasPages'
 import { Favoritos } from './Pages/Favoritos/Favoritos'
 
 function App() {
@@ -73,7 +74,7 @@ function App() {
             <Route path='/ListaColores' element={<ListaColores/>}/>
             <Route path='/ListaZonas' element={<ListaZonas/>}/>
             <Route path='/RespuestaPago' element={<RespuestaPago />}/>
-         
+            <Route path='/Metricas' element={<MetricasPages />}/>
             <Route path='/ProductoDetalladoPages' element={<ProductoDetalladoPages/>}/>
             <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
             

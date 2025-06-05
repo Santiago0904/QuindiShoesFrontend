@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
+
 import { ParticlesBackground } from '../../Components/Particulas/ParticlesBackground';
 
 export const HistorialFacturas = () => {
