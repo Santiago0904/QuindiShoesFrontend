@@ -1,6 +1,6 @@
 // ParticlesBackground.jsx
 import { useCallback } from "react";
-import Particles from "react-tsparticles";
+import Particles from "@tsparticles/react";
 import { loadSlim } from "tsparticles-slim";
 
 export const ParticlesBackground = () => {
