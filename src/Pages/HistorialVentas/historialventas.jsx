@@ -10,7 +10,7 @@ export const HistorialFacturas = () => {
   useEffect(() => {
     const fetchFacturas = async () => {
       try {
-        const res = await fetch("http://localhost:3000/producto/facturas");
+        const res = await fetch("https://quindishoes-backend-3.onrender.com/producto/facturas");
         const data = await res.json();
         const formateadas = data.map(f => ({
           ...f,
