@@ -16,7 +16,7 @@ export const FormularioResena: React.FC<Props> = ({ onClose }) => {
 
   useEffect(() => {
     if (!usuario_id) return;
-    axios.get(`https://quindishoes-backend-3.onrender.com/usuario/${usuario_id}`)
+    axios.get(`http://localhost:3000/usuario/${usuario_id}`)
       .then(res => {
         if (res.data?.resena) {
           setMensaje(res.data.resena);
@@ -43,7 +43,7 @@ export const FormularioResena: React.FC<Props> = ({ onClose }) => {
 
     const fecha_resena = new Date().toISOString().slice(0, 19).replace('T', ' ');
     try {
-      await axios.post('https://quindishoes-backend-3.onrender.com/resena/agregar', {
+      await axios.post('http://localhost:3000/resena/agregar', {
         resena: mensaje,
         fecha_resena,
         id_usuario: usuario_id
@@ -65,7 +65,7 @@ export const FormularioResena: React.FC<Props> = ({ onClose }) => {
 
     const fecha_resena = new Date().toISOString().slice(0, 19).replace('T', ' ');
     try {
-      await axios.put('https://quindishoes-backend-3.onrender.com/resena/editar', {
+      await axios.put('http://localhost:3000/resena/editar', {
         resena: mensaje,
         fecha_resena,
         id_usuario: usuario_id
@@ -83,7 +83,7 @@ export const FormularioResena: React.FC<Props> = ({ onClose }) => {
   const eliminarResena = async () => {
     if (!usuario_id) return alert('Inicia sesión nuevamente.');
     try {
-      await axios.delete('https://quindishoes-backend-3.onrender.com/resena/eliminar', {
+      await axios.delete('http://localhost:3000/resena/eliminar', {
         data: { id_usuario: usuario_id }
       });
       alert('Reseña eliminada correctamente');
