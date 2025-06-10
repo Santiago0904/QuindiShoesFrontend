@@ -36,7 +36,7 @@ export function DetalleProducto() {
   const { incrementarContador } = useContext(ContadorCarritoContext);
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/productoDetalle/${id}`)
+    axios.get(`https://quindishoes-backend-3.onrender.com/productoDetalle/${id}`)
       .then(res => setProducto(res.data))
       .catch(() => setProducto(null));
   }, [id]);

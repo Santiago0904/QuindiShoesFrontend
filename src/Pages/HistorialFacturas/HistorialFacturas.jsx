@@ -7,7 +7,7 @@ export const HistorialFacturas = () => {
 
   const CargarFacturas = () => {
     axios
-      .get(`http://localhost:3000/facturas`)
+      .get(`https://quindishoes-backend-3.onrender.com/facturas`)
       .then((res) => {
         setFacturas(res.data);
       })

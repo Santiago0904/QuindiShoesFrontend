@@ -33,7 +33,7 @@ const ChatBot = () => {
 
       
 
-      const response = await axios.post("http://localhost:3000/api/chat", {
+      const response = await axios.post("https://quindishoes-backend-3.onrender.com/api/chat", {
 
         question: userInput,
         history: updatedMessages,
@@ -44,6 +44,20 @@ const ChatBot = () => {
       console.error('Error en la comunicación con el backend:', error);
     }
   };
+
+  // Nuevo useEffect para enviar productos a la IA al cargar el chat
+  useEffect(() => {
+    if (chatVisible) {
+      axios.post("https://quindishoes-backend-3.onrender.com/enviarProductosAI")
+        .then(response => {
+          console.log('Productos enviados a la IA:', response.data);
+          // Puedes agregar un mensaje o lógica que dependa de la respuesta de la IA aquí
+        })
+        .catch(error => {
+          console.error('Error enviando productos a la IA:', error);
+        });
+    }
+  }, [chatVisible]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
