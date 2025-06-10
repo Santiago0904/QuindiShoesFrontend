@@ -18,12 +18,13 @@ export default function VentasPorRango() {
   const [topProductosMas, setTopProductosMas] = useState<any[]>([]);
   const [topProductosMenos, setTopProductosMenos] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [productosInactivos, setProductosInactivos] = useState<any[]>([]);
 
   useEffect(() => {
     const cargarDatos = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`https://quindishoes-backend-3.onrender.com/metricas/ventas?agrupacion=${agrupacion}`);
+        const res = await axios.get(`http://localhost:3000/metricas/ventas?agrupacion=${agrupacion}`);
         const datosFormateados = res.data.map((item: any) => {
           if (agrupacion === 'dia' && item.fecha) {
             const fechaObj = new Date(item.fecha);
@@ -45,8 +46,8 @@ export default function VentasPorRango() {
     const cargarTopProductos = async () => {
       try {
         const [masRes, menosRes] = await Promise.all([
-          axios.get('https://quindishoes-backend-3.onrender.com/metricas/top-productos?tipo=mas&limite=5'),
-          axios.get('https://quindishoes-backend-3.onrender.com/metricas/top-productos?tipo=menos&limite=5')
+          axios.get('http://localhost:3000/metricas/top-productos?tipo=mas&limite=5'),
+          axios.get('http://localhost:3000/metricas/top-productos?tipo=menos&limite=5')
         ]);
         setTopProductosMas(masRes.data);
         setTopProductosMenos(menosRes.data);
@@ -56,6 +57,19 @@ export default function VentasPorRango() {
     };
     cargarTopProductos();
   }, []);
+
+useEffect(() => {
+  const cargarInactivos = async () => {
+    try {
+      const res = await axios.get('http://localhost:3000/metricas/productos-inactivos');
+      setProductosInactivos(res.data);
+    } catch (err) {
+      console.error('Error al obtener productos inactivos:', err);
+    }
+  };
+  cargarInactivos();
+}, []);
+
 
   const dataKeyX = agrupacion === 'año' ? 'año' : agrupacion === 'mes' ? 'mes' : 'fecha';
   const colorVerdePastel = '#D4F6DB';
@@ -171,6 +185,46 @@ export default function VentasPorRango() {
           </div>
         </>
       )}
+      <div className="mt-20">
+  <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center flex items-center justify-center gap-3">
+    <span className="text-gray-500 text-3xl">🕸️</span> Productos Inactivos (Nunca Vendidos)
+  </h3>
+
+  {productosInactivos.length === 0 ? (
+    <p className="text-center text-green-600 font-semibold text-lg">¡Todos los productos han sido vendidos al menos una vez! 🎉</p>
+  ) : (
+    <div className="overflow-x-auto">
+      <table className="min-w-full border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-white">
+        <thead className="bg-gray-100 text-gray-700">
+          <tr>
+            <th className="py-3 px-4 text-left">Imagen</th>
+            <th className="py-3 px-4 text-left">ID</th>
+            <th className="py-3 px-4 text-left">Nombre</th>
+            <th className="py-3 px-4 text-left">Precio</th>
+            <th className="py-3 px-4 text-left">Stock</th>
+          </tr>
+        </thead>
+    <tbody>
+  {productosInactivos.map((producto) => (
+    console.log(producto),
+  
+    <tr key={producto.id} className="border-t hover:bg-gray-50 transition">
+        <td className="py-3 px-4">
+          <img src={producto.url_imagen} alt={producto.url_imagen} className="w-16 h-16 object-cover rounded-md" />
+        </td>
+      <td className="py-3 px-4">{producto.id_producto}</td>
+      <td className="py-3 px-4">{producto.nombre_producto}</td>
+      <td className="py-3 px-4">
+        {producto.precio_producto !== undefined ? `$${producto.precio_producto.toFixed(2)}` : 'N/A'}
+      </td>
+      <td className="py-3 px-4">{producto.stock ?? 0}</td>
+    </tr>
+  ))}
+</tbody>
+      </table>
+    </div>
+  )}
+</div>
     </div>
   );
 }
