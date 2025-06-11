@@ -8,7 +8,8 @@ import axiosClient from "../../api/axion";
 const Carrito = () => {
   const [carrito, setCarrito] = useState([]);
   const navigate = useNavigate();
-  const [userId, setUserId] = useState(null); // ← NUEVO
+  const [metodoEntrega, setMetodoEntrega] = useState("recoger_en_tienda"); 
+  const [userId, setUserId] = useState(null);
   const { resetear } = useContext(ContadorCarritoContext);
   const [descuento, setDescuento] = useState(0);
   const [productoConDescuento, setProductoConDescuento] = useState(null);
@@ -100,12 +101,13 @@ const handlePSEPayment = () => {
     country: "co",
     method: "POST",
     response: "https://quindi-shoes-frontend-yemj.vercel.app/",
-    confirmation: "http://localhost:3000/api/pagos/confirmacion",
+    confirmation:"https://03c8-190-130-102-66.ngrok-free.app/api/pagos/confirmacion",
 
     external: "false",
     x_extra1: userId.toString(),
     x_extra2: JSON.stringify(carritoReducido),
-    x_extra3: productoConDescuento !== null && descuento > 0 ? descuento : 0
+    x_extra3: productoConDescuento !== null && descuento > 0 ? descuento : 0,
+    x_extra4: metodoEntrega
   };
 
   handler.open(data);
@@ -161,7 +163,6 @@ const handlePSEPayment = () => {
                   type="radio"
                   name="descuento-producto"
                   checked={productoConDescuento === index}
-                  // Permite seleccionar y deseleccionar el radio
                   onClick={() =>
                     setProductoConDescuento(productoConDescuento === index ? null : index)
                   }
@@ -174,6 +175,22 @@ const handlePSEPayment = () => {
                   alt={producto.nombre_producto}
                   className="w-32 h-32 object-cover rounded-xl border border-gray-100 shadow-sm"
                 />
+
+                <div className="mt-6">
+                    <label className="block mb-2 text-lg font-semibold text-gray-700">
+                        Selecciona el método de entrega:
+                    </label>
+                    <select
+                        value={metodoEntrega}
+                        onChange={(e) => setMetodoEntrega(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm"
+                    >
+                        <option value="recoger_en_tienda">🏬 Recoger en tienda</option>
+                        <option value="domicilio">🚚 Domicilio</option>
+
+                    </select>
+                </div>
+
                 <div className="flex-1 text-left">
                   <h4 className="text-2xl font-semibold text-gray-800 mb-1">
                     {producto.nombre_producto}
