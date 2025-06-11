@@ -8,7 +8,7 @@ const ListaResenas: React.FC = () => {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    axios.get('http://localhost:3000/resena/todas')
+    axios.get('https://quindishoes-backend-3.onrender.com/resena/todas')
       .then(res => setResenas(res.data))
       .catch(() => setResenas([]))
       .finally(() => setLoading(false));
