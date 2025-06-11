@@ -1,8 +1,7 @@
 import { create } from 'zustand';
-import axiosClient from '../../api/axion'; // Usa tu cliente axios configurado
+import axiosClient from '../../api/axion';
 
 export const GuardarPersonalizado = create((set, get) => ({
-  zonas: [],
   colores: [],
   materiales: [],
   personalizacion: {},
@@ -10,14 +9,12 @@ export const GuardarPersonalizado = create((set, get) => ({
   // Carga todos los datos del backend usando axiosClient
   fetchData: async () => {
     try {
-      const [resZonas, resColores, resMateriales] = await Promise.all([
-        axiosClient.get('/obtenerZonaProducto'),
-        axiosClient.get('/obtenerColores'),
-        axiosClient.get('/obtenerMateriales'),
+      const [resColores, resMateriales] = await Promise.all([
+        axiosClient.get('/color'),
+        axiosClient.get('/material'),
       ]);
 
       set({
-        zonas: resZonas.data,
         colores: resColores.data,
         materiales: resMateriales.data,
       });
@@ -28,16 +25,12 @@ export const GuardarPersonalizado = create((set, get) => ({
 
   // Establece color y material para una zona específica
   setPersonalizacion: (zonaId, colorId, materialId) => {
-    const current = get().personalizacion;
-    set({
+    set((state) => ({
       personalizacion: {
-        ...current,
-        [zonaId]: {
-          colorId,
-          materialId,
-        },
+        ...state.personalizacion,
+        [zonaId]: { colorId, materialId },
       },
-    });
+    }));
   },
 
   // Para enviar al backend (opcional por ahora)

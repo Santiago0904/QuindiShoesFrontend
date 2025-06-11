@@ -3,7 +3,9 @@ import { ZonaNewForm } from '../../Components/ZonaNewForm/ZonaNewFrom'
 
 export const ZonaProductoPage = () => {
   return (
-    < ZonaNewForm/>
+        <div className='flex justify-center items-center h-screen bg-gray-100'>
+          <ZonaNewForm/>
+        </div>
   )
 }
 
