@@ -5,6 +5,14 @@ import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
 import Swal from "sweetalert2";
 import "sweetalert2/src/sweetalert2.scss";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
+// Extiende la interfaz Window para incluir ePayco
+declare global {
+  interface Window {
+    ePayco?: any;
+  }
+}
 
 interface Variante {
   id_variantes: number;
@@ -26,6 +34,7 @@ interface DetalleProducto {
   colores: { id_color: number; color: string; codigo_hex: string }[];
   tallas: { id_talla: number; talla: string }[];
   variantes: Variante[];
+  reserva_activa?: number | boolean; // Puede ser 1/0 (number) o true/false (boolean)
 }
 
 export function DetalleProducto() {
@@ -36,6 +45,8 @@ export function DetalleProducto() {
   const [cantidad, setCantidad] = useState(1);
   const [esFavorito, setEsFavorito] = useState(false);
   const { incrementarContador } = useContext(ContadorCarritoContext);
+  const usuario_id = localStorage.getItem("id");
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get(`http://localhost:3000/productoDetalle/${id}`)
@@ -149,7 +160,71 @@ export function DetalleProducto() {
     window.dispatchEvent(new Event("favoritos-updated"));
   };
 
-  console.log("Colores recibidos:", producto.colores);
+  // Botón de reservar (Epayco)
+  const handleReservar = async () => {
+    if (!colorSeleccionado || !tallaSeleccionada) {
+      Swal.fire({
+        icon: "warning",
+        title: "Selecciona color y talla",
+        text: "Por favor selecciona un color y una talla antes de reservar.",
+        confirmButtonColor: "#2563eb"
+      });
+      return;
+    }
+
+    if (cantidad > stockDisponible) {
+      Swal.fire({
+        icon: "error",
+        title: "Stock insuficiente",
+        text: "No hay suficiente stock disponible para la cantidad seleccionada.",
+        confirmButtonColor: "#2563eb"
+      });
+      return;
+    }
+
+    // Aquí puedes personalizar los datos de la reserva
+    const reservaData = {
+      name: "Reserva de producto",
+      description: `Reserva: ${producto?.nombre_producto}`,
+      invoice: "RES-" + Date.now(),
+      currency: "cop",
+      amount: (producto?.precio_producto * cantidad).toString(),
+      tax_base: "0",
+      tax: "0",
+      country: "co",
+      method: "POST",
+      response: "https://quindi-shoes-frontend-yemj.vercel.app/",
+      confirmation: "http://localhost:3000/api/pagos/confirmacion",
+      external: "false",
+      x_extra1: usuario_id,
+      x_extra2: JSON.stringify({
+        id_producto: producto?.id_producto,
+        nombre_producto: producto?.nombre_producto,
+        color: producto?.colores.find(c => c.id_color === colorSeleccionado)?.color,
+        talla: producto?.tallas.find(t => t.id_talla === tallaSeleccionada)?.talla,
+        cantidad,
+      }),
+    };
+
+    // Epayco checkout
+    if (window.ePayco) {
+      const handler = window.ePayco.checkout.configure({
+        key: "76018558cee4255d423b4753fee3fdf1",
+        test: true,
+      });
+      handler.open(reservaData);
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo cargar el sistema de pagos.",
+        confirmButtonColor: "#2563eb"
+      });
+    }
+  };
+
+  // Utilidad para saber si la reserva está activa (soporta tinyint 1/0, boolean)
+  const reservaActiva = producto && (producto.reserva_activa === 1 || producto.reserva_activa === true);
 
   return (
     <div className="flex flex-col md:flex-row gap-10 max-w-6xl mx-auto my-10 bg-white rounded-2xl shadow-2xl p-8 animate-fade-in">
@@ -204,7 +279,7 @@ export function DetalleProducto() {
                   title={c.color}
                   type="button"
                   style={{
-                    backgroundColor: "transparent", // El botón no tiene color de fondo
+                    backgroundColor: "transparent",
                   }}
                 >
                   <span
@@ -259,8 +334,8 @@ export function DetalleProducto() {
           </span>
         </div>
 
-        {/* Botón agregar al carrito */}
-        <div className="mt-6">
+        {/* Botones de acción */}
+        <div className="mt-6 flex flex-col sm:flex-row gap-4">
           <button
             onClick={handleAgregarCarrito}
             className={`px-10 py-4 rounded-xl font-bold text-lg shadow-xl transition-all duration-200
@@ -271,7 +346,35 @@ export function DetalleProducto() {
           >
             Añadir al carrito
           </button>
+          {/* Botón de reservar solo si la reserva está activa */}
+          {reservaActiva && (
+            <button
+              onClick={handleReservar}
+              className={`px-10 py-4 rounded-xl font-bold text-lg shadow-xl transition-all duration-200
+                bg-pink-500 text-white hover:bg-pink-600 hover:scale-105 animate-pulse
+                ${(!colorSeleccionado || !tallaSeleccionada || stockDisponible === 0) && "opacity-50 cursor-not-allowed"}
+              `}
+              disabled={!colorSeleccionado || !tallaSeleccionada || stockDisponible === 0 || !usuario_id}
+              title={!usuario_id ? "Inicia sesión para reservar" : "Reservar"}
+            >
+              Reservar
+            </button>
+          )}
         </div>
+
+        {/* Aviso de reserva disponible */}
+        {reservaActiva && (
+          <div className="mb-6 flex flex-col items-start gap-2 animate-fade-in">
+            <div className="flex items-center gap-2">
+              <span className="inline-block px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-xs shadow animate-bounce">
+                Reserva disponible para este producto
+              </span>
+            </div>
+            {!usuario_id && (
+              <span className="text-xs text-pink-400 mt-1">Inicia sesión para poder reservar este producto.</span>
+            )}
+          </div>
+        )}
 
         <div className="mt-8 text-gray-500 text-base animate-fade-in">
           <p>Envío gratis a partir de $150. Cambios y devoluciones fáciles.</p>

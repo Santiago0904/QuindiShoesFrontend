@@ -57,6 +57,7 @@ function hacerPastel(rgb) {
 export const CartaProducto = ({ producto }) => {
   const { incrementarContador } = useContext(ContadorCarritoContext);
   const navigate = useNavigate();
+  const usuario_id = localStorage.getItem("id");
 
   const [bgColor, setBgColor] = useState("#fde8f0");
   const [esFavorito, setEsFavorito] = useState(false);
@@ -149,11 +150,31 @@ export const CartaProducto = ({ producto }) => {
       <div className="space-y-1">
         <h3 className="text-xl font-semibold text-pink-700 truncate">{producto.nombre_producto}</h3>
         <p className="text-sm text-pink-400">Tipo: {producto.tipo_producto}</p>
-
         <div className="flex items-center justify-between mt-3">
           <p className="text-lg font-bold text-green-600">${producto.precio_producto}</p>
           <span className="text-xs text-gray-500 group-hover:text-gray-600">Ver más</span>
         </div>
+        {/* Badge y botón de reserva */}
+        {!!producto.reserva_activa && (
+          <div className="mt-3 flex flex-col gap-2 items-start">
+            <span className="inline-block px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-xs shadow animate-bounce">
+              ¡Reserva disponible!
+            </span>
+            <button
+              className="px-4 py-1 rounded-full bg-pink-400 hover:bg-pink-500 text-white font-bold text-xs shadow transition animate-pulse"
+              disabled={!usuario_id}
+              onClick={e => {
+                e.stopPropagation();
+                if (!usuario_id) return;
+                // Aquí inicia el flujo de reserva
+                console.log("Iniciar reserva para producto", producto.id_producto);
+              }}
+              title={!usuario_id ? "Inicia sesión para reservar" : "Reservar"}
+            >
+              Reservar
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
