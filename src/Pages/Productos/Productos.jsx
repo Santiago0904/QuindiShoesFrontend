@@ -4,6 +4,7 @@ import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { FiltrosProducto } from "../../Components/FiltrosProducto/FiltrosProducto";
 
 const STOCK_MINIMO = 5;
 
@@ -67,6 +68,7 @@ export const ListaProductos = () => {
   const [productos, setProductos] = useState([]);
   const [productoEditar, setProductoEditar] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [filtros, setFiltros] = useState({});
 
   useEffect(() => {
     cargarProductos();
@@ -135,6 +137,30 @@ export const ListaProductos = () => {
     window.location.href = "/nuevoProducto";
   };
 
+  // Lógica de filtrado
+  const filtrarProductos = (productos, filtros) => {
+    return productos.filter(producto => {
+      if (
+        filtros.nombre &&
+        !producto.nombre_producto.toLowerCase().includes(filtros.nombre.toLowerCase())
+      )
+        return false;
+      if (
+        filtros.tipo &&
+        producto.tipo_producto.trim().toLowerCase() !== filtros.tipo.trim().toLowerCase()
+      )
+        return false;
+      if (
+        filtros.genero &&
+        producto.genero_producto.trim().toLowerCase() !== filtros.genero.trim().toLowerCase()
+      )
+        return false;
+      return true;
+    });
+  };
+
+  const productosFiltrados = filtrarProductos(productos, filtros);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-12 px-4 sm:px-8">
       <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-3xl p-8">
@@ -149,9 +175,10 @@ export const ListaProductos = () => {
             <FaPlus /> Nuevo Producto
           </button>
         </div>
+        <FiltrosProducto onFiltrar={setFiltros} />
         {/* Grid de productos */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {productos.map((producto) => (
+          {productosFiltrados.map((producto) => (
             <ProductoCard
               key={producto.id_producto}
               producto={producto}
