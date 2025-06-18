@@ -3,6 +3,7 @@ import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
 import { useNavigate } from "react-router-dom";
 import ColorThief from "colorthief";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import axiosClient from "../../api/axion";
 
 function rgbToHsl(r, g, b) {
   r /= 255; g /= 255; b /= 255;
@@ -61,6 +62,7 @@ export const CartaProducto = ({ producto }) => {
 
   const [bgColor, setBgColor] = useState("#fde8f0");
   const [esFavorito, setEsFavorito] = useState(false);
+  const [promedio, setPromedio] = useState(null);
   const imgRef = useRef(null);
 
   const imagenPrincipal =
@@ -119,6 +121,23 @@ export const CartaProducto = ({ producto }) => {
     }
   }, [imagenPrincipal]);
 
+  useEffect(() => {
+    // Trae las reseñas y calcula el promedio de estrellas
+    axiosClient
+      .get(`/resenaProducto/producto/${producto.id_producto}`)
+      .then(res => {
+        const resenas = res.data || [];
+        const puntuaciones = resenas.map(r => Number(r.puntuacion)).filter(Boolean);
+        if (puntuaciones.length > 0) {
+          const suma = puntuaciones.reduce((a, b) => a + b, 0);
+          setPromedio((suma / puntuaciones.length).toFixed(1));
+        } else {
+          setPromedio(null);
+        }
+      })
+      .catch(() => setPromedio(null));
+  }, [producto.id_producto]);
+
   return (
     <div
       onClick={irADetalle}
@@ -175,6 +194,23 @@ export const CartaProducto = ({ producto }) => {
             </button>
           </div>
         )}
+        <div className="flex items-center gap-2 mt-2">
+          {promedio ? (
+            <>
+              <span className="text-yellow-500 font-bold">{promedio}</span>
+              <div className="flex">
+                {[1,2,3,4,5].map(i => (
+                  <svg key={i} className={`w-5 h-5 ${i <= Math.round(promedio) ? "text-yellow-400" : "text-gray-200"}`} fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z" />
+                  </svg>
+                ))}
+              </div>
+              <span className="text-xs text-gray-500">({promedio} / 5)</span>
+            </>
+          ) : (
+            <span className="text-xs text-gray-400">Sin valoraciones</span>
+          )}
+        </div>
       </div>
     </div>
   );

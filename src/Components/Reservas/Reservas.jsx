@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axiosClient from "../../api/axion";
 import { ReservaSwitch } from "../ReservaSwitch/ReservaSwitch";
 import { ParticlesBackground } from "../Particulas/ParticlesBackground";
@@ -6,7 +6,7 @@ import { ParticlesBackground } from "../Particulas/ParticlesBackground";
 export const ReservasPanel = () => {
   const [productos, setProductos] = useState([]);
   const [reservas, setReservas] = useState([]);
-  const [tab, setTab] = useState("productos"); // "productos" o "reservas"
+  const [tab, setTab] = useState("productos");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,8 +21,9 @@ export const ReservasPanel = () => {
       .finally(() => setLoading(false));
   };
 
+  // Cambia la URL a "/reservas" si tu endpoint es así
   const cargarReservas = () => {
-    axiosClient.get("/reserva")
+    axiosClient.get("/reservas")
       .then(res => setReservas(res.data))
       .catch(() => setReservas([]));
   };
@@ -88,23 +89,29 @@ export const ReservasPanel = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-green-100 text-green-700">
-                  <th className="py-2 px-4 rounded-tl-xl">Producto</th>
-                  <th className="py-2 px-4">Usuario</th>
+                  <th className="py-2 px-4 rounded-tl-xl">ID Reserva</th>
+                  <th className="py-2 px-4">ID Producto</th>
+                  <th className="py-2 px-4">ID Usuario</th>
                   <th className="py-2 px-4">Fecha</th>
-                  <th className="py-2 px-4 rounded-tr-xl">Estado</th>
+                  <th className="py-2 px-4">Estado</th>
+                  <th className="py-2 px-4">Monto</th>
+                  <th className="py-2 px-4 rounded-tr-xl">Notificado</th>
                 </tr>
               </thead>
               <tbody>
                 {reservas.map(reserva => (
-                  <tr key={reserva.id_reserva} className="border-b border-green-50 hover:bg-green-50 transition">
-                    <td className="py-2 px-4">{reserva.nombre_producto}</td>
-                    <td className="py-2 px-4">{reserva.nombre_usuario || reserva.usuario}</td>
-                    <td className="py-2 px-4">{new Date(reserva.fecha).toLocaleString()}</td>
+                  <tr key={reserva.id_reserva}>
+                    <td className="py-2 px-4">{reserva.id_reserva}</td>
+                    <td className="py-2 px-4">{reserva.id_producto}</td>
+                    <td className="py-2 px-4">{reserva.id_usuario}</td>
+                    <td className="py-2 px-4">{new Date(reserva.fecha_reserva).toLocaleString()}</td>
                     <td className="py-2 px-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${reserva.estado === "activa" ? "bg-green-200 text-green-700" : "bg-pink-200 text-pink-700"}`}>
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${reserva.estado === "Aceptada" ? "bg-green-200 text-green-700" : "bg-pink-200 text-pink-700"}`}>
                         {reserva.estado}
                       </span>
                     </td>
+                    <td className="py-2 px-4">${Number(reserva.monto).toLocaleString()}</td>
+                    <td className="py-2 px-4">{reserva.notificado ? "Sí" : "No"}</td>
                   </tr>
                 ))}
               </tbody>

@@ -228,18 +228,19 @@ export function DetalleProducto() {
     const reservaData = {
       name: producto.nombre_producto,
       description: `Reserva de ${producto.nombre_producto}`,
-      invoice: "RES-" + Date.now(),
+      invoice: "ORD-" + Date.now(),
       currency: "cop",
       amount: (producto.precio_producto * cantidad).toString(),
       tax_base: "0",
       tax: "0",
       country: "co",
       method: "POST",
-      response: "https://curly-laws-notice.loca.lt/pagos/respuesta", // URL pública de tu frontend
-      confirmation: "http://localhost:3000/api/pagos/confirmacion", // URL pública de tu backend
+      response: "https://quiet-beers-hug.loca.lt/pagos/respuesta", // URL pública de tu frontend
+      confirmation: "https://quiet-beers-hug.loca.lt/api/pagos/confirmacion", // URL pública de tu backend
       external: "false",
-      x_extra1: usuario_id,
+      x_extra1: String(usuario_id), // Asegúrate que sea string o número simple, NO un objeto
       x_extra2: JSON.stringify({
+        tipo: "reserva", // Identificador para el backend
         id_producto: producto.id_producto,
         nombre_producto: producto.nombre_producto,
         color: producto.colores.find(c => c.id_color === colorSeleccionado)?.color,
@@ -341,8 +342,8 @@ export function DetalleProducto() {
                   key={t.id_talla}
                   onClick={() => setTallaSeleccionada(t.id_talla)}
                   className={`px-4 py-2 rounded-lg font-semibold text-lg transition-all duration-200 ${tallaSeleccionada === t.id_talla
-                      ? "bg-blue-600 text-white border-2 border-blue-600 scale-105 shadow-lg"
-                      : "bg-gray-100 text-gray-800 border border-gray-300 hover:bg-blue-100"}
+                    ? "bg-blue-600 text-white border-2 border-blue-600 scale-105 shadow-lg"
+                    : "bg-gray-100 text-gray-800 border border-gray-300 hover:bg-blue-100"}
                   `}
                 >
                   {t.talla}
@@ -371,10 +372,10 @@ export function DetalleProducto() {
           </div>
 
           {/* Botones de acción */}
-          <div className="mt-6 flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 mt-6">
             <button
               onClick={handleAgregarCarrito}
-              className={`px-8 py-3 rounded-xl font-bold text-lg shadow-xl transition-all duration-200 ${(!colorSeleccionado || !tallaSeleccionada || stockDisponible === 0) && "opacity-50 cursor-not-allowed"} bg-blue-600 text-white hover:bg-blue-700 hover:scale-105`} // Ajuste en el padding
+              className={`flex-1 px-8 py-3 rounded-xl font-bold text-lg shadow-xl transition-all duration-200 ${(!colorSeleccionado || !tallaSeleccionada || stockDisponible === 0) && "opacity-50 cursor-not-allowed"} bg-blue-600 text-white hover:bg-blue-700 hover:scale-105`} // Ajuste en el padding
               disabled={!colorSeleccionado || !tallaSeleccionada || stockDisponible === 0}
             >
               Añadir al carrito
@@ -383,7 +384,7 @@ export function DetalleProducto() {
             {reservaActiva && (
               <button
                 onClick={handleReservar}
-                className={`px-8 py-3 rounded-xl font-bold text-lg shadow-xl transition-all duration-200 ${(!colorSeleccionado || !tallaSeleccionada || stockDisponible === 0) && "opacity-50 cursor-not-allowed"} bg-pink-500 text-white hover:bg-pink-600 hover:scale-105 animate-pulse`} // Ajuste en el padding
+                className={`flex-1 px-8 py-3 rounded-xl font-bold text-lg shadow-xl transition-all duration-200 ${(!colorSeleccionado || !tallaSeleccionada || stockDisponible === 0) && "opacity-50 cursor-not-allowed"} bg-pink-500 text-white hover:bg-pink-600 hover:scale-105 animate-pulse`} // Ajuste en el padding
                 disabled={!colorSeleccionado || !tallaSeleccionada || stockDisponible === 0 || !usuario_id}
                 title={!usuario_id ? "Inicia sesión para reservar" : "Reservar"}
               >
@@ -392,17 +393,12 @@ export function DetalleProducto() {
             )}
           </div>
 
-          {/* Aviso de reserva disponible */}
+          {/* Mensaje de reserva disponible */}
           {reservaActiva && (
-            <div className="mb-6 flex flex-col items-start gap-2 animate-fade-in">
-              <div className="flex items-center gap-2">
-                <span className="inline-block px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-xs shadow animate-bounce">
-                  Reserva disponible para este producto
-                </span>
-              </div>
-              {!usuario_id && (
-                <span className="text-xs text-pink-400 mt-1">Inicia sesión para poder reservar este producto.</span>
-              )}
+            <div className="mt-4">
+              <span className="inline-block bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm font-medium shadow">
+                Reserva disponible para este producto
+              </span>
             </div>
           )}
 
