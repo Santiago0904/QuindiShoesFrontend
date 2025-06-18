@@ -53,6 +53,10 @@ function App() {
     ocultarHeaderYFooterEn.includes(location.pathname.toLowerCase()) ||
     variantesRegex.test(location.pathname);
 
+  // Ocultar solo el footer en el personalizador
+  const ocultarSoloFooter =
+    location.pathname.toLowerCase() === "/personalizador";
+
   return (
     <>
       {!ocultarHeaderYFooter && <Header />}
@@ -99,7 +103,8 @@ function App() {
         </div>
        
       </div>
-      {!ocultarHeaderYFooter && <Footer />}
+      {/* Oculta el footer si está en rutas especiales o en el personalizador */}
+      {!(ocultarHeaderYFooter || ocultarSoloFooter) && <Footer />}
 
     </>
   );

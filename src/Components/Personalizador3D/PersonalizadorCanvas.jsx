@@ -1,57 +1,53 @@
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF, useTexture } from '@react-three/drei';
-import { GuardarPersonalizado } from './GuardarPersonalizado';
-import { getZonaIdFromName, getColorHexFromStore } from '../PersonalizadorUtils/utils';
+import React from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrbitControls, useGLTF } from "@react-three/drei";
+import { GuardarPersonalizado } from "./GuardarPersonalizado";
+import { getZonaIdFromName, getColorHexFromStore } from "../PersonalizadorUtils/utils";
 
-// Componente hijo para cada parte del zapato
-function ShoeMesh({ mesh, name, colorHex, textureUrl }) {
-  // Solo llama useTexture si hay una URL válida
-  const texture = textureUrl ? useTexture(textureUrl) : null;
+// Renderizado recursivo respetando jerarquía
+function renderNode(node, colores, personalizacion) {
+  if (!node) return null;
 
+  // Si el nodo tiene geometría, renderiza el mesh
+  if (node.isMesh && node.geometry) {
+    const zonaId = getZonaIdFromName(node.name);
+    const colorHex = getColorHexFromStore(zonaId, colores, personalizacion);
+
+    return (
+      <mesh
+        key={node.uuid}
+        geometry={node.geometry}
+        position={node.position}
+        rotation={node.rotation}
+        scale={node.scale}
+      >
+        <meshStandardMaterial color={colorHex || "#cccccc"} />
+      </mesh>
+    );
+  }
+
+  // Si el nodo es un grupo, renderiza sus hijos reales
   return (
-    <mesh
-      geometry={mesh.geometry}
-      position={mesh.position}
-      rotation={mesh.rotation}
-      scale={mesh.scale}
-      material={undefined}
+    <group
+      key={node.uuid}
+      position={node.position}
+      rotation={node.rotation}
+      scale={node.scale}
     >
-      <meshStandardMaterial
-        color={colorHex || '#cccccc'}
-        map={texture}
-        emissive={colorHex || '#000000'}
-        emissiveIntensity={1}
-      />
-    </mesh>
+      {node.children &&
+        node.children.map((child) =>
+          renderNode(child, colores, personalizacion)
+        )}
+    </group>
   );
 }
 
 function ShoeModel() {
-  const { nodes } = useGLTF('/models/nike_shoes.glb');
-  const { personalizacion, colores, materiales } = GuardarPersonalizado();
+  const { scene } = useGLTF("/models/nike_shoes (1).glb");
+  const { personalizacion, colores } = GuardarPersonalizado();
 
-  return (
-    <group>
-      {Object.entries(nodes).map(([name, mesh]) => {
-        const zonaId = getZonaIdFromName(name);
-        const colorHex = getColorHexFromStore(zonaId, colores, personalizacion);
-        const materialId = personalizacion[zonaId]?.materialId;
-        const textureUrl = materialId
-          ? `http://localhost:3000/material/imagen/${materialId}`
-          : null;
-
-        return (
-          <ShoeMesh
-            key={name}
-            mesh={mesh}
-            name={name}
-            colorHex={colorHex}
-            textureUrl={textureUrl}
-          />
-        );
-      })}
-    </group>
-  );
+  // Renderiza desde el nodo raíz (scene)
+  return renderNode(scene, colores, personalizacion);
 }
 
 export default function PersonalizadorCanvas() {
