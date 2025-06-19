@@ -66,9 +66,10 @@ export const CartaProducto = ({ producto }) => {
   const imgRef = useRef(null);
 
   const imagenPrincipal =
-    producto.imagenes && producto.imagenes.length > 0
-      ? producto.imagenes[0]
-      : "https://via.placeholder.com/300x200?text=Sin+Imagen";
+  producto.url_imagen ||
+  (producto.imagenes && producto.imagenes.length > 0
+    ? producto.imagenes[0]
+    : "https://via.placeholder.com/300x200?text=Sin+Imagen");
 
   const irADetalle = () => navigate(`/producto/${producto.id_producto}`);
 
