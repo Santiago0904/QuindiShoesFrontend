@@ -37,6 +37,7 @@ import { HistorialFacturas } from './Pages/HistorialVentas/historialventas'
 import { MetricasPages } from './Pages/MetricasPage/MetricasPages'
 import { Favoritos } from './Pages/Favoritos/Favoritos'
 
+import { Accesibilidad } from './Components/Accesibilidad/Accesibilidad'
 function App() {
   const location = useLocation();
 
@@ -52,6 +53,7 @@ function App() {
   return (
     <>
       {!ocultarHeaderYFooter && <Header />}
+       <Accesibilidad />
       <div className="relative min-h-screen flex flex-col">
         <div className="flex-1 flex flex-col">
           <Routes>

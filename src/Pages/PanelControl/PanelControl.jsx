@@ -9,6 +9,7 @@ import { HistorialFacturas } from '../HistorialVentas/historialventas';
 import { ParticlesBackground } from '../../Components/Particulas/ParticlesBackground';
 import VentasPorRango from '../../Components/Metricas/Metricas';
 import { ReservasPanel } from '../../Components/Reservas/Reservas';
+import Domicilios from '../Domicilios/Domicilios';
 export const PanelControl = () => {
   const [seccionSeleccionada, setSeccionSeleccionada] = useState('');
   const [mostrarPanel, setMostrarPanel] = useState(true);
@@ -19,7 +20,7 @@ export const PanelControl = () => {
       case 'usuarios': return <ListaEmpleados />;
       case 'inventario': return <ListaProductos />;
       case 'ventas': return <HistorialFacturas />;
-      case 'domicilios': return <div>Módulo de domicilios</div>;
+      case 'domicilios': return <Domicilios/>;
       case 'reservas': return <ReservasPanel/>;
       case 'mesrivas': return <VentasPorRango />;
       default: return null;
