@@ -101,7 +101,7 @@ const handlePSEPayment = () => {
     country: "co",
     method: "POST",
     response: "https://quindi-shoes-frontend-yemj.vercel.app/",
-    confirmation:"https://03c8-190-130-102-66.ngrok-free.app/api/pagos/confirmacion",
+    confirmation: "http://localhost:3000/api/pagos/confirmacion",
 
     external: "false",
     x_extra1: userId.toString(),

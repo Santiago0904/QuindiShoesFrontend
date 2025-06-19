@@ -50,7 +50,7 @@ export const LoginForm = () => {
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("rol", response.data.rol);
       if (response.data.id) {
-        localStorage.setItem("id", response.data.id); // <-- Guarda el id del usuario
+        localStorage.setItem("id", response.data.id); // <-- Esto ya lo guarda
       }
 
       await MySwal.fire({
