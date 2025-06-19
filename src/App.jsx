@@ -9,9 +9,7 @@ import { EmailPage } from './Pages/EmailPage/EmailPage'
 import { PasswordPage } from './Pages/PasswordPage/PasswordPage'
 import { NewProduct } from './Pages/NewProduct/NewProduct'
 import { ListaProductos } from './Pages/Productos/Productos'
-import {MaterialNewForm} from './Components/MaterialNewForm/MaterialNewForm'
-import { ColorNewForm } from './Components/ColorNewForm/ColorNewForm'
-import { ZonaNewForm } from './Components/ZonaNewForm/ZonaNewFrom'
+import { ZonaProductoPage } from './Pages/ZonaProductoPage/ZonaProductoPage'
 import { RegisterEmpledos } from './Pages/Empleados/Empleadospages'
 import {PanelControl} from './Pages/PanelControl/PanelControl'
 import { ListaEmpleados } from './Pages/Empleados/Empleados'
@@ -19,6 +17,9 @@ import Carrito from './Pages/Carrito/Carrito'
 import { ListaMateriales } from './Pages/MostrarMateriales/MostrarMateriales'
 import { ListaColores } from './Pages/MostrarColores/MostrarColores'
 import { ListaZonas } from './Pages/MostrarZonaProductos/MostrarZonaProductos'
+import { Personalizador } from './Pages/Personalizador/Personalizador'
+
+
 import { Footer } from './Layouts/Footer/Footer'
 import { ProductoDetalladoPages } from './Pages/ProductoDetalladoPages/ProductoDetalladoPages'
 import  Perfil  from './Pages/Perfil/Perfil'
@@ -34,6 +35,8 @@ import { DetalleProducto } from './Pages/ProductoDetalle/ProductoDetalle'
 import { VariantesProducto } from './Pages/VariantesProducto/VariantesProducto'
 import { WavesBackground } from './Components/Particulas2/Particulas2'
 import { HistorialFacturas } from './Pages/HistorialVentas/historialventas'
+import { MaterialPage } from './Pages/MaterialPage/MaterialPage'
+import { ColorPage } from './Pages/ColorPage/ColorPage'
 import { MetricasPages } from './Pages/MetricasPage/MetricasPages'
 import { Favoritos } from './Pages/Favoritos/Favoritos'
 
@@ -50,6 +53,10 @@ function App() {
     ocultarHeaderYFooterEn.includes(location.pathname.toLowerCase()) ||
     variantesRegex.test(location.pathname);
 
+  // Ocultar solo el footer en el personalizador
+  const ocultarSoloFooter =
+    location.pathname.toLowerCase() === "/personalizador";
+
   return (
     <>
       {!ocultarHeaderYFooter && <Header />}
@@ -64,9 +71,9 @@ function App() {
             <Route path='/reiniciarContrasena' element={<PasswordPage/>}/>
             <Route path='/nuevoProducto' element={<NewProduct/>}/>
             <Route path='/productos' element={<ListaProductos/>}/>
-            <Route path='/material' element={<MaterialNewForm/>}/>
-            <Route path='/color' element={<ColorNewForm/>}/>
-            <Route path='/zona' element={<ZonaNewForm/>}/>
+            <Route path='/material' element={<MaterialPage/>}/>
+            <Route path='/color' element={<ColorPage/>}/>
+            <Route path='/zona' element={<ZonaProductoPage/>}/>
             <Route path='/productos' element={<ListaProductos/>}/>
             <Route path='/Empleados' element={<RegisterEmpledos/>}/>
             <Route path='/ListaEmpleados' element={<ListaEmpleados/>}/>
@@ -91,6 +98,7 @@ function App() {
             <Route path="/juego" element={<Juego />} />
             <Route path="/producto/:id" element={<DetalleProducto />} />
             <Route path="/producto/:id/variantes" element={<VariantesProducto />} />
+            <Route path="/personalizador" element={<Personalizador />} />
 
             <Route path="/Favoritos" element={<Favoritos/>} />
 
@@ -99,7 +107,8 @@ function App() {
         </div>
        
       </div>
-      {!ocultarHeaderYFooter && <Footer />}
+      {/* Oculta el footer si está en rutas especiales o en el personalizador */}
+      {!(ocultarHeaderYFooter || ocultarSoloFooter) && <Footer />}
 
     </>
   );
