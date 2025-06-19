@@ -66,10 +66,10 @@ export const CartaProducto = ({ producto }) => {
   const imgRef = useRef(null);
 
   const imagenPrincipal =
-  producto.url_imagen ||
-  (producto.imagenes && producto.imagenes.length > 0
-    ? producto.imagenes[0]
-    : "https://via.placeholder.com/300x200?text=Sin+Imagen");
+    producto.url_imagen ||
+    (producto.imagenes && producto.imagenes.length > 0
+      ? producto.imagenes[0]
+      : "https://via.placeholder.com/300x200?text=Sin+Imagen");
 
   const irADetalle = () => navigate(`/producto/${producto.id_producto}`);
 
@@ -200,7 +200,7 @@ export const CartaProducto = ({ producto }) => {
             <>
               <span className="text-yellow-500 font-bold">{promedio}</span>
               <div className="flex">
-                {[1,2,3,4,5].map(i => (
+                {[1, 2, 3, 4, 5].map(i => (
                   <svg key={i} className={`w-5 h-5 ${i <= Math.round(promedio) ? "text-yellow-400" : "text-gray-200"}`} fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z" />
                   </svg>
@@ -229,7 +229,7 @@ export const MostrarProducto = ({ productosProp }) => {
   const cargarProductos = () => {
     import("axios").then(({ default: axios }) => {
       axios
-        .get("http://localhost:3000/producto/public")
+        .get("https://quindishoes-backend-3.onrender.com/producto/public")
         .then((res) => {
           const data = Array.isArray(res.data) ? res.data : res.data.productos || [];
           setProductos(data);

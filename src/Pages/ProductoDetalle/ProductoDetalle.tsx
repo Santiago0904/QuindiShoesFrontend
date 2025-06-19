@@ -235,8 +235,8 @@ export function DetalleProducto() {
       tax: "0",
       country: "co",
       method: "POST",
-      response: "https://quiet-beers-hug.loca.lt/pagos/respuesta", // URL pública de tu frontend
-      confirmation: "https://quiet-beers-hug.loca.lt/api/pagos/confirmacion", // URL pública de tu backend
+      response: "https://quindi-shoes-frontend-yemj.vercel.app/pagos/respuesta", // URL pública de tu frontend
+      confirmation: "https://quindishoes-backend-3.onrender.com/api/pagos/confirmacion", // URL pública de tu backend
       external: "false",
       x_extra1: String(usuario_id), // Asegúrate que sea string o número simple, NO un objeto
       x_extra2: JSON.stringify({

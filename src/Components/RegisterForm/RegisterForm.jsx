@@ -41,7 +41,7 @@ export function RegisterForm() {
     }
 
     try {
-      await axios.post("http://localhost:3000/register", formulario);
+      await axios.post("https://quindishoes-backend-3.onrender.com/register", formulario);
       navigate("/esperando-confirmacion");
     } catch (error) {
       console.error("Error al registrar:", error);
@@ -89,7 +89,7 @@ export function RegisterForm() {
                     errores[campo.id]
                       ? "border-red-400"
                       : "border-pink-200" // Pastel border for non-error
-                  }`}
+                    }`}
                 />
                 {errores[campo.id] && (
                   <p className="text-red-400 text-xs italic mt-1">

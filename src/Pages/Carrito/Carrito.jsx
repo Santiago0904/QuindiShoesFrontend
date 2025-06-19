@@ -8,7 +8,7 @@ import axiosClient from "../../api/axion";
 const Carrito = () => {
   const [carrito, setCarrito] = useState([]);
   const navigate = useNavigate();
-  const [metodoEntrega, setMetodoEntrega] = useState("recoger_en_tienda"); 
+  const [metodoEntrega, setMetodoEntrega] = useState("recoger_en_tienda");
   const [userId, setUserId] = useState(null);
   const { resetear } = useContext(ContadorCarritoContext);
   const [descuento, setDescuento] = useState(0);
@@ -22,14 +22,14 @@ const Carrito = () => {
       .catch(() => setDescuento(0));
   }, []);
   const totalVisual = carrito.reduce((acc, p, idx) => {
-  if (productoConDescuento === idx && descuento > 0) {
-    const precioConDescuento = p.precio_producto * (1 - descuento / 100);
-    return acc + (p.cantidad * Math.max(0, precioConDescuento));
-  }
-  return acc + (p.cantidad * p.precio_producto);
+    if (productoConDescuento === idx && descuento > 0) {
+      const precioConDescuento = p.precio_producto * (1 - descuento / 100);
+      return acc + (p.cantidad * Math.max(0, precioConDescuento));
+    }
+    return acc + (p.cantidad * p.precio_producto);
 
 
-}, 0);
+  }, 0);
   useEffect(() => {
     const datosGuardados = localStorage.getItem("carrito");
     if (datosGuardados) {
@@ -59,59 +59,59 @@ const Carrito = () => {
     navigate("/");
   };
 
-const handlePSEPayment = () => {
-  if (!userId) {
-    console.error("No se encontró el ID del usuario");
-    return;
-  }
+  const handlePSEPayment = () => {
+    if (!userId) {
+      console.error("No se encontró el ID del usuario");
+      return;
+    }
 
-  const carritoReducido = carrito.map(({ id_producto, nombre_producto,precio_producto ,talla, id_color, id_talla, cantidad, imagen }) => ({
-    id_producto,
-    nombre_producto,
-    precio_producto,
-    talla,
-    id_color,
-    id_talla,
-    cantidad,
-    imagen
-  }));
+    const carritoReducido = carrito.map(({ id_producto, nombre_producto, precio_producto, talla, id_color, id_talla, cantidad, imagen }) => ({
+      id_producto,
+      nombre_producto,
+      precio_producto,
+      talla,
+      id_color,
+      id_talla,
+      cantidad,
+      imagen
+    }));
 
-  // Calcula el total aplicando el descuento solo al producto seleccionado
-  const total = carrito.reduce((acc, p, idx) => {
+    // Calcula el total aplicando el descuento solo al producto seleccionado
+    const total = carrito.reduce((acc, p, idx) => {
       if (productoConDescuento === idx && descuento > 0) {
         const precioConDescuento = p.precio_producto * (1 - descuento / 100);
         return acc + (p.cantidad * Math.max(0, precioConDescuento));
       }
       return acc + (p.cantidad * p.precio_producto);
-  }, 0);
+    }, 0);
 
-  const handler = window.ePayco.checkout.configure({
-    key: "76018558cee4255d423b4753fee3fdf1",
-    test: true,
-  });
+    const handler = window.ePayco.checkout.configure({
+      key: "76018558cee4255d423b4753fee3fdf1",
+      test: true,
+    });
 
-  const data = {
-    name: "Pago de productos",
-    description: "Compra en QuindiShoes",
-    invoice: "ORD-" + Date.now(),
-    currency: "cop",
-    amount: total.toString(),
-    tax_base: "0",
-    tax: "0",
-    country: "co",
-    method: "POST",
-    response: "https://quindi-shoes-frontend-yemj.vercel.app/",
-    confirmation: "http://localhost:3000/api/pagos/confirmacion",
+    const data = {
+      name: "Pago de productos",
+      description: "Compra en QuindiShoes",
+      invoice: "ORD-" + Date.now(),
+      currency: "cop",
+      amount: total.toString(),
+      tax_base: "0",
+      tax: "0",
+      country: "co",
+      method: "POST",
+      response: "https://quindi-shoes-frontend-yemj.vercel.app/",
+      confirmation: "https://quindishoes-backend-3.onrender.com/api/pagos/confirmacion",
 
-    external: "false",
-    x_extra1: userId.toString(),
-    x_extra2: JSON.stringify(carritoReducido),
-    x_extra3: productoConDescuento !== null && descuento > 0 ? descuento : 0,
-    x_extra4: metodoEntrega
+      external: "false",
+      x_extra1: userId.toString(),
+      x_extra2: JSON.stringify(carritoReducido),
+      x_extra3: productoConDescuento !== null && descuento > 0 ? descuento : 0,
+      x_extra4: metodoEntrega
+    };
+
+    handler.open(data);
   };
-
-  handler.open(data);
-};
 
 
 
@@ -120,7 +120,7 @@ const handlePSEPayment = () => {
     setCarrito([]);
     resetear();
   };
- console.log("Carrito:", carrito);
+  console.log("Carrito:", carrito);
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-12 px-4 sm:px-8">
       <div className="max-w-4xl mx-auto bg-white shadow-2xl rounded-3xl p-8">
@@ -177,18 +177,18 @@ const handlePSEPayment = () => {
                 />
 
                 <div className="mt-6">
-                    <label className="block mb-2 text-lg font-semibold text-gray-700">
-                        Selecciona el método de entrega:
-                    </label>
-                    <select
-                        value={metodoEntrega}
-                        onChange={(e) => setMetodoEntrega(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg shadow-sm"
-                    >
-                        <option value="recoger_en_tienda">🏬 Recoger en tienda</option>
-                        <option value="domicilio">🚚 Domicilio</option>
+                  <label className="block mb-2 text-lg font-semibold text-gray-700">
+                    Selecciona el método de entrega:
+                  </label>
+                  <select
+                    value={metodoEntrega}
+                    onChange={(e) => setMetodoEntrega(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg shadow-sm"
+                  >
+                    <option value="recoger_en_tienda">🏬 Recoger en tienda</option>
+                    <option value="domicilio">🚚 Domicilio</option>
 
-                    </select>
+                  </select>
                 </div>
 
                 <div className="flex-1 text-left">
