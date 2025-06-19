@@ -10,6 +10,9 @@ export const VariantesProducto = () => {
   const [variantes, setVariantes] = useState([]);
   const [tallas, setTallas] = useState([]);
   const [colores, setColores] = useState([]);
+  const [filtroTalla, setFiltroTalla] = useState("");
+  const [filtroColor, setFiltroColor] = useState("");
+  const [filtroStock, setFiltroStock] = useState("");
 
   useEffect(() => {
     cargarVariantes();
@@ -279,11 +282,43 @@ export const VariantesProducto = () => {
     });
   };
 
+  // Filtrado de variaciones
+  const variantesFiltradas = variantes.filter(v => {
+    if (filtroTalla && v.talla !== filtroTalla) return false;
+    if (filtroColor && v.color !== filtroColor) return false;
+    if (filtroStock === "bajo" && v.stock >= 5) return false;
+    if (filtroStock === "agotado" && v.stock > 0) return false;
+    if (filtroStock === "disponible" && v.stock === 0) return false;
+    return true;
+  });
+
   return (
     <div className="max-w-3xl mx-auto mt-10 bg-white p-8 rounded-3xl shadow-2xl animate-fade-in">
       <h2 className="text-3xl font-extrabold mb-8 text-center text-blue-700 animate-fade-in-down tracking-tight">
         Variaciones del Producto
       </h2>
+      {/* Filtros de variaciones */}
+      <div className="flex gap-4 mb-6">
+        <select value={filtroTalla} onChange={e => setFiltroTalla(e.target.value)} className="border p-2 rounded">
+          <option value="">Talla</option>
+          {tallas.map(t => (
+            <option key={t.id_talla} value={t.talla}>{t.talla}</option>
+          ))}
+        </select>
+        <select value={filtroColor} onChange={e => setFiltroColor(e.target.value)} className="border p-2 rounded">
+          <option value="">Color</option>
+          {colores.map(c => (
+            <option key={c.id_color} value={c.color}>{c.color}</option>
+          ))}
+        </select>
+        <select value={filtroStock} onChange={e => setFiltroStock(e.target.value)} className="border p-2 rounded">
+          <option value="">Stock</option>
+          <option value="bajo">Stock bajo (&lt;5)</option>
+          <option value="agotado">Agotado</option>
+          <option value="disponible">Disponible</option>
+        </select>
+      </div>
+      {/* Tabla de variaciones */}
       <div className="overflow-x-auto">
         <table className="w-full border-separate border-spacing-y-2">
           <thead>
@@ -296,14 +331,14 @@ export const VariantesProducto = () => {
             </tr>
           </thead>
           <tbody>
-            {variantes.length === 0 ? (
+            {variantesFiltradas.length === 0 ? (
               <tr>
                 <td colSpan={5} className="text-center py-8 text-gray-400 animate-pulse">
                   No hay variantes registradas.
                 </td>
               </tr>
             ) : (
-              variantes.map((v) => (
+              variantesFiltradas.map((v) => (
                 <tr
                   key={v.id_variantes}
                   className="bg-white shadow-md rounded-xl transition-transform duration-200 hover:scale-[1.01] hover:bg-blue-50"

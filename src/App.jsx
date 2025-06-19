@@ -23,12 +23,9 @@ import { Footer } from './Layouts/Footer/Footer'
 import { ProductoDetalladoPages } from './Pages/ProductoDetalladoPages/ProductoDetalladoPages'
 import  Perfil  from './Pages/Perfil/Perfil'
 import { useLocation } from 'react-router-dom'
-
-
 import { Rechazada } from './Pages/RespuestaPagos/Rechazada'
 import { RespuestaPago } from './Pages/RespuestaPagos/RespuestaPago'
 import { Confirmacion } from './Pages/RespuestaPagos/Confrimacion'
-
 import  VerificarCorreo  from './Layouts/VerificarCorreo/VerificarCorreo'
 import EsperandoConfirmacion from './Pages/EsperandoConfirmacion/EsperandoConfirmacion'
 import Chat from './Components/ChatBot/ChatBot'
@@ -38,6 +35,8 @@ import { VariantesProducto } from './Pages/VariantesProducto/VariantesProducto'
 import { WavesBackground } from './Components/Particulas2/Particulas2'
 import { HistorialFacturas } from './Pages/HistorialVentas/historialventas'
 import { MetricasPages } from './Pages/MetricasPage/MetricasPages'
+import { Favoritos } from './Pages/Favoritos/Favoritos'
+
 function App() {
   const location = useLocation();
 
@@ -90,6 +89,9 @@ function App() {
             <Route path="/juego" element={<Juego />} />
             <Route path="/producto/:id" element={<DetalleProducto />} />
             <Route path="/producto/:id/variantes" element={<VariantesProducto />} />
+
+            <Route path="/Favoritos" element={<Favoritos/>} />
+
 
           </Routes>
         </div>
