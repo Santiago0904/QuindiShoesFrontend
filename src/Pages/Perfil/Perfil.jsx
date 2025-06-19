@@ -4,13 +4,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import axiosClient from "../../api/axion";
 import { useNavigate } from "react-router-dom";
 import { WavesBackground } from "../../Components/Particulas2/Particulas2"; // Asegúrate de que esta es la ruta correcta para WavesBackground
-import { Footer } from "../../Layouts/Footer/Footer"; // Asegúrate de que la ruta sea correcta
+import { Footer } from "../../Layouts/Footer/Footer";
 import { WavesBackground2 } from "../../Components/Particulas2.0/Particulas2.0";
+import { HistorialCompras } from "../../Components/HistorialCompras/HistorialCompras";
 
 const Perfil = () => {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [usuario, setUsuario] = useState(null);
   const [cargando, setCargando] = useState(true);
+  const [historialAbierto, setHistorialAbierto] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -217,6 +219,49 @@ const Perfil = () => {
                 )}
               </AnimatePresence>
             </motion.div>
+
+            {/* Botón vistoso para abrir historial */}
+            <div className="flex justify-center my-8">
+              <button
+                onClick={() => setHistorialAbierto(true)}
+                className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-pink-200 text-pink-800 font-bold text-lg shadow-lg hover:bg-pink-300 transition-all border-2 border-pink-300"
+              >
+                <svg className="w-7 h-7 text-pink-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Ver historial de compras
+              </button>
+            </div>
+
+            {/* Panel animado del historial */}
+            <AnimatePresence>
+              {historialAbierto && (
+                <motion.div
+                  initial={{ opacity: 0, y: 60 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 60 }}
+                  transition={{ duration: 0.5, type: "spring", bounce: 0.2 }}
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
+                >
+                  <motion.div
+                    initial={{ scale: 0.95 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0.95 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-white/90 rounded-2xl shadow-2xl p-8 max-w-2xl w-full relative"
+                  >
+                    <button
+                      onClick={() => setHistorialAbierto(false)}
+                      className="absolute top-4 right-4 text-pink-500 hover:text-pink-700 text-2xl font-bold"
+                      aria-label="Cerrar historial"
+                    >
+                      ×
+                    </button>
+                    <HistorialCompras userId={usuario?.id_usuario} onClose={() => setHistorialAbierto(false)}/>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
       </div>
