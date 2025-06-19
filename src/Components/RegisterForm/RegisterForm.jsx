@@ -41,7 +41,7 @@ export function RegisterForm() {
     }
 
     try {
-      await axios.post("http://localhost:3000/register", formulario);
+      await axios.post("https://quindishoes-backend-3.onrender.com/register", formulario);
       navigate("/esperando-confirmacion");
     } catch (error) {
       console.error("Error al registrar:", error);
