@@ -23,7 +23,7 @@ export default function VentasPorRango() {
     const cargarDatos = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`https://quindishoes-backend-3.onrender.com/metricas/ventas?agrupacion=${agrupacion}`);
+        const res = await axios.get(`http://localhost:3000/metricas/ventas?agrupacion=${agrupacion}`);
         const datosFormateados = res.data.map((item: any) => {
           if (agrupacion === 'dia' && item.fecha) {
             const fechaObj = new Date(item.fecha);
@@ -45,8 +45,8 @@ export default function VentasPorRango() {
     const cargarTopProductos = async () => {
       try {
         const [masRes, menosRes] = await Promise.all([
-          axios.get('https://quindishoes-backend-3.onrender.com/metricas/top-productos?tipo=mas&limite=5'),
-          axios.get('https://quindishoes-backend-3.onrender.com/metricas/top-productos?tipo=menos&limite=5')
+          axios.get('http://localhost:3000/metricas/top-productos?tipo=mas&limite=5'),
+          axios.get('http://localhost:3000/metricas/top-productos?tipo=menos&limite=5')
         ]);
         setTopProductosMas(masRes.data);
         setTopProductosMenos(menosRes.data);
