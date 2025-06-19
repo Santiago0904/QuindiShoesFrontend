@@ -43,7 +43,7 @@ function renderNode(node, colores, personalizacion) {
 }
 
 function ShoeModel() {
-  const { scene } = useGLTF("/models/nike_shoes (1).glb");
+  const { scene } = useGLTF("/models/nike_shoes.glb");
   const { personalizacion, colores } = GuardarPersonalizado();
 
   // Renderiza desde el nodo raíz (scene)
