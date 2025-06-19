@@ -4,7 +4,7 @@ import { OrbitControls, useGLTF } from "@react-three/drei";
 import { GuardarPersonalizado } from "./GuardarPersonalizado";
 import { getZonaIdFromName, getColorHexFromStore } from "../PersonalizadorUtils/utils";
 
-// Renderizado recursivo respetando jerarquía
+
 function renderNode(node, colores, personalizacion) {
   if (!node) return null;
 
