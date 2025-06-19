@@ -24,12 +24,9 @@ import { Footer } from './Layouts/Footer/Footer'
 import { ProductoDetalladoPages } from './Pages/ProductoDetalladoPages/ProductoDetalladoPages'
 import  Perfil  from './Pages/Perfil/Perfil'
 import { useLocation } from 'react-router-dom'
-
-
 import { Rechazada } from './Pages/RespuestaPagos/Rechazada'
 import { RespuestaPago } from './Pages/RespuestaPagos/RespuestaPago'
 import { Confirmacion } from './Pages/RespuestaPagos/Confrimacion'
-
 import  VerificarCorreo  from './Layouts/VerificarCorreo/VerificarCorreo'
 import EsperandoConfirmacion from './Pages/EsperandoConfirmacion/EsperandoConfirmacion'
 import Chat from './Components/ChatBot/ChatBot'
@@ -40,6 +37,8 @@ import { WavesBackground } from './Components/Particulas2/Particulas2'
 import { HistorialFacturas } from './Pages/HistorialVentas/historialventas'
 import { MaterialPage } from './Pages/MaterialPage/MaterialPage'
 import { ColorPage } from './Pages/ColorPage/ColorPage'
+import { MetricasPages } from './Pages/MetricasPage/MetricasPages'
+import { Favoritos } from './Pages/Favoritos/Favoritos'
 
 function App() {
   const location = useLocation();
@@ -82,7 +81,7 @@ function App() {
             <Route path='/ListaColores' element={<ListaColores/>}/>
             <Route path='/ListaZonas' element={<ListaZonas/>}/>
             <Route path='/RespuestaPago' element={<RespuestaPago />}/>
-         
+            <Route path='/Metricas' element={<MetricasPages />}/>
             <Route path='/ProductoDetalladoPages' element={<ProductoDetalladoPages/>}/>
             <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
             
@@ -98,6 +97,9 @@ function App() {
             <Route path="/producto/:id" element={<DetalleProducto />} />
             <Route path="/producto/:id/variantes" element={<VariantesProducto />} />
             <Route path="/personalizador" element={<Personalizador />} />
+
+            <Route path="/Favoritos" element={<Favoritos/>} />
+
 
           </Routes>
         </div>
