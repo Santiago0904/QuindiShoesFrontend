@@ -44,7 +44,6 @@ function renderNode(node, colores, personalizacion) {
 
 function ShoeModel() {
   const { scene } = useGLTF("/models/nike_shoes.glb");
-  console.log("GLTF cargado:", gltf);
 
   const { personalizacion, colores } = GuardarPersonalizado();
 
