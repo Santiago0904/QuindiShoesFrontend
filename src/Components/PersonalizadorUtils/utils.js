@@ -14,14 +14,14 @@ export const zonaMap = {
 // Diccionario de nombres amigables para mostrar al usuario
 export const zonaDisplayNames = {
   'Object_4': 'Lengüeta',
-  'Object_6': 'Laterales',
-  'Object_8': 'Lateral Exterior',
-  'Object_10': 'Lateral Interior',
-  'Object_12': 'Talón',
-  'Object_14': 'Lengüeta',
-  'Object_16': 'Cordones',
-  'Object_18': 'Ojetes',
-  'Object_20': 'Plantilla',
+  'Object_6': 'Linea lateral',
+  'Object_8': 'Suela Exterior',
+  'Object_10': 'Entresuela',
+  'Object_12': 'Logo',
+  'Object_14': 'Cordones',
+  'Object_16': 'Laterales',
+  'Object_18': 'Quarter',
+  'Object_20': 'Revestimiento trasero',
 };
 
 export function getZonaIdFromName(name) {
