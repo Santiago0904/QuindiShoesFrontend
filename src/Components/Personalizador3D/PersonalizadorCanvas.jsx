@@ -52,12 +52,45 @@ function ShoeModel() {
 }
 
 export default function PersonalizadorCanvas() {
+  const containerRef = useRef(null);
+
+  const handleDownload = () => {
+    // Busca el canvas real dentro del contenedor
+    const realCanvas = containerRef.current?.querySelector("canvas");
+    if (realCanvas) {
+      const image = realCanvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = image;
+      link.download = "zapato_personalizado.png";
+      link.click();
+    }
+  };
+
   return (
-    <Canvas>
-      <ambientLight />
-      <directionalLight position={[10, 10, 5]} />
-      <ShoeModel />
-      <OrbitControls />
-    </Canvas>
+    <div ref={containerRef} style={{ position: "relative" }}>
+      <Canvas>
+        <ambientLight />
+        <directionalLight position={[10, 10, 5]} />
+        <ShoeModel />
+        <OrbitControls />
+      </Canvas>
+      <button
+        onClick={handleDownload}
+        style={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+          zIndex: 10,
+          padding: "8px 16px",
+          background: "#6366f1",
+          color: "#fff",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer"
+        }}
+      >
+        Descargar imagen
+      </button>
+    </div>
   );
 }
