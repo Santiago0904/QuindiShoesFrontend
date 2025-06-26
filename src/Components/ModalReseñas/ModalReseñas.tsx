@@ -10,7 +10,7 @@ export const ListaResenas: React.FC<{ usuario_id?: number }> = ({ usuario_id }) 
   const [enviando, setEnviando] = useState(false);
 
   React.useEffect(() => {
-    axios.get("https://quindishoes-backend-3.onrender.com/resena/todas")
+    axios.get("http://localhost:3000/resena/todas")
       .then(res => setResenas(res.data))
       .catch(() => setResenas([]));
   }, []);
@@ -27,7 +27,7 @@ export const ListaResenas: React.FC<{ usuario_id?: number }> = ({ usuario_id }) 
     }
     setEnviando(true);
     try {
-      await axios.put("https://quindishoes-backend-3.onrender.com/resena/editar", {
+      await axios.put("http://localhost:3000/resena/editar", {
         resena: mensajeEdit,
         id_usuario
       });

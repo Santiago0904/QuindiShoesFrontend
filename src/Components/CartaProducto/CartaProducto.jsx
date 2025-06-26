@@ -229,7 +229,7 @@ export const MostrarProducto = ({ productosProp }) => {
   const cargarProductos = () => {
     import("axios").then(({ default: axios }) => {
       axios
-        .get("https://quindishoes-backend-3.onrender.com/producto/public")
+        .get("http://localhost:3000/producto/public")
         .then((res) => {
           const data = Array.isArray(res.data) ? res.data : res.data.productos || [];
           setProductos(data);
