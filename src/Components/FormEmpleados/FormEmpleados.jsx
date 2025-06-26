@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import axiosClient from "../../api/axion";
+import { motion } from "framer-motion";
 
-export const FormEmpleados = () => {
-  const [formData, setFormData] = useState({
-    nombres: "",
-    apellidos: "",
-    telefono: "",
-    direccion: "",
-    correo: "",
-    contrasena: "",
-    rol:"vendedor",
-  });
+export const FormEmpleados = ({ onSuccess, initialData = null, modo = "agregar" }) => {
+  const [formData, setFormData] = useState(
+    initialData || {
+      nombre: "",
+      apellido: "",
+      telefono: "",
+      direccion: "",
+      correo: "",
+      contrasena: "",
+      rol: "vendedor",
+    }
+  );
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({
@@ -21,44 +25,58 @@ export const FormEmpleados = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     try {
-      const response = await axiosClient.post("/register", formData);
-      console.log("Empleado registrado:", response.data);
-  
+      if (modo === "agregar") {
+        await axiosClient.post("/register", formData);
+      } else {
+        await axiosClient.put(`/empleado/${formData.id}`, formData);
+      }
+      if (onSuccess) onSuccess();
     } catch (error) {
-      console.error("Error al registrar Empleado:", error);
+      setError("Error al guardar empleado.");
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded-2xl shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-center">Registro de Empleados</h2>
-      <form className="space-y-4">
+    <motion.div
+      initial={{ opacity: 0, y: -30, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="w-full max-w-3xl bg-gray-100 p-10 rounded-3xl shadow-xl border border-pink-100 mx-auto"
+    >
+      <h2 className="text-3xl font-extrabold text-center text-pink-400 mb-6 drop-shadow-sm">
+        {modo === "agregar" ? "Registro de Empleado" : "Actualizar Empleado"}
+      </h2>
+      {error && (
+        <p className="text-red-400 text-sm mb-4 text-center">{error}</p>
+      )}
+      <form className="space-y-5" onSubmit={handleSubmit}>
         <input
           type="text"
-          name="nombres"
-          placeholder="Nombre"
-          value={formData.nombres}
+          name="nombre"
+          placeholder="Nombres"
+          value={formData.nombre}
           onChange={handleChange}
-          className="w-full p-2 border rounded-md"
+          className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 placeholder:text-pink-400 border-pink-200 bg-white"
           required
         />
         <input
           type="text"
-          name="apellidos"
-          placeholder="Apellido"
-          value={formData.apellidos}
+          name="apellido"
+          placeholder="Apellidos"
+          value={formData.apellido}
           onChange={handleChange}
-          className="w-full p-2 border rounded-md"
+          className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 placeholder:text-pink-400 border-pink-200 bg-white"
           required
         />
         <input
-          type="tel"
+          type="text"
           name="telefono"
           placeholder="Teléfono"
           value={formData.telefono}
           onChange={handleChange}
-          className="w-full p-2 border rounded-md"
+          className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-300 placeholder:text-green-400 border-green-200 bg-white"
           required
         />
         <input
@@ -67,7 +85,7 @@ export const FormEmpleados = () => {
           placeholder="Dirección"
           value={formData.direccion}
           onChange={handleChange}
-          className="w-full p-2 border rounded-md"
+          className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 placeholder:text-pink-400 border-pink-200 bg-white"
           required
         />
         <input
@@ -76,37 +94,44 @@ export const FormEmpleados = () => {
           placeholder="Correo"
           value={formData.correo}
           onChange={handleChange}
-          className="w-full p-2 border rounded-md"
+          className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-300 placeholder:text-green-400 border-green-200 bg-white"
           required
         />
-        <input
-          type="password"
-          name="contrasena"
-          placeholder="Contraseña"
-          value={formData.contrasena}
-          onChange={handleChange}
-          className="w-full p-2 border rounded-md"
-          required
-        />
-
+        {modo === "agregar" && (
+          <input
+            type="password"
+            name="contrasena"
+            placeholder="Contraseña"
+            value={formData.contrasena}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 placeholder:text-pink-400 border-pink-200 bg-white"
+            required
+          />
+        )}
         <select
           name="rol"
           value={formData.rol}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-300 border-green-200 bg-white"
         >
           <option value="vendedor">Vendedor</option>
           <option value="domiciliario">Domiciliario</option>
         </select>
-        <button
-          onClick={handleSubmit}
+        <motion.button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+          className="w-full inline-flex items-center justify-center
+                     bg-pink-400 hover:bg-pink-500
+                     text-white font-semibold text-lg py-3 rounded-full
+                     shadow-lg hover:shadow-xl
+                     transform hover:scale-105 transition-all duration-300 ease-out
+                     focus:outline-none focus:ring-2 focus:ring-pink-300 focus:ring-opacity-75"
+          whileHover={{ scale: 1.05, boxShadow: "0 8px 24px rgba(0,0,0,0.15)" }}
+          whileTap={{ scale: 0.97 }}
         >
-          Registrarse
-        </button>
+          {modo === "agregar" ? "Registrar" : "Guardar"}
+        </motion.button>
       </form>
-    </div>
+    </motion.div>
   );
 };
 
