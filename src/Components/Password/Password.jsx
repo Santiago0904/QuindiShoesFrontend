@@ -51,10 +51,7 @@ export const Password = () => {
 
   return (
     <>
-      <div
-        className="flex items-center justify-center z-10 relative bg-transparent"
-        style={{ minHeight: "100vh" }}
-      >
+      <div className="flex items-center justify-center z-10 relative bg-transparent" style={{ minHeight: "100vh" }}>
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -90,10 +87,7 @@ export const Password = () => {
                          shadow-lg hover:shadow-xl
                          transform hover:scale-105 transition-all duration-300 ease-out
                          focus:outline-none focus:ring-2 focus:ring-purple-300 focus:ring-opacity-75"
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-              }}
+              whileHover={{ scale: 1.05, boxShadow: "0 8px 24px rgba(0,0,0,0.15)" }}
               whileTap={{ scale: 0.97 }}
             >
               <svg
