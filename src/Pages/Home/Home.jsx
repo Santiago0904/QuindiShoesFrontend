@@ -1,16 +1,47 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axiosClient from '../../api/axion';
 import { BuscadorProductos } from '../../Components/BuscadorProducto.ts/BuscadorProducto';
 import ChatWidget from '../../Components/ChatBot/ChatBot';
 import indexWoman from '../../assets/images/women2.webp'; 
 import { BotonReseñas } from '../../Components/BotonReseñas/BotonReseñas';
 import { ModalReseñas } from '../../Components/ModalReseñas/ModalReseñas';
 import { ParaTi } from '../../Components/ParaTi/ParaTi';
-
+import { CartaProducto } from '../../Components/CartaProducto/CartaProducto';
+import FiltrosProducto from '../../Components/FiltrosProducto/FiltrosProducto';
 export const Home = () => {
   const [modalAbierto, setModalAbierto] = useState(false);
+  const [productos, setProductos] = useState([]);
+  const [filtros, setFiltros] = useState({
+    categoria: "",
+    color: "",
+    talla: "",
+    // ...otros filtros
+  });
 
-  // Obtén el id del usuario autenticado
   const usuario_id = localStorage.getItem("id");
+
+  useEffect(() => {
+    axiosClient.get("/api/productos")
+      .then(res => setProductos(res.data));
+  }, []);
+
+  // Filtrado de productos (insensible a mayúsculas/minúsculas y espacios)
+  const productosFiltrados = productos.filter(producto => {
+    if (
+      filtros.categoria &&
+      producto.categoria?.toLowerCase().trim() !== filtros.categoria.toLowerCase().trim()
+    ) return false;
+    if (
+      filtros.color &&
+      producto.color?.toLowerCase().trim() !== filtros.color.toLowerCase().trim()
+    ) return false;
+    if (
+      filtros.talla &&
+      String(producto.talla).toLowerCase().trim() !== String(filtros.talla).toLowerCase().trim()
+    ) return false;
+    // ...otros filtros
+    return true;
+  });
 
   return (
     <div className="px-6 md:px-12 lg:px-20 py-10 space-y-12 relative">

@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axion";
 
-export const FiltrosProducto = ({ onFiltrar }) => {
-  const [filtros, setFiltros] = useState({
-    nombre: "",
-    tipo: "",
-    genero: "",
-  });
+export const FiltrosProducto = (props) => {
+  const { filtros, setFiltros } = props;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     const nuevosFiltros = { ...filtros, [name]: value };
     setFiltros(nuevosFiltros);
-    onFiltrar(nuevosFiltros);
   };
 
   return (
@@ -35,6 +30,24 @@ export const FiltrosProducto = ({ onFiltrar }) => {
         <option value="Femenino">Femenino</option>
         <option value="Masculino">Masculino</option>
         <option value="Unisex">Unisex</option>
+      </select>
+      <select
+        value={filtros.categoria}
+        onChange={e => setFiltros(f => ({ ...f, categoria: e.target.value }))}
+        className="border p-2 rounded"
+      >
+        <option value="">Todas las categorías</option>
+        <option value="zapatillas">Zapatillas</option>
+        <option value="botas">Botas</option>
+      </select>
+      <select
+        value={filtros.color}
+        onChange={e => setFiltros(f => ({ ...f, color: e.target.value }))}
+        className="border p-2 rounded"
+      >
+        <option value="">Todos los colores</option>
+        <option value="azul">Azul</option>
+        <option value="rojo">Rojo</option>
       </select>
     </div>
   );
@@ -62,4 +75,6 @@ const filtrarProductos = (productos, filtros) => {
     return true;
   });
 };
+
+export default FiltrosProducto;
 
