@@ -1,74 +1,63 @@
-// ParticlesBackground.jsx
-import { useCallback } from "react";
+import React from "react";
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
 
 export const ParticlesBackground = () => {
-  const particlesInit = useCallback(async (engine) => {
+  const particlesInit = async (engine) => {
     await loadSlim(engine);
-  }, []);
+  };
 
   return (
     <Particles
-      id="tsparticles"
       init={particlesInit}
+      className="absolute top-0 left-0 w-full h-full -z-10"
       options={{
-        fullScreen: {
-          enable: true,
-          zIndex: -1,
-        },
-        background: {
-          color: {
-            value: "#ffffff00", // fondo transparente
-          },
-        },
+        fullScreen: false,
+        background: { color: { value: "#ffffff" } },
+        fpsLimit: 60,
         particles: {
           number: {
-            value: 60,
-            density: {
-              enable: true,
-              area: 800,
-            },
+            value: 140,
+            density: { enable: true, area: 700 },
           },
           color: {
-            value: ["#fbcfe8", "#f9a8d4", "#a7f3d0", "#fef9c3"], // colores suaves
+            value: ["#f472b6", "#93c5fd", "#c4b5fd", "#6ee7b7", "#fdba74"], // rosa, azul, lila, menta, durazno
           },
-          shape: {
-            type: "circle",
-          },
+          shape: { type: "circle" },
           opacity: {
-            value: 0.6,
+            value: 0.5,
+            random: true,
           },
           size: {
-            value: { min: 2, max: 5 },
+            value: { min: 2, max: 6 },
+            random: true,
           },
           move: {
             enable: true,
-            speed: 0.6,
+            speed: 1.5,
             direction: "none",
-            outModes: {
-              default: "bounce",
-            },
+            outModes: { default: "out" },
+            straight: false,
+          },
+          links: {
+            enable: false,
           },
         },
         interactivity: {
           events: {
             onHover: {
               enable: true,
-              mode: "repulse",
+              mode: "repulse", // efecto al pasar el mouse
             },
             onClick: {
-              enable: true,
-              mode: "push",
+              enable: false,
             },
+            resize: true,
           },
           modes: {
             repulse: {
               distance: 80,
-              duration: 0.5,
-            },
-            push: {
-              quantity: 4,
+              duration: 0.3,
             },
           },
         },

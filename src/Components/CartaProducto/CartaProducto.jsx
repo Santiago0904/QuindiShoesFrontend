@@ -151,7 +151,7 @@ export const CartaProducto = ({ producto }) => {
           src={imagenPrincipal}
           alt={producto.nombre_producto}
           crossOrigin="anonymous"
-          className="w-full h-48 object-contain mb-3 rounded-2xl bg-white transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-48 object-contain mb-3 rounded-2xl bg-transparent mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
         />
 
         <button

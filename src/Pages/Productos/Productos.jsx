@@ -5,47 +5,50 @@ import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FiltrosProducto } from "../../Components/FiltrosProducto/FiltrosProducto";
+import { motion } from "framer-motion";
+import { ParticlesBackground } from "../../Components/Particulas/ParticlesBackground";
 
-const STOCK_MINIMO = 5;
-
-// Componente de carta para cada producto (panel de control)
 const ProductoCard = ({ producto, onDelete, onUpdate }) => {
   const navigate = useNavigate();
-  // Imagen principal
   const imagenPrincipal =
     producto.imagenes && producto.imagenes.length > 0
       ? producto.imagenes[0]
       : "https://via.placeholder.com/300x200?text=Sin+Imagen";
 
-  // Nueva función para navegar solo si se hace click fuera de los botones
   const handleCardClick = (e) => {
-    // Si el click fue en un botón, no navegar
     if (e.target.closest("button")) return;
     navigate(`/producto/${producto.id_producto}/variantes`);
   };
 
   return (
-    <div
-      className="bg-white rounded-xl shadow-md p-4 flex flex-col items-start w-full max-w-xs mx-auto"
+    <motion.div
+      layout
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.98 }}
+      className="rounded-3xl p-4 bg-gradient-to-tr from-white to-pink-50 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
       onClick={handleCardClick}
-      style={{ cursor: "pointer" }}
     >
+        <ParticlesBackground />
       <img
         src={imagenPrincipal}
         alt={producto.nombre_producto}
-        className="w-full h-40 object-cover rounded-md mb-3"
+        className="w-full h-48 object-contain rounded-xl mb-4"
       />
-      <h3 className="text-lg font-bold">{producto.nombre_producto}</h3>
-      <p>Tipo: {producto.tipo_producto}</p>
-      <p>Género: {producto.genero_producto}</p>
-      <p>Precio: ${producto.precio_producto}</p>
-      <div className="flex gap-3 mt-3">
+      <h3 className="text-lg font-semibold text-pink-600">
+        {producto.nombre_producto}
+      </h3>
+      <p className="text-sm text-gray-500">Tipo: {producto.tipo_producto}</p>
+      <p className="text-sm text-gray-500">Género: {producto.genero_producto}</p>
+      <p className="text-md text-emerald-600 font-semibold">
+        ${producto.precio_producto.toLocaleString("es-CO")}
+      </p>
+      <div className="flex gap-3 mt-4">
         <button
           onClick={(e) => {
             e.stopPropagation();
             onUpdate();
           }}
-          className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 flex items-center gap-1"
+          className="flex items-center gap-1 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-full shadow-sm"
         >
           <FaEdit /> Actualizar
         </button>
@@ -54,16 +57,15 @@ const ProductoCard = ({ producto, onDelete, onUpdate }) => {
             e.stopPropagation();
             onDelete();
           }}
-          className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 flex items-center gap-1"
+          className="flex items-center gap-1 px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm rounded-full shadow-sm"
         >
           <FaTrash /> Eliminar
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
-// Lista de productos (panel de control)
 export const ListaProductos = () => {
   const [productos, setProductos] = useState([]);
   const [productoEditar, setProductoEditar] = useState(null);
@@ -137,24 +139,20 @@ export const ListaProductos = () => {
     window.location.href = "/nuevoProducto";
   };
 
-  // Lógica de filtrado
   const filtrarProductos = (productos, filtros) => {
     return productos.filter(producto => {
       if (
         filtros.nombre &&
         !producto.nombre_producto.toLowerCase().includes(filtros.nombre.toLowerCase())
-      )
-        return false;
+      ) return false;
       if (
         filtros.tipo &&
         producto.tipo_producto.trim().toLowerCase() !== filtros.tipo.trim().toLowerCase()
-      )
-        return false;
+      ) return false;
       if (
         filtros.genero &&
         producto.genero_producto.trim().toLowerCase() !== filtros.genero.trim().toLowerCase()
-      )
-        return false;
+      ) return false;
       return true;
     });
   };
@@ -162,22 +160,25 @@ export const ListaProductos = () => {
   const productosFiltrados = filtrarProductos(productos, filtros);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-12 px-4 sm:px-8">
-      <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-3xl p-8">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-extrabold text-blue-600">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen relative py-12 px-4 sm:px-8 overflow-hidden"
+    >
+      <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-3xl p-10">
+        <div className="flex justify-between items-center mb-10">
+          <h2 className="text-4xl font-extrabold text-pink-600">
             Productos Disponibles
           </h2>
           <button
             onClick={redirigirFormulario}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+            className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-all shadow-md"
           >
             <FaPlus /> Nuevo Producto
           </button>
         </div>
         <FiltrosProducto onFiltrar={setFiltros} />
-        {/* Grid de productos */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 mt-8">
           {productosFiltrados.map((producto) => (
             <ProductoCard
               key={producto.id_producto}
@@ -187,7 +188,6 @@ export const ListaProductos = () => {
             />
           ))}
         </div>
-        {/* Modal para actualizar producto */}
         {mostrarModal && (
           <ModalActualizarProducto
             producto={productoEditar}
@@ -196,6 +196,6 @@ export const ListaProductos = () => {
           />
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
