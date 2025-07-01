@@ -38,6 +38,9 @@ import { MetricasPages } from './Pages/MetricasPage/MetricasPages'
 import { Favoritos } from './Pages/Favoritos/Favoritos'
 import ScrollToTop from './Components/ScrollTop/ScrollTop'
 import { Accesibilidad } from './Components/Accesibilidad/Accesibilidad'
+import { Nosotros } from './Pages/Nosotros/Nosotros'
+import { AnimatePresence } from "framer-motion";
+import { PageWrapper } from './Components/PageWrapper/PageWrapper'
 function App() {
   const location = useLocation();
   const rutaActual = location.pathname.toLowerCase();
@@ -71,38 +74,41 @@ function App() {
       <div className="relative min-h-screen flex flex-col">
         <div className="flex-1 flex flex-col">
          <ScrollToTop />
-          <Routes>
-            {/* rutas */}
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/recuperarcontrasena" element={<EmailPage />} />
-            <Route path="/reiniciarcontrasena" element={<PasswordPage />} />
-            <Route path="/nuevoProducto" element={<NewProduct />} />
-            <Route path="/productos" element={<ListaProductos />} />
-            <Route path="/material" element={<MaterialNewForm />} />
-            <Route path="/color" element={<ColorNewForm />} />
-            <Route path="/zona" element={<ZonaNewForm />} />
-            <Route path="/empleados" element={<RegisterEmpledos />} />
-            <Route path="/listaempleados" element={<ListaEmpleados />} />
-            <Route path="/panelcontrol" element={<PanelControl />} />
-            <Route path="/carrito" element={<Carrito />} />
-            <Route path="/listamateriales" element={<ListaMateriales />} />
-            <Route path="/listacolores" element={<ListaColores />} />
-            <Route path="/listazonas" element={<ListaZonas />} />
-            <Route path="/respuestapago" element={<RespuestaPago />} />
-            <Route path="/metricas" element={<MetricasPages />} />
-            <Route path="/productodetalladopages" element={<ProductoDetalladoPages />} />
-            <Route path="/historialfacturas" element={<HistorialFacturas />} />
-            <Route path="/confirmacion" element={<Confirmacion />} />
-            <Route path="/perfil" element={<Perfil />} />
-            <Route path="/validarcorreo" element={<VerificarCorreo />} />
-            <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
-            <Route path="/juego" element={<Juego />} />
-            <Route path="/producto/:id" element={<DetalleProducto />} />
-            <Route path="/producto/:id/variantes" element={<VariantesProducto />} />
-            <Route path="/favoritos" element={<Favoritos />} />
-          </Routes>
+            <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/nosotros" element={<PageWrapper><Nosotros /></PageWrapper>} />
+          <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
+          <Route path="/register" element={<PageWrapper><Register /></PageWrapper>} />
+          <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
+          <Route path="/recuperarcontrasena" element={<PageWrapper><EmailPage /></PageWrapper>} />
+          <Route path="/reiniciarcontrasena" element={<PageWrapper><PasswordPage /></PageWrapper>} />
+          <Route path="/nuevoProducto" element={<PageWrapper><NewProduct /></PageWrapper>} />
+          <Route path="/productos" element={<PageWrapper><ListaProductos /></PageWrapper>} />
+          <Route path="/material" element={<PageWrapper><MaterialNewForm /></PageWrapper>} />
+          <Route path="/color" element={<PageWrapper><ColorNewForm /></PageWrapper>} />
+          <Route path="/zona" element={<PageWrapper><ZonaNewForm /></PageWrapper>} />
+          <Route path="/empleados" element={<PageWrapper><RegisterEmpledos /></PageWrapper>} />
+          <Route path="/listaempleados" element={<PageWrapper><ListaEmpleados /></PageWrapper>} />
+          <Route path="/panelcontrol" element={<PageWrapper><PanelControl /></PageWrapper>} />
+          <Route path="/carrito" element={<PageWrapper><Carrito /></PageWrapper>} />
+          <Route path="/listamateriales" element={<PageWrapper><ListaMateriales /></PageWrapper>} />
+          <Route path="/listacolores" element={<PageWrapper><ListaColores /></PageWrapper>} />
+          <Route path="/listazonas" element={<PageWrapper><ListaZonas /></PageWrapper>} />
+          <Route path="/respuestapago" element={<PageWrapper><RespuestaPago /></PageWrapper>} />
+          <Route path="/rechazada" element={<PageWrapper><Rechazada /></PageWrapper>} />
+          <Route path="/confirmacion" element={<PageWrapper><Confirmacion /></PageWrapper>} />
+          <Route path="/perfil" element={<PageWrapper><Perfil /></PageWrapper>} />
+          <Route path="/validarcorreo" element={<PageWrapper><VerificarCorreo /></PageWrapper>} />
+          <Route path="/esperando-confirmacion" element={<PageWrapper><EsperandoConfirmacion /></PageWrapper>} />
+          <Route path="/productodetalladopages" element={<PageWrapper><ProductoDetalladoPages /></PageWrapper>} />
+          <Route path="/juego" element={<PageWrapper><Juego /></PageWrapper>} />
+          <Route path="/producto/:id" element={<PageWrapper><DetalleProducto /></PageWrapper>} />
+          <Route path="/producto/:id/variantes" element={<PageWrapper><VariantesProducto /></PageWrapper>} />
+          <Route path="/historialfacturas" element={<PageWrapper><HistorialFacturas /></PageWrapper>} />
+          <Route path="/metricas" element={<PageWrapper><MetricasPages /></PageWrapper>} />
+          <Route path="/favoritos" element={<PageWrapper><Favoritos /></PageWrapper>} />
+        </Routes>
+      </AnimatePresence>
         </div>
       </div>
 
