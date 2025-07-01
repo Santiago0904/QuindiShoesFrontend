@@ -7,7 +7,7 @@ import fondoVideo from '../../assets/images/202505231554.mp4';
 import Ecos_Freneticos from '../../assets/sounds/Ecos_Freneticos.mp3';
 import axiosClient from '../../api/axion';
 
-export default function FlappyBirdGame({onGameOver}) {
+export default function FlappyBirdGame({ onGameOver }) {
   const [gameState, setGameState] = useState('Start');
   const [birdY, setBirdY] = useState(40);
   const [pipes, setPipes] = useState([]);
@@ -15,6 +15,7 @@ export default function FlappyBirdGame({onGameOver}) {
   const scoreRef = useRef(0);
   const [birdSrc, setBirdSrc] = useState(birdImg);
   const [videoReverse, setVideoReverse] = useState(false);
+  const [descuentoMsg, setDescuentoMsg] = useState(null);
 
   const velocityRef = useRef(0);
   const birdYRef = useRef(40);
@@ -29,6 +30,40 @@ export default function FlappyBirdGame({onGameOver}) {
   const ecosFreneticosAudio = useRef(new Audio(Ecos_Freneticos));
   const gameOverRef = useRef(false);
 
+
+  function checkAndSetDescuento(score) {
+  const token = localStorage.getItem("token");
+  if (!token) return;
+
+  const payload = JSON.parse(atob(token.split('.')[1]));
+  const usuarioId = payload.id || payload.data?.id;
+  if (!usuarioId) return;
+
+  const niveles = [
+    { puntos: 5, porcentaje: 5 },
+    { puntos: 10, porcentaje: 10 },
+    { puntos: 15, porcentaje: 15 },
+  ];
+
+  let nuevoDescuento = 0;
+  for (const n of niveles) {
+    if (score >= n.puntos) nuevoDescuento = n.porcentaje;
+  }
+  if (nuevoDescuento === 0) return;
+
+  const key = `descuento_max_${usuarioId}`;
+  const guardado = parseInt(localStorage.getItem(key) || "0", 10);
+
+  if (nuevoDescuento > guardado) {
+    localStorage.setItem(key, nuevoDescuento.toString());
+    setDescuentoMsg(
+      guardado === 0
+        ? `¡Felicidades! Has conseguido un ${nuevoDescuento}% de descuento.`
+        : `¡Genial! Tu descuento ha mejorado a ${nuevoDescuento}%.`
+    );
+  }
+}
+
   useEffect(() => {
     dieSound.current.load();
     ecosFreneticosAudio.current.load();
@@ -38,21 +73,21 @@ export default function FlappyBirdGame({onGameOver}) {
     scoreRef.current = score;
   }, [score]);
 
-const guardarPuntuacion = async (puntuacion) => {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+  const guardarPuntuacion = async (puntuacion) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
-    // Decodifica el payload del JWT para obtener el usuarioId
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const usuarioId = payload.id || payload.data?.id;
-    if (!usuarioId) return;
+      // Decodifica el payload del JWT para obtener el usuarioId
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const usuarioId = payload.id || payload.data?.id;
+      if (!usuarioId) return;
 
-    await axiosClient.post("/juego", { usuarioId, puntuacion });
-  } catch (error) {
-    console.error("Error al guardar puntuación:", error);
-  }
-};
+      await axiosClient.post("/juego", { usuarioId, puntuacion });
+    } catch (error) {
+      console.error("Error al guardar puntuación:", error);
+    }
+  };
 
   const gravity = 0.1;
   const flapPower = -1.5;
@@ -176,6 +211,7 @@ const gameOver = () => {
   }
 
   guardarPuntuacion(scoreRef.current);    
+  checkAndSetDescuento(scoreRef.current);
   if (typeof onGameOver === 'function') {
       onGameOver();
     }};
@@ -258,9 +294,6 @@ const gameLoop = () => {
 
   animationFrameRef.current = requestAnimationFrame(gameLoop);
 };
-
-// ... (el resto igual)
-
 
   useEffect(() => {
   if (score > 0 && score % 10 === 0) {
@@ -394,7 +427,19 @@ return (
           )}
         </div>
       )}
+      {descuentoMsg && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-[9999] bg-black bg-opacity-40 animate-fade-in"
+          onClick={() => setDescuentoMsg(null)}
+        >
+          <div className="bg-white rounded-xl shadow-2xl p-8 text-2xl text-center animate-bounce">
+            {descuentoMsg}
+            <div className="mt-4 text-base text-gray-500">(Haz clic para cerrar)</div>
+          </div>
+        </div>
+      )}
     </div>
 );
-
 }
+
+
