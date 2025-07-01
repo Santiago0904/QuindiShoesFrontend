@@ -20,11 +20,13 @@ export const ListaEmpleados = () => {
     axiosClient
       .get("/empleado")
       .then((res) => setEmpleados(res.data))
-      .catch((err) => {
+      .catch(() => {
         Swal.fire({
           icon: "error",
           title: "Error",
           text: "No se pudieron cargar los empleados.",
+          background: "#F9FAFB",
+          confirmButtonColor: "#047857", // emerald-700
         });
       });
   };
@@ -35,11 +37,11 @@ export const ListaEmpleados = () => {
       text: "El empleado será eliminado permanentemente.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#f472b6",
-      cancelButtonColor: "#a7f3d0",
+      confirmButtonColor: "#E11D48", // rose-600
+      cancelButtonColor: "#D1FAE5", // emerald-100
       confirmButtonText: "Sí, eliminar",
       cancelButtonText: "Cancelar",
-      background: "#fff1f2",
+      background: "#F9FAFB",
     }).then((result) => {
       if (result.isConfirmed) {
         const token = localStorage.getItem("token");
@@ -52,8 +54,8 @@ export const ListaEmpleados = () => {
               icon: "success",
               title: "Eliminado",
               text: "El empleado ha sido eliminado.",
-              confirmButtonColor: "#a7f3d0",
-              background: "#f0fff4",
+              background: "#F0FFF4",
+              confirmButtonColor: "#059669", // emerald-600
               timer: 1200,
               showConfirmButton: false,
             });
@@ -64,8 +66,8 @@ export const ListaEmpleados = () => {
               icon: "error",
               title: "Error",
               text: "No se pudo eliminar el empleado.",
-              confirmButtonColor: "#fda4af",
-              background: "#fff1f2",
+              background: "#F9FAFB",
+              confirmButtonColor: "#047857", // emerald-700
             });
           });
       }
@@ -88,13 +90,13 @@ export const ListaEmpleados = () => {
   return (
     <>
       <div className="flex justify-between items-center mb-10">
-        <h2 className="text-4xl font-extrabold text-pink-400 drop-shadow">
+        <h2 className="text-4xl font-extrabold text-emerald-700 drop-shadow">
           Empleados
         </h2>
         {!mostrarFormulario && (
           <button
             onClick={() => setMostrarFormulario(true)}
-            className="bg-pink-200 text-pink-700 font-bold p-4 rounded-full shadow-xl hover:scale-110 transition-all border-2 border-pink-300"
+            className="bg-emerald-200 text-emerald-800 font-bold p-4 rounded-full shadow-xl hover:scale-110 transition-all border-2 border-emerald-300"
             title="Agregar Empleado"
           >
             <FaPlus />
@@ -106,33 +108,39 @@ export const ListaEmpleados = () => {
         {mostrarFormulario && (
           <motion.div
             key="formulario"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 40 }}
-            className="max-w-3xl mx-auto bg-gray-100 rounded-3xl shadow-2xl p-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
           >
-            <FormEmpleados
-              onSuccess={() => {
-                Swal.fire({
-                  icon: "success",
-                  title: "Empleado agregado",
-                  text: "El empleado fue registrado correctamente.",
-                  confirmButtonColor: "#22c55e",
-                  background: "#f3f4f6",
-                  timer: 1400,
-                  showConfirmButton: false,
-                });
-                cargarEmpleados();
-                setMostrarFormulario(false);
-              }}
-              modo="agregar"
-            />
-            <button
-              onClick={() => setMostrarFormulario(false)}
-              className="w-full mt-4 bg-pink-200 text-pink-700 px-6 py-2 rounded-lg shadow hover:bg-pink-300 transition-all font-semibold"
-            >
-              Cancelar
-            </button>
+            <div className="w-full max-w-3xl">
+              <FormEmpleados
+                onSuccess={() => {
+                  Swal.fire({
+                    icon: "success",
+                    title: "Empleado agregado",
+                    text: "El empleado fue registrado correctamente.",
+                    confirmButtonColor: "#059669", // emerald-600
+                    background: "#F9FAFB",
+                    timer: 1400,
+                    showConfirmButton: false,
+                  });
+                  cargarEmpleados();
+                  setMostrarFormulario(false);
+                }}
+                modo="agregar"
+              />
+              <div className="flex justify-center mt-4">
+                <motion.button
+                  onClick={() => setMostrarFormulario(false)}
+                  className="bg-gray-200 text-gray-700 px-6 py-2 rounded-full shadow font-semibold text-sm hover:bg-gray-300 transition-all"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Cancelar
+                </motion.button>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -144,15 +152,15 @@ export const ListaEmpleados = () => {
             initial={{ opacity: 0, y: 40, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="bg-white rounded-3xl shadow-xl border border-pink-100 p-8 flex flex-col gap-4"
+            className="bg-white rounded-3xl shadow-lg border border-gray-200 p-8 flex flex-col gap-4"
           >
             <div>
               <div className="flex items-center gap-4 mb-2">
-                <div className="bg-pink-200 rounded-full w-14 h-14 flex items-center justify-center text-2xl font-bold text-pink-500 shadow">
+                <div className="bg-emerald-100 rounded-full w-14 h-14 flex items-center justify-center text-2xl font-bold text-emerald-700 shadow">
                   {empleado.nombre?.charAt(0)?.toUpperCase()}
                 </div>
                 <div>
-                  <div className="font-bold text-lg text-pink-700">
+                  <div className="font-bold text-lg text-emerald-800">
                     {empleado.nombre} {empleado.apellido}
                   </div>
                   <div className="text-xs text-gray-400">
@@ -163,19 +171,19 @@ export const ListaEmpleados = () => {
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
                   <span className="block text-gray-500">Correo</span>
-                  <span className="block text-green-700">{empleado.correo}</span>
+                  <span className="block text-gray-800">{empleado.correo}</span>
                 </div>
                 <div>
                   <span className="block text-gray-500">Teléfono</span>
-                  <span className="block text-green-700">{empleado.telefono}</span>
+                  <span className="block text-gray-800">{empleado.telefono}</span>
                 </div>
                 <div>
                   <span className="block text-gray-500">Dirección</span>
-                  <span className="block text-pink-500">{empleado.direccion}</span>
+                  <span className="block text-gray-700">{empleado.direccion}</span>
                 </div>
                 <div>
                   <span className="block text-gray-500">Rol</span>
-                  <span className="block text-emerald-600 font-semibold">
+                  <span className="block text-emerald-700 font-semibold">
                     {empleado.rol}
                   </span>
                 </div>
@@ -184,13 +192,13 @@ export const ListaEmpleados = () => {
             <div className="flex gap-2 mt-2">
               <button
                 onClick={() => handleActualizar(empleado)}
-                className="bg-green-200 text-green-900 px-4 py-2 rounded-lg hover:bg-green-300 transition-all shadow font-semibold flex items-center gap-2"
+                className="bg-emerald-100 text-emerald-900 px-4 py-2 rounded-lg hover:bg-emerald-200 transition-all shadow font-semibold flex items-center gap-2"
               >
                 <FaEdit /> Actualizar
               </button>
               <button
                 onClick={() => handleEliminar(empleado.id_usuario)}
-                className="bg-pink-200 text-pink-900 px-4 py-2 rounded-lg hover:bg-pink-300 transition-all shadow font-semibold flex items-center gap-2"
+                className="bg-rose-100 text-rose-800 px-4 py-2 rounded-lg hover:bg-rose-200 transition-all shadow font-semibold flex items-center gap-2"
               >
                 <FaTrash /> Eliminar
               </button>

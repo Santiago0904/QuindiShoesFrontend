@@ -2,7 +2,15 @@ import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axion";
 
 export const FiltrosProducto = (props) => {
-  const { filtros, setFiltros } = props;
+  const [filtros, setFiltros] = useState({
+  nombre: "",
+  tipo: "",
+  genero: "",
+  categoria: "",
+  color: "",
+  talla: "",
+  stock: "",
+});
 
   const handleChange = (e) => {
     const { name, value } = e.target;

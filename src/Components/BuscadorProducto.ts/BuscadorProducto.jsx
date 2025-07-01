@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
 import { MostrarProducto } from "../CartaProducto/CartaProducto";
 
 export const BuscadorProductos = () => {
@@ -19,9 +20,7 @@ export const BuscadorProductos = () => {
     obtenerTodosLosProductos();
   }, []);
 
-  // Buscar productos en el backend cuando cambian los filtros o el nombre
   useEffect(() => {
-    // Si no hay ningún filtro ni nombre, muestra todos los productos
     if (
       !nombre &&
       !filtros.tipo &&
@@ -35,7 +34,6 @@ export const BuscadorProductos = () => {
       return;
     }
     buscarProductos();
-    // eslint-disable-next-line
   }, [nombre, filtros]);
 
   const obtenerTodosLosProductos = async () => {
@@ -81,86 +79,97 @@ export const BuscadorProductos = () => {
         </button>
       </div>
 
-      {mostrarFiltros && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 bg-white/80 rounded-xl p-4 shadow-inner">
-          {/* Tipo */}
-          <select
-            name="tipo"
-            value={filtros.tipo}
-            onChange={handleInputChange}
-            className="rounded-xl px-4 py-2 border border-green-200 shadow-sm bg-white focus:border-green-400 focus:ring-2 focus:ring-green-100 transition"
-          >
-            <option value="">Tipo</option>
-            <option value="zapatilla">Zapatilla</option>
-            <option value="bota">Bota</option>
-            <option value="sandalia">Sandalia</option>
-            {/* Agrega más tipos según tu catálogo */}
-          </select>
-          {/* Precio mínimo */}
-          <input
-            name="precioMin"
-            type="number"
-            placeholder="Precio mínimo"
-            value={filtros.precioMin}
-            onChange={handleInputChange}
-            className="rounded-xl px-4 py-2 border border-green-200 shadow-sm bg-white focus:border-green-400 focus:ring-2 focus:ring-green-100 transition"
-          />
-          {/* Precio máximo */}
-          <input
-            name="precioMax"
-            type="number"
-            placeholder="Precio máximo"
-            value={filtros.precioMax}
-            onChange={handleInputChange}
-            className="rounded-xl px-4 py-2 border border-green-200 shadow-sm bg-white focus:border-green-400 focus:ring-2 focus:ring-green-100 transition"
-          />
-          {/* Color */}
-          <select
-            name="color"
-            value={filtros.color}
-            onChange={handleInputChange}
-            className="rounded-xl px-4 py-2 border border-pink-200 shadow-sm bg-white focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition"
-          >
-            <option value="">Color</option>
-            <option value="Azul">Azul</option>
-            <option value="Rojo">Rojo</option>
-            <option value="Negro">Negro</option>
-            <option value="Blanco">Blanco</option>
-            {/* Agrega más colores según tu catálogo */}
-          </select>
-          {/* Género */}
-          <select
-            name="genero"
-            value={filtros.genero}
-            onChange={handleInputChange}
-            className="rounded-xl px-4 py-2 border border-pink-200 shadow-sm bg-white focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition"
-          >
-            <option value="">Género</option>
-            <option value="Hombre">Hombre</option>
-            <option value="Mujer">Mujer</option>
-            <option value="Unisex">Unisex</option>
-          </select>
-          {/* Talla */}
-          <select
-            name="talla"
-            value={filtros.talla}
-            onChange={handleInputChange}
-            className="rounded-xl px-4 py-2 border border-green-200 shadow-sm bg-white focus:border-green-400 focus:ring-2 focus:ring-green-100 transition"
-          >
-            <option value="">Talla</option>
-            <option value="34">34</option>
-            <option value="35">35</option>
-            <option value="36">36</option>
-            <option value="37">37</option>
-            <option value="38">38</option>
-            <option value="39">39</option>
-            <option value="40">40</option>
-            <option value="41">41</option>
-            <option value="42">42</option>
-            {/* Agrega más tallas según tu catálogo */}
-          </select>
-        </div>
-      )}
+     <AnimatePresence>
+  {mostrarFiltros && (
+    <motion.div
+      key="filtros"
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: "auto" }}
+      exit={{ opacity: 0, height: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+      className="overflow-hidden grid grid-cols-2 md:grid-cols-3 gap-4 bg-white/80 rounded-xl p-4 shadow-inner"
+    >
+      {/* Tipo */}
+      <select
+        name="tipo"
+        value={filtros.tipo}
+        onChange={handleInputChange}
+        className="rounded-xl px-4 py-2 border border-green-200 shadow-sm bg-white focus:border-green-400 focus:ring-2 focus:ring-green-100 transition"
+      >
+        <option value="">Tipo</option>
+        <option value="zapatilla">Zapatilla</option>
+        <option value="bota">Bota</option>
+        <option value="sandalia">Sandalia</option>
+      </select>
+
+      {/* Precio mínimo */}
+      <input
+        name="precioMin"
+        type="number"
+        placeholder="Precio mínimo"
+        value={filtros.precioMin}
+        onChange={handleInputChange}
+        className="rounded-xl px-4 py-2 border border-green-200 shadow-sm bg-white focus:border-green-400 focus:ring-2 focus:ring-green-100 transition"
+      />
+
+      {/* Precio máximo */}
+      <input
+        name="precioMax"
+        type="number"
+        placeholder="Precio máximo"
+        value={filtros.precioMax}
+        onChange={handleInputChange}
+        className="rounded-xl px-4 py-2 border border-green-200 shadow-sm bg-white focus:border-green-400 focus:ring-2 focus:ring-green-100 transition"
+      />
+
+      {/* Color */}
+      <select
+        name="color"
+        value={filtros.color}
+        onChange={handleInputChange}
+        className="rounded-xl px-4 py-2 border border-pink-200 shadow-sm bg-white focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition"
+      >
+        <option value="">Color</option>
+        <option value="Azul">Azul</option>
+        <option value="Rojo">Rojo</option>
+        <option value="Negro">Negro</option>
+        <option value="Blanco">Blanco</option>
+      </select>
+
+      {/* Género */}
+      <select
+        name="genero"
+        value={filtros.genero}
+        onChange={handleInputChange}
+        className="rounded-xl px-4 py-2 border border-pink-200 shadow-sm bg-white focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition"
+      >
+        <option value="">Género</option>
+        <option value="Hombre">Hombre</option>
+        <option value="Mujer">Mujer</option>
+        <option value="Unisex">Unisex</option>
+      </select>
+
+      {/* Talla */}
+      <select
+        name="talla"
+        value={filtros.talla}
+        onChange={handleInputChange}
+        className="rounded-xl px-4 py-2 border border-green-200 shadow-sm bg-white focus:border-green-400 focus:ring-2 focus:ring-green-100 transition"
+      >
+        <option value="">Talla</option>
+        <option value="34">34</option>
+        <option value="35">35</option>
+        <option value="36">36</option>
+        <option value="37">37</option>
+        <option value="38">38</option>
+        <option value="39">39</option>
+        <option value="40">40</option>
+        <option value="41">41</option>
+        <option value="42">42</option>
+      </select>
+    </motion.div>
+  )}
+</AnimatePresence>
 
       <MostrarProducto productosProp={productos} />
     </div>
