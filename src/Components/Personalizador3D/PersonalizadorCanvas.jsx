@@ -36,12 +36,13 @@ function renderNode(node, colores, personalizacion) {
     </group>
   );
 }
+useGLTF.preload("https://res.cloudinary.com/dwdjlk9lv/image/upload/v1751481715/nike_shoes_hupdgv.glb");
 
 
 // ✅ AQUI: forwardRef para exponer el canvas
 const PersonalizadorCanvas = forwardRef((props, ref) => {
   const containerRef = useRef(null);
-  const {scene} = useGLTF("models/nike_shoes.glb");
+  const {scene} = useGLTF("https://res.cloudinary.com/dwdjlk9lv/image/upload/v1751481715/nike_shoes_hupdgv.glb");
   const { personalizacion, colores} = GuardarPersonalizado();
 
   // ✅ Esto permite que el padre acceda al <canvas>

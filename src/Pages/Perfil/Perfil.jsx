@@ -48,9 +48,12 @@ const Perfil = () => {
   return (
     // Main wrapper for the entire Perfil page
     // Using pastel pink/purple background colors
-    <div className="relative min-h-screen overflow-hidden flex flex-col">
+    <div className="relative min-h-screen flex flex-col">
       {/* WavesBackground fixed to the bottom */}
-      <WavesBackground2 /> {/* Using WavesBackground2 as per your latest code */}
+      <div className="pt-30">
+        <WavesBackground2 /> 
+      </div>
+      {/* Using WavesBackground2 as per your latest code */}
 
       {/* Main content area, flex-grow to take available space, relative z-index to appear above waves */}
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
