@@ -11,8 +11,8 @@ export const Header = () => {
         <h1 className="text-3xl font-black text-gray-800">QuindiShoes</h1>
         <nav className="hidden md:flex space-x-10 font-semibold text-gray-700">
           <NavLink to="/" className="hover:text-black">Inicio</NavLink>
-          <NavLink to="/" className="hover:text-black">Productos</NavLink>
           <NavLink to="/juego" className="hover:text-black">VideoJuego</NavLink>
+          <NavLink to="/nosotros" className="hover:text-black">Nosotros</NavLink>
         </nav>
         <div className="flex items-center space-x-6">
           <NavLink to="/favoritos" className="text-xl text-gray-600 hover:text-pink-400">

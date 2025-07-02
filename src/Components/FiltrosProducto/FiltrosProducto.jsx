@@ -1,21 +1,18 @@
-    import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axiosClient from "../../api/axion";
 
-export const FiltrosProductos = ({ onFilterChange }) => {
+export const FiltrosProducto = ({ onFiltrar }) => {
   const [filtros, setFiltros] = useState({
     nombre: "",
     tipo: "",
     genero: "",
-    stock: "",
-    talla: "",
-    precio: "",
-    color: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     const nuevosFiltros = { ...filtros, [name]: value };
     setFiltros(nuevosFiltros);
-    onFilterChange(nuevosFiltros);
+    onFiltrar(nuevosFiltros);
   };
 
   return (
@@ -27,47 +24,42 @@ export const FiltrosProductos = ({ onFilterChange }) => {
         className="border p-2 rounded w-full sm:w-auto"
         onChange={handleChange}
       />
-
       <select name="tipo" className="border p-2 rounded" onChange={handleChange}>
         <option value="">Tipo</option>
         <option value="zapato">Zapato</option>
         <option value="tenis">Tenis</option>
+        <option value="sandalia">Sandalia</option>
       </select>
-
       <select name="genero" className="border p-2 rounded" onChange={handleChange}>
         <option value="">Género</option>
-        <option value="hombre">Hombre</option>
-        <option value="mujer">Mujer</option>
-        <option value="unisex">Unisex</option>
-      </select>
-
-      <select name="stock" className="border p-2 rounded" onChange={handleChange}>
-        <option value="">Stock</option>
-        <option value="asc">Menor a mayor</option>
-        <option value="desc">Mayor a menor</option>
-      </select>
-
-      <select name="talla" className="border p-2 rounded" onChange={handleChange}>
-        <option value="">Talla</option>
-        <option value="36">36</option>
-        <option value="37">37</option>
-        <option value="38">38</option>
-        <option value="39">39</option>
-      </select>
-
-      <select name="precio" className="border p-2 rounded" onChange={handleChange}>
-        <option value="">Precio</option>
-        <option value="asc">Menor a mayor</option>
-        <option value="desc">Mayor a menor</option>
-      </select>
-
-      <select name="color" className="border p-2 rounded" onChange={handleChange}>
-        <option value="">Color</option>
-        <option value="negro">Negro</option>
-        <option value="blanco">Blanco</option>
-        <option value="rojo">Rojo</option>
+        <option value="Femenino">Femenino</option>
+        <option value="Masculino">Masculino</option>
+        <option value="Unisex">Unisex</option>
       </select>
     </div>
   );
+};
+
+// Supón que cada producto tiene un array producto.variaciones
+const filtrarProductos = (productos, filtros) => {
+  return productos.filter(producto => {
+    // Filtros principales
+    if (filtros.nombre && !producto.nombre_producto.toLowerCase().includes(filtros.nombre.toLowerCase())) return false;
+    if (filtros.tipo && producto.tipo_producto !== filtros.tipo) return false;
+    if (filtros.genero && producto.genero_producto !== filtros.genero) return false;
+
+    // Filtros de variaciones
+    if (filtros.talla || filtros.color || filtros.stock) {
+      return producto.variaciones.some(variacion => {
+        if (filtros.talla && variacion.talla !== filtros.talla) return false;
+        if (filtros.color && variacion.color !== filtros.color) return false;
+        if (filtros.stock && filtros.stock === "asc" && variacion.stock <= 0) return false;
+        if (filtros.stock && filtros.stock === "desc" && variacion.stock > 0) return false;
+        return true;
+      });
+    }
+
+    return true;
+  });
 };
 
