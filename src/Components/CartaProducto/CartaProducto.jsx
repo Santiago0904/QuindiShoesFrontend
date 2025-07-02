@@ -66,32 +66,27 @@ export const CartaProducto = ({ producto }) => {
   const imgRef = useRef(null);
 
   const imagenPrincipal =
-  producto.url_imagen ||
-  (producto.imagenes && producto.imagenes.length > 0
-    ? producto.imagenes[0]
-    : "https://via.placeholder.com/300x200?text=Sin+Imagen");
+    producto.url_imagen ||
+    (producto.imagenes?.[0] ?? "https://via.placeholder.com/300x200?text=Sin+Imagen");
 
   const irADetalle = () => navigate(`/producto/${producto.id_producto}`);
 
   useEffect(() => {
     const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
-    setEsFavorito(favoritos.some((p) => p.id_producto === producto.id_producto));
+    setEsFavorito(favoritos.some(p => p.id_producto === producto.id_producto));
   }, [producto.id_producto]);
 
   const toggleFavorito = (e) => {
     e.stopPropagation();
     const favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
-    const yaExiste = favoritos.some((p) => p.id_producto === producto.id_producto);
+    const yaExiste = favoritos.some(p => p.id_producto === producto.id_producto);
 
-    let nuevosFavoritos;
-    if (yaExiste) {
-      nuevosFavoritos = favoritos.filter((p) => p.id_producto !== producto.id_producto);
-    } else {
-      nuevosFavoritos = [...favoritos, producto];
-    }
+    const nuevosFavoritos = yaExiste
+      ? favoritos.filter(p => p.id_producto !== producto.id_producto)
+      : [...favoritos, producto];
+
     localStorage.setItem("favoritos", JSON.stringify(nuevosFavoritos));
     setEsFavorito(!yaExiste);
-
     window.dispatchEvent(new Event("favoritos-updated"));
   };
 
@@ -105,36 +100,22 @@ export const CartaProducto = ({ producto }) => {
       try {
         const color = colorThief.getColor(img);
         const pastel = hacerPastel(color);
-        const rgbString = `rgb(${pastel[0]}, ${pastel[1]}, ${pastel[2]})`;
-        setBgColor(rgbString);
-      } catch (error) {
+        setBgColor(`rgb(${pastel[0]}, ${pastel[1]}, ${pastel[2]})`);
+      } catch {
         setBgColor("#fde8f0");
       }
     };
 
     img.crossOrigin = "anonymous";
-
-    if (img.complete) {
-      onLoad();
-    } else {
-      img.addEventListener("load", onLoad);
-      return () => img.removeEventListener("load", onLoad);
-    }
+    img.complete ? onLoad() : img.addEventListener("load", onLoad);
+    return () => img.removeEventListener("load", onLoad);
   }, [imagenPrincipal]);
 
   useEffect(() => {
-    // Trae las reseñas y calcula el promedio de estrellas
-    axiosClient
-      .get(`/resenaProducto/producto/${producto.id_producto}`)
+    axiosClient.get(`/resenaProducto/producto/${producto.id_producto}`)
       .then(res => {
-        const resenas = res.data || [];
-        const puntuaciones = resenas.map(r => Number(r.puntuacion)).filter(Boolean);
-        if (puntuaciones.length > 0) {
-          const suma = puntuaciones.reduce((a, b) => a + b, 0);
-          setPromedio((suma / puntuaciones.length).toFixed(1));
-        } else {
-          setPromedio(null);
-        }
+        const puntuaciones = (res.data || []).map(r => Number(r.puntuacion)).filter(Boolean);
+        setPromedio(puntuaciones.length > 0 ? (puntuaciones.reduce((a, b) => a + b, 0) / puntuaciones.length).toFixed(1) : null);
       })
       .catch(() => setPromedio(null));
   }, [producto.id_producto]);
@@ -143,69 +124,57 @@ export const CartaProducto = ({ producto }) => {
     <div
       onClick={irADetalle}
       style={{ backgroundColor: bgColor }}
-      className="rounded-3xl p-4 shadow-lg cursor-pointer transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl group border border-white/50 backdrop-blur-md"
+      className="rounded-3xl p-5 shadow-lg cursor-pointer transition-all duration-300 transform hover:scale-[1.015] hover:shadow-2xl border border-white/30 backdrop-blur-md"
     >
-      <div className="relative">
+      <div className="relative group">
         <img
           ref={imgRef}
           src={imagenPrincipal}
           alt={producto.nombre_producto}
-          crossOrigin="anonymous"
-          className="w-full h-48 object-contain mb-3 rounded-2xl bg-white transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-56 object-contain mb-4 rounded-2xl transition-transform duration-300 group-hover:scale-105 mix-blend-multiply"
         />
 
         <button
           onClick={toggleFavorito}
           className="absolute top-3 right-3 bg-white/80 hover:bg-white text-pink-400 hover:text-pink-600 p-2 rounded-full shadow-md transition duration-300 z-10"
-          title={esFavorito ? "Quitar de favoritos" : "Agregar a favoritos"}
         >
-          {esFavorito ? <FaHeart size={20} /> : <FaRegHeart size={20} />}
+          {esFavorito ? <FaHeart size={18} /> : <FaRegHeart size={18} />}
         </button>
 
-        <span className="absolute bottom-3 left-3 bg-green-100 text-green-700 text-xs font-medium px-3 py-1 rounded-full shadow-sm">
+        <span className="absolute bottom-3 left-3 bg-white/60 text-gray-800 text-[11px] font-medium px-2 py-0.5 rounded-full shadow">
           {producto.genero_producto}
         </span>
       </div>
 
-      <div className="space-y-1">
-        <h3 className="text-xl font-semibold text-pink-700 truncate">{producto.nombre_producto}</h3>
-        <p className="text-sm text-pink-400">Tipo: {producto.tipo_producto}</p>
-        <div className="flex items-center justify-between mt-3">
-          <p className="text-lg font-bold text-green-600">${producto.precio_producto}</p>
-          <span className="text-xs text-gray-500 group-hover:text-gray-600">Ver más</span>
+      <div className="space-y-2">
+        <h3 className="text-xl font-semibold text-gray-800 truncate">{producto.nombre_producto}</h3>
+        <p className="text-sm text-gray-500 capitalize">Tipo: {producto.tipo_producto}</p>
+
+        <div className="flex justify-between items-center pt-2">
+          <p className="text-lg font-bold text-green-700">${producto.precio_producto}</p>
+          <span className="text-xs text-gray-600 underline underline-offset-4">Ver más</span>
         </div>
-        {/* Badge y botón de reserva */}
+
         {!!producto.reserva_activa && (
-          <div className="mt-3 flex flex-col gap-2 items-start">
-            <span className="inline-block px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-xs shadow animate-bounce">
-              ¡Reserva disponible!
-            </span>
-            <button
-              className="px-4 py-1 rounded-full bg-pink-400 hover:bg-pink-500 text-white font-bold text-xs shadow transition animate-pulse"
-              disabled={!usuario_id}
-              onClick={e => {
-                e.stopPropagation();
-                if (!usuario_id) return;
-                // Aquí inicia el flujo de reserva
-                console.log("Iniciar reserva para producto", producto.id_producto);
-              }}
-              title={!usuario_id ? "Inicia sesión para reservar" : "Reservar"}
-            >
-              Reservar
-            </button>
-          </div>
+          <span className="inline-block mt-2 px-3 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full shadow animate-bounce">
+            ¡Reserva disponible!
+          </span>
         )}
-        <div className="flex items-center gap-2 mt-2">
+
+        <div className="flex items-center gap-1 mt-2">
           {promedio ? (
             <>
-              <span className="text-yellow-500 font-bold">{promedio}</span>
-              <div className="flex">
-                {[1,2,3,4,5].map(i => (
-                  <svg key={i} className={`w-5 h-5 ${i <= Math.round(promedio) ? "text-yellow-400" : "text-gray-200"}`} fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z" />
-                  </svg>
-                ))}
-              </div>
+              <span className="text-yellow-500 text-sm">{promedio}</span>
+              {[1, 2, 3, 4, 5].map(i => (
+                <svg
+                  key={i}
+                  className={`w-4 h-4 ${i <= Math.round(promedio) ? "text-yellow-400" : "text-gray-300"}`}
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z" />
+                </svg>
+              ))}
               <span className="text-xs text-gray-500">({promedio} / 5)</span>
             </>
           ) : (
@@ -215,7 +184,8 @@ export const CartaProducto = ({ producto }) => {
       </div>
     </div>
   );
-}
+};
+
 
 export const MostrarProducto = ({ productosProp }) => {
   const [productos, setProductos] = React.useState([]);
@@ -244,7 +214,7 @@ export const MostrarProducto = ({ productosProp }) => {
       : Array.isArray(productos) ? productos : [];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 px-4 md:px-8 mt-8">
       {productosMostrar.map((producto) => (
         <CartaProducto key={producto.id_producto} producto={producto} />
       ))}

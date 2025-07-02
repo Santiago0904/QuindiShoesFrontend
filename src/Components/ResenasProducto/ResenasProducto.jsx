@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axion";
+import { motion } from "framer-motion";
 
 // Formatea fecha_resena: "YYYY-MM-DD HH:mm:ss" => "DD/MM/YYYY"
 function formatearFecha(fechaStr) {
@@ -168,91 +169,99 @@ export default function ResenasProducto({ id_producto, usuario }) {
   );
 
   return (
-    <section className="max-w-2xl mx-auto w-full mt-8">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">Reseñas de usuarios</h2>
+  <section className="w-full">
+    <motion.h2
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="text-3xl font-bold mb-6 text-pink-700 text-center"
+    >
+      Reseñas de usuarios
+    </motion.h2>
 
-      {/* Formulario para nueva reseña */}
-      {usuario && !editando && (
-        <form
-          onSubmit={handleEnviar}
-          className="mb-8 bg-pink-50 p-4 rounded-xl shadow flex flex-col gap-2 border border-pink-200"
+    {usuario && !editando && (
+      <motion.form
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        onSubmit={handleEnviar}
+        className="mb-10 bg-pink-50 p-5 rounded-2xl shadow-md flex flex-col gap-3 border border-pink-200"
+      >
+        <label className="font-semibold text-gray-700 mb-1">Tu reseña</label>
+        <textarea
+          className="border rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-pink-300"
+          rows={3}
+          maxLength={500}
+          value={nuevaResena}
+          onChange={(e) => setNuevaResena(e.target.value)}
+          placeholder="Escribe tu experiencia..."
+          required
+        />
+        <div className="flex items-center gap-2 mt-1">
+          <span className="text-gray-600">Tu puntuación:</span>
+          <Estrellas puntuacion={nuevaPuntuacion} setPuntuacion={setNuevaPuntuacion} editable />
+        </div>
+        <button
+          type="submit"
+          disabled={enviando || !nuevaResena.trim()}
+          className={`mt-2 px-6 py-2 rounded-lg font-semibold transition
+            ${enviando || !nuevaResena.trim()
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-pink-300 text-pink-900 hover:bg-pink-400"}
+          `}
         >
-          <label className="font-semibold text-gray-700 mb-1">Tu reseña</label>
-          <textarea
-            className="border rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-pink-300"
-            rows={3}
-            maxLength={500}
-            value={nuevaResena}
-            onChange={(e) => setNuevaResena(e.target.value)}
-            placeholder="Escribe tu experiencia..."
-            required
-          />
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-gray-600">Tu puntuación:</span>
-            <Estrellas puntuacion={nuevaPuntuacion} setPuntuacion={setNuevaPuntuacion} editable />
-          </div>
-          <button
-            type="submit"
-            disabled={enviando || !nuevaResena.trim()}
-            className={`mt-2 px-6 py-2 rounded-lg font-semibold transition
-              ${enviando || !nuevaResena.trim()
-                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                : "bg-pink-300 text-pink-900 hover:bg-pink-400"}
-            `}
-          >
-            {enviando ? "Enviando..." : "Enviar reseña"}
-          </button>
-        </form>
-      )}
+          {enviando ? "Enviando..." : "Enviar reseña"}
+        </button>
+      </motion.form>
+    )}
 
-      {/* Listado de reseñas */}
-      <div className="flex flex-col gap-4">
-        {resenas.length === 0 ? (
-          <div className="text-gray-500 text-center py-8 bg-white rounded-xl shadow">
-            ¡Sé el primero en dejar una reseña sobre este producto!
-          </div>
-        ) : (
-          resenas.map((r) => (
-            <div
-              key={r.id_resena}
-              className="bg-white rounded-xl shadow p-4 flex flex-col border border-green-100"
-            >
-              <div className="flex items-center gap-3 mb-1">
-                {/* Avatar con inicial */}
-                <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-700 font-bold text-lg shadow">
-                  {getInicial(r.nombre_usuario)}
-                </div>
-                <span className="font-semibold text-gray-800">{r.nombre_usuario}</span>
-                <span className="text-gray-400 text-sm">{formatearFecha(r.fecha_resena)}</span>
-                {Number(usuario?.id) === Number(r.id_usuario) && (
-                  <div className="ml-auto flex gap-2">
-                    <button
-                      className="px-3 py-1 rounded-lg font-semibold bg-green-200 text-green-800 border border-green-300 hover:bg-green-300 transition text-sm"
-                      onClick={() => handleEditar(r)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="px-3 py-1 rounded-lg font-semibold bg-pink-200 text-pink-800 border border-pink-300 hover:bg-pink-300 transition text-sm"
-                      onClick={() => handleEliminar(r.id_resena)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                )}
+    <div className="flex flex-col gap-5 max-h-[600px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-pink-300 scrollbar-track-pink-100 rounded-2xl">
+      {resenas.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-gray-500 text-center py-8 bg-white/60 rounded-xl shadow border border-gray-100"
+        >
+          ¡Sé el primero en dejar una reseña sobre este producto!
+        </motion.div>
+      ) : (
+        resenas.map((r, idx) => (
+          <motion.div
+            key={r.id_resena}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.05 }}
+            className="bg-white/70 rounded-2xl shadow p-5 border border-pink-100"
+          >
+            <div className="flex items-center gap-3 mb-1">
+              <div className="w-10 h-10 rounded-full bg-pink-200 flex items-center justify-center text-pink-700 font-bold text-lg shadow">
+                {getInicial(r.nombre_usuario)}
               </div>
-              {/* Estrellas */}
-              {editandoId === r.id_resena ? (
+              <span className="font-semibold text-gray-800">{r.nombre_usuario}</span>
+              <span className="text-gray-400 text-sm">{formatearFecha(r.fecha_resena)}</span>
+              {Number(usuario?.id) === Number(r.id_usuario) && (
+                <div className="ml-auto flex gap-2">
+                  <button
+                    className="px-3 py-1 rounded-lg font-semibold bg-green-100 text-green-800 border border-green-300 hover:bg-green-200 transition text-sm"
+                    onClick={() => handleEditar(r)}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    className="px-3 py-1 rounded-lg font-semibold bg-pink-200 text-pink-800 border border-pink-300 hover:bg-pink-300 transition text-sm"
+                    onClick={() => handleEliminar(r.id_resena)}
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {editandoId === r.id_resena ? (
+              <>
                 <div className="flex items-center mb-1">
                   <Estrellas puntuacion={editPuntuacion} setPuntuacion={setEditPuntuacion} editable />
                 </div>
-              ) : r.puntuacion ? (
-                <div className="flex items-center mb-1">
-                  <Estrellas puntuacion={r.puntuacion} setPuntuacion={() => {}} />
-                </div>
-              ) : null}
-              {/* Edición */}
-              {editandoId === r.id_resena ? (
                 <div className="flex flex-col gap-2 mt-2">
                   <textarea
                     className="border rounded-lg p-2 resize-none focus:outline-none focus:ring-2 focus:ring-green-300"
@@ -278,13 +287,21 @@ export default function ResenasProducto({ id_producto, usuario }) {
                     </button>
                   </div>
                 </div>
-              ) : (
+              </>
+            ) : (
+              <>
+                {r.puntuacion ? (
+                  <div className="flex items-center mb-2">
+                    <Estrellas puntuacion={r.puntuacion} setPuntuacion={() => {}} />
+                  </div>
+                ) : null}
                 <p className="text-gray-700">{r.resena}</p>
-              )}
-            </div>
-          ))
-        )}
-      </div>
-    </section>
-  );
+              </>
+            )}
+          </motion.div>
+        ))
+      )}
+    </div>
+  </section>
+);
 }
