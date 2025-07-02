@@ -451,181 +451,227 @@ if (modoVisualizacion === 'prediccion') {
 }
 
 
-    return (
-        <div className="p-4 bg-white rounded-xl shadow-md">
-            <h2 className="text-2xl font-extrabold text-gray-800 mb-6 text-center">Ventas por {agrupacion.toUpperCase()}</h2>
-
-            <div className="mt-4 flex gap-6 flex-wrap justify-center">
-                <div>
-                    <label className="font-semibold mr-2 text-gray-700">Agrupación:</label>
-                    <select value={agrupacion} onChange={(e) => setAgrupacion(e.target.value as typeof agrupacion)} className="border px-3 py-1 rounded">
-                        {agrupaciones.map((a) => (
-                            <option key={a} value={a}>{a.charAt(0).toUpperCase() + a.slice(1)}</option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label className="font-semibold mr-2 text-gray-700">Tipo de gráfica:</label>
-                    <select
-  value={tipoGrafica}
-  onChange={(e) => setTipoGrafica(e.target.value as any)}
-  className="border px-3 py-1 rounded"
-  disabled={modoVisualizacion !== 'historico'} // ← Deshabilita si no es histórico
->
-  <option value="bar">Barras</option>
-  <option value="line">Línea</option>
-</select>
-
-                </div>
-                <div>
-                    <label className="font-semibold mr-2 text-gray-700">Vista:</label>
-                    <select value={modoVisualizacion} onChange={(e) => setModoVisualizacion(e.target.value as any)} className="border px-3 py-1 rounded">
-                        <option value="historico">Solo histórico</option>
-                        <option value="prediccion">Solo predicción</option>
-                        <option value="combinado">Histórico + Predicción</option>
-                    </select>
-                </div>
-            </div>
-
-            {modoVisualizacion !== 'historico' && tendencia && (
-                <p className={`text-center mt-6 font-semibold text-lg ${tendencia === 'positiva' ? 'text-green-600' : 'text-red-600'}`}>
-                    Tendencia {tendencia}
-                </p>
-                
-            )}
-
-           {modoVisualizacion !== 'historico' && (
-  <div className="flex justify-center mt-4 gap-6 flex-wrap">
-    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow text-center w-60">
-      <p className="text-sm text-gray-500 font-medium">Diferencia promedio en pesos</p>
-      <p className="text-xl font-bold text-blue-600">
-        {mae != null ? mae.toLocaleString('es-CO', { style: 'currency', currency: 'COP' }) : 'Sin datos'}
-      </p>
-    </div>
-    <p className="text-center text-sm text-gray-500 mt-2 italic w-full">
-      *Las predicciones pueden variar levemente con cada recarga. Esto se debe a que el modelo realiza múltiples simulaciones para calcular una estimación con margen de confianza.
-    </p>
-  </div>
-)}
-
-
-
-            <div className="w-full h-[600px] mt-6">
-                <ResponsiveContainer width="100%" height="100%">
-                    {tipoGrafica === 'bar' ? (
-                        <BarChart data={chartData}>
-                            <CartesianGrid strokeDasharray="4 4" />
-                            <XAxis dataKey={dataKeyX} />
-                            <YAxis domain={[0, yMax]} tickFormatter={formatYAxisTick} allowDataOverflow={true} />
-                            <Tooltip content={<CustomTooltip />} />
-                            <Legend />
-                            {modoVisualizacion !== 'prediccion' && (
-                                <Bar key="bar-historico" dataKey="total_ventas" fill="#60A5FA" name="Ventas Históricas" />
-                            )}
-                            {modoVisualizacion !== 'historico' && (
-                                <Bar key="bar-prediccion" dataKey="prediccion_ventas" fill="#34D399" name="Ventas Predichas" />
-                            )}
-                        </BarChart>
-                    ) : (
-                      <LineChart data={chartData}>
-  <CartesianGrid strokeDasharray="4 4" />
-  <XAxis dataKey={dataKeyX} />
-  <YAxis domain={[0, yMax]} tickFormatter={formatYAxisTick} allowDataOverflow={true} />
-  <Tooltip content={<CustomTooltip />} />
-  <Legend />
-
-  {/* Línea histórica */}
-  {modoVisualizacion !== 'prediccion' && (
-    <Line
-      type="monotone"
-      dataKey="total_ventas"
-      stroke="#60A5FA"
-      strokeWidth={3}
-      dot={{ r: 4 }}
-      name="Ventas Históricas"
-    />
-  )}
-</LineChart>
-
-
-
-
-                    )}
-                </ResponsiveContainer>
-            </div>
    
-            {/* TOPS Y PRODUCTOS INACTIVOS */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-16">
-                {[{ titulo: "Top Productos Más Vendidos", productos: topProductosMas, color: '#D4F6DB', icono: "🚀", borde: "green" },
-                { titulo: "Top Productos Menos Vendidos", productos: topProductosMenos, color: '#F7D6E0', icono: "📉", borde: "red" }]
-                    .map(({ titulo, productos, color, icono, borde }, idx) => (
-                        <div key={idx}>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center flex items-center justify-center gap-3">
-                                <span className={`text-${borde}-500 text-3xl`}>{icono}</span> {titulo}
-                            </h3>
-                            <div className="grid grid-cols-1 gap-6">
-                                {productos.map((prod, index) => (
-                                    <div
-                                        key={prod.id}
-                                        className={`relative flex items-center gap-5 bg-white p-5 rounded-3xl shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300 ease-in-out border-2 border-transparent hover:border-${borde}-400`}
-                                        style={{ backgroundColor: color }}
-                                    >
-                                        <div className={`absolute -top-3 -left-3 bg-${borde}-500 text-white rounded-full h-10 w-10 flex items-center justify-center text-lg font-bold shadow-md rotate-[-10deg]`}>
-                                            {index + 1}
-                                        </div>
-                                        <img
-                                            src={prod.imagen_producto}
-                                            alt={prod.nombre}
-                                            className="w-24 h-24 object-cover rounded-xl shadow-md border border-gray-200"
-                                        />
-                                        <div className="flex-grow">
-                                            <h4 className="font-extrabold text-xl text-gray-800 mb-1 leading-tight truncate">{prod.nombre}</h4>
-                                            <p className="text-md text-gray-700">
-                                                Cantidad Vendida: <span className={`font-bold text-${borde}-700 text-lg`}>{prod.total_vendido}</span>
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
+        return (
+  <div className="p-6 bg-gray-600 min-h-screen rounded-xl text-gray-800">
+    <h2 className="text-3xl font-bold text-white text-center mb-8">
+      Ventas por {agrupacion.toUpperCase()}
+    </h2>
+
+    {/* Filtros con estilo moderno */}
+<div className="flex flex-wrap justify-center gap-6 mb-12 animate-fade-in">
+  {/* Agrupación */}
+  <div className="flex flex-col items-start">
+    <label className="text-sm font-semibold text-white mb-2">Agrupación:</label>
+    <select
+      value={agrupacion}
+      onChange={(e) => setAgrupacion(e.target.value as typeof agrupacion)}
+      className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+    >
+      {agrupaciones.map((a) => (
+        <option key={a} value={a}>
+          {a.charAt(0).toUpperCase() + a.slice(1)}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  {/* Tipo de gráfica */}
+  <div className="flex flex-col items-start">
+    <label className="text-sm font-semibold text-white mb-2">Tipo de gráfica:</label>
+    <select
+      value={tipoGrafica}
+      onChange={(e) => setTipoGrafica(e.target.value as any)}
+      disabled={modoVisualizacion !== 'historico'}
+      className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 shadow-sm disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+    >
+      <option value="bar">Barras</option>
+      <option value="line">Línea</option>
+    </select>
+  </div>
+
+  {/* Vista */}
+  <div className="flex flex-col items-start">
+    <label className="text-sm font-semibold text-white mb-2">Vista:</label>
+    <select
+      value={modoVisualizacion}
+      onChange={(e) => setModoVisualizacion(e.target.value as any)}
+      className="px-4 py-2 rounded-lg bg-gray-800 text-white border border-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+    >
+      <option value="historico">Solo histórico</option>
+      <option value="prediccion">Solo predicción</option>
+      <option value="combinado">Histórico + Predicción</option>
+    </select>
+  </div>
+</div>
+
+
+    {/* Tendencia */}
+    {modoVisualizacion !== 'historico' && tendencia && (
+      <p className={`text-center mt-4 font-semibold text-lg transition-all duration-500 ${tendencia === 'positiva' ? 'text-green-400' : 'text-red-400'}`}>
+        Tendencia {tendencia}
+      </p>
+    )}
+
+    {/* Métrica de precisión */}
+    {modoVisualizacion !== 'historico' && (
+      <div className="flex justify-center mt-6 gap-6 flex-wrap animate-fade-in">
+        <div className="bg-white rounded-2xl p-4 shadow w-60 text-center hover:scale-105 transition">
+          <p className="text-sm text-gray-500">Diferencia promedio en pesos</p>
+          <p className="text-2xl font-bold text-blue-500">
+            {mae != null ? mae.toLocaleString('es-CO', { style: 'currency', currency: 'COP' }) : 'Sin datos'}
+          </p>
+        </div>
+        <p className="text-center text-sm text-gray-400 italic w-full">
+          *Las predicciones pueden variar con cada recarga.
+        </p>
+      </div>
+    )}
+
+    {/* Gráfico + Productos No Vendidos */}
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mt-12">
+      {/* Gráfica (colspan 2 para agrandar) */}
+     {/* Gráfica (colspan 2 para agrandar) */}
+<div className="xl:col-span-2 bg-white rounded-2xl shadow p-6 h-[700px] animate-fade-in-slow">
+  {chartData.length === 0 ? (
+    <div className="flex items-center justify-center h-full text-gray-400 text-lg italic">
+      No hay datos para mostrar.
+    </div>
+  ) : (
+    <ResponsiveContainer width="100%" height="100%">
+      {tipoGrafica === 'bar' ? (
+        <BarChart data={chartData}>
+          <CartesianGrid strokeDasharray="4 4" />
+          <XAxis dataKey={dataKeyX} />
+          <YAxis domain={[0, yMax]} tickFormatter={formatYAxisTick} />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend />
+          {modoVisualizacion !== 'prediccion' && (
+            <Bar dataKey="total_ventas" fill="#60A5FA" name="Ventas Históricas" />
+          )}
+          {modoVisualizacion !== 'historico' && (
+            <Bar dataKey="prediccion_ventas" fill="#34D399" name="Ventas Predichas" />
+          )}
+        </BarChart>
+      ) : (
+        <LineChart data={chartData}>
+          <CartesianGrid strokeDasharray="4 4" />
+          <XAxis dataKey={dataKeyX} />
+          <YAxis domain={[0, yMax]} tickFormatter={formatYAxisTick} />
+          <Tooltip content={<CustomTooltip />} />
+          <Legend />
+          {modoVisualizacion !== 'prediccion' && (
+            <Line type="monotone" dataKey="total_ventas" stroke="#60A5FA" strokeWidth={3} dot={{ r: 4 }} name="Ventas Históricas" />
+          )}
+          {modoVisualizacion !== 'historico' && (
+            <Line type="monotone" dataKey="prediccion_ventas" stroke="#34D399" strokeWidth={3} dot={{ r: 4 }} name="Ventas Predichas" />
+          )}
+        </LineChart>
+      )}
+    </ResponsiveContainer>
+  )}
+</div>
+
+
+      {/* Productos no vendidos */}
+      <div className="bg-white rounded-2xl shadow p-6 animate-fade-in">
+        <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">Productos No Vendidos (Semana)</h3>
+        {productosInactivos.length === 0 ? (
+          <p className="text-center text-green-500">¡Todos han sido vendidos! 🎉</p>
+        ) : (
+          <div className="space-y-4">
+            {productosInactivos.map((producto, i) => (
+              <div key={producto.id_producto} className="flex items-center gap-4 bg-gray-50 p-3 rounded-xl">
+                <img src={producto.url_imagen} alt={producto.nombre_producto} className="w-12 h-12 object-cover rounded-md" />
+                <div className="flex-1">
+                  <p className="font-medium text-gray-800 truncate">{producto.nombre_producto}</p>
+                  <p className="text-sm text-gray-500">ID: {producto.id_producto}</p>
+                </div>
+                <span className="text-sm font-bold text-gray-700">${producto.precio_producto?.toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+
+    {/* Tops: Más y Menos Vendidos (ahora debajo de gráfica) */}
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-16 animate-fade-in-slow">
+  {[{
+    titulo: "Top Productos Más Vendidos",
+    productos: topProductosMas,
+    color: 'from-green-100 to-green-50',
+    borde: 'green-500',
+    icono: '🔥'
+  }, {
+    titulo: "Top Productos Menos Vendidos",
+    productos: topProductosMenos,
+    color: 'from-red-100 to-red-50',
+    borde: 'red-500',
+    icono: '📉'
+  }].map(({ titulo, productos, color, borde, icono }, idx) => (
+    <div
+      key={idx}
+      className={`bg-white backdrop-blur-md border border-gray-200 rounded-3xl shadow-xl p-6 transition duration-500 hover:shadow-2xl`}
+    >
+      <h3 className="text-xl font-extrabold text-gray-800 mb-6 text-center flex items-center justify-center gap-2">
+        <span className={`text-${borde} text-2xl`}>{icono}</span> {titulo}
+      </h3>
+
+      <div className="space-y-4">
+        {productos.map((prod, i) => (
+          <div
+            key={prod.id}
+            className={`flex items-center gap-4 px-4 py-3 rounded-2xl bg-gradient-to-r ${color} border-l-4 border-${borde}
+              shadow-sm hover:shadow-md transition transform hover:-translate-y-1 hover:scale-[1.01] duration-300`}
+          >
+            {/* Ranking con medalla */}
+            <div
+              className={`relative w-12 h-12 flex items-center justify-center rounded-full shadow-inner text-white font-bold text-lg
+              ${
+                i === 0
+                  ? 'bg-gradient-to-tr from-yellow-400 to-yellow-500'
+                  : i === 1
+                  ? 'bg-gradient-to-tr from-gray-300 to-gray-400'
+                  : i === 2
+                  ? 'bg-gradient-to-tr from-orange-400 to-orange-500'
+                  : 'bg-gray-700'
+              }`}
+            >
+              {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
+
+              {/* Insignia 🏆 solo para el primero */}
+              {i === 0 && (
+                <div className="absolute -top-2 -right-2 bg-yellow-500 text-white text-xs px-2 py-0.5 rounded-full shadow-md animate-pulse">
+                  🏆
+                </div>
+              )}
             </div>
 
-            <div className="mt-20">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center flex items-center justify-center gap-3">
-                    <span className="text-gray-500 text-3xl">🕸️</span> Productos No vendidos (Semana Actual)
-                </h3>
-                {productosInactivos.length === 0 ? (
-                    <p className="text-center text-green-600 font-semibold text-lg">¡Todos los productos han sido vendidos al menos una vez! 🎉</p>
-                ) : (
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-white">
-                            <thead className="bg-gray-100 text-gray-700">
-                                <tr>
-                                    <th className="py-3 px-4 text-left">Imagen</th>
-                                    <th className="py-3 px-4 text-left">ID</th>
-                                    <th className="py-3 px-4 text-left">Nombre</th>
-                                    <th className="py-3 px-4 text-left">Precio</th>
-                                    <th className="py-3 px-4 text-left">Stock</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {productosInactivos.map((producto) => (
-                                    <tr key={producto.id_producto} className="border-t hover:bg-gray-50 transition">
-                                        <td className="py-3 px-4">
-                                            <img src={producto.url_imagen} alt={producto.nombre_producto} className="w-16 h-16 object-cover rounded-md" />
-                                        </td>
-                                        <td className="py-3 px-4">{producto.id_producto}</td>
-                                        <td className="py-3 px-4">{producto.nombre_producto}</td>
-                                        <td className="py-3 px-4">{producto.precio_producto !== undefined ? `$${producto.precio_producto.toFixed(2)}` : 'N/A'}</td>
-                                        <td className="py-3 px-4">{producto.stock ?? 0}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+            {/* Imagen */}
+            <img
+              src={prod.imagen_producto}
+              alt={prod.nombre}
+              className="w-14 h-14 rounded-lg object-cover shadow-md border border-gray-300"
+            />
+
+            {/* Detalles */}
+            <div className="flex-1">
+              <p className="text-md font-semibold text-gray-800 truncate">{prod.nombre}</p>
+              <p className="text-sm text-gray-600">
+                Cantidad: <span className="font-bold text-gray-700">{prod.total_vendido}</span>
+              </p>
             </div>
-        </div>
-    );
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+
+  </div>
+);
+
+
 }
