@@ -29,21 +29,19 @@ import { RespuestaPago } from './Pages/RespuestaPagos/RespuestaPago'
 import { Confirmacion } from './Pages/RespuestaPagos/Confrimacion'
 import  VerificarCorreo  from './Layouts/VerificarCorreo/VerificarCorreo'
 import EsperandoConfirmacion from './Pages/EsperandoConfirmacion/EsperandoConfirmacion'
-import Chat from './Components/ChatBot/ChatBot'
 import { Juego } from './Pages/Juego/Juego'
 import { DetalleProducto } from './Pages/ProductoDetalle/ProductoDetalle'
 import { VariantesProducto } from './Pages/VariantesProducto/VariantesProducto'
-import { WavesBackground } from './Components/Particulas2/Particulas2'
 import { HistorialFacturas } from './Pages/HistorialVentas/historialventas'
-import { MaterialPage } from './Pages/MaterialPage/MaterialPage'
-import { ColorPage } from './Pages/ColorPage/ColorPage'
 import { MetricasPages } from './Pages/MetricasPage/MetricasPages'
 import { Favoritos } from './Pages/Favoritos/Favoritos'
 import ScrollToTop from './Components/ScrollTop/ScrollTop'
 import { Accesibilidad } from './Components/Accesibilidad/Accesibilidad'
 import { Nosotros } from './Pages/Nosotros/Nosotros'
 import { AnimatePresence } from "framer-motion";
+import { ColorNewForm } from './Components/ColorNewForm/ColorNewForm'
 import { PageWrapper } from './Components/PageWrapper/PageWrapper'
+
 function App() {
   const location = useLocation();
   const rutaActual = location.pathname.toLowerCase();
@@ -91,16 +89,12 @@ function App() {
           <Route path="/reiniciarcontrasena" element={<PageWrapper><PasswordPage /></PageWrapper>} />
           <Route path="/nuevoProducto" element={<PageWrapper><NewProduct /></PageWrapper>} />
           <Route path="/productos" element={<PageWrapper><ListaProductos /></PageWrapper>} />
-          <Route path="/material" element={<PageWrapper><MaterialNewForm /></PageWrapper>} />
           <Route path="/color" element={<PageWrapper><ColorNewForm /></PageWrapper>} />
-          <Route path="/zona" element={<PageWrapper><ZonaNewForm /></PageWrapper>} />
           <Route path="/empleados" element={<PageWrapper><RegisterEmpledos /></PageWrapper>} />
           <Route path="/listaempleados" element={<PageWrapper><ListaEmpleados /></PageWrapper>} />
           <Route path="/panelcontrol" element={<PageWrapper><PanelControl /></PageWrapper>} />
           <Route path="/carrito" element={<PageWrapper><Carrito /></PageWrapper>} />
-          <Route path="/listamateriales" element={<PageWrapper><ListaMateriales /></PageWrapper>} />
           <Route path="/listacolores" element={<PageWrapper><ListaColores /></PageWrapper>} />
-          <Route path="/listazonas" element={<PageWrapper><ListaZonas /></PageWrapper>} />
           <Route path="/respuestapago" element={<PageWrapper><RespuestaPago /></PageWrapper>} />
           <Route path="/rechazada" element={<PageWrapper><Rechazada /></PageWrapper>} />
           <Route path="/confirmacion" element={<PageWrapper><Confirmacion /></PageWrapper>} />
@@ -114,6 +108,7 @@ function App() {
           <Route path="/historialfacturas" element={<PageWrapper><HistorialFacturas /></PageWrapper>} />
           <Route path="/metricas" element={<PageWrapper><MetricasPages /></PageWrapper>} />
           <Route path="/favoritos" element={<PageWrapper><Favoritos /></PageWrapper>} />
+          <Route path="/personalizador" element={<PageWrapper><Personalizador /></PageWrapper>} />
         </Routes>
       </AnimatePresence>
         </div>
