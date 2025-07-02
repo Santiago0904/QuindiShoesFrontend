@@ -14,18 +14,18 @@ export const PanelControl = () => {
   const [seccionSeleccionada, setSeccionSeleccionada] = useState('');
   const [mostrarPanel, setMostrarPanel] = useState(true);
 
-  const renderContenido = () => {
-    <ParticlesBackground />
-    switch (seccionSeleccionada) {
-      case 'usuarios': return <ListaEmpleados />;
-      case 'inventario': return <ListaProductos />;
-      case 'ventas': return <HistorialFacturas />;
-      case 'domicilios': return <Domicilios/>;
-      case 'reservas': return <ReservasPanel/>;
-      case 'mesrivas': return <VentasPorRango />;
-      default: return null;
-    }
-  };
+ const renderContenido = () => {
+  switch (seccionSeleccionada) {
+    case 'usuarios': return <ListaEmpleados />;
+    case 'inventario': return <ListaProductos />;
+    case 'ventas': return <HistorialFacturas />;
+    case 'domicilios': return <Domicilios/>;
+    case 'reservas': return <ReservasPanel/>;
+    case 'mesrivas': return <VentasPorRango />;
+    default: return null;
+  }
+};
+
 
   return (
     <>
