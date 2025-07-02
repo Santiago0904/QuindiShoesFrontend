@@ -6,5 +6,5 @@ export  function Personalizador() {
 
     <PersonalizadorLayout/>
 
-)
+  )
 }

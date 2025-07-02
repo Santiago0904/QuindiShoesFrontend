@@ -221,6 +221,7 @@ export const VariantesProducto = () => {
           true
         )}
         <input id="stock" type="number" min="1" class="swal2-input" placeholder="Stock">
+        <input id="imagen" type="file" accept="image/*" class="swal2-file" style="margin-top:10px;">
       `,
       focusConfirm: false,
       confirmButtonText: "Agregar",
@@ -241,7 +242,8 @@ export const VariantesProducto = () => {
           Swal.showValidationMessage("Todos los campos son obligatorios y el stock debe ser mayor a 0.");
           return false;
         }
-        return { id_talla, id_color, stock };
+        const imagenFile = document.getElementById('imagen').files[0];
+        return { id_talla, id_color, stock,imagenFile };
       },
       showClass: { popup: "animate__animated animate__fadeInDown" },
       hideClass: { popup: "animate__animated animate__fadeOutUp" }
@@ -249,35 +251,48 @@ export const VariantesProducto = () => {
       if (result.isConfirmed && result.value) {
         const token = localStorage.getItem("token");
         axiosClient
-          .post(`/variantes`, {
-            id_producto: id,
-            id_talla: result.value.id_talla,
-            id_color: result.value.id_color,
-            stock: result.value.stock
-          }, {
-            headers: { Authorization: `Bearer ${token}` }
-          })
-          .then(() => {
-            Swal.fire({
-              icon: "success",
-              title: "Agregado",
-              text: "Variante agregada correctamente",
-              timer: 1200,
-              showConfirmButton: false,
-              showClass: { popup: "animate__animated animate__fadeInDown" },
-              hideClass: { popup: "animate__animated animate__fadeOutUp" }
-            });
-            cargarVariantes();
-          })
-          .catch(() => {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text: "No se pudo agregar la variante",
-              confirmButtonColor: "#2563eb",
-              showClass: { popup: "animate__animated animate__shakeX" }
-            });
-          });
+  .post(`/variantes`, {
+    id_producto: id,
+    id_talla: result.value.id_talla,
+    id_color: result.value.id_color,
+    stock: result.value.stock
+  }, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  .then((res) => {
+    if (result.value.imagenFile) {
+      const formData = new FormData();
+      formData.append("id_producto", id);
+      formData.append("imagen", result.value.imagenFile);
+
+      return axiosClient.post("/imagenes", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        }
+      });
+    }
+  })
+  .then(() => {
+    Swal.fire({
+      icon: "success",
+      title: "Agregado",
+      text: "Variante agregada correctamente",
+      timer: 1200,
+      showConfirmButton: false
+    });
+    cargarVariantes();
+  })
+  .catch((error) => {
+    console.error(error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "No se pudo agregar la variante o la imagen",
+      confirmButtonColor: "#2563eb"
+    });
+  });
+
       }
     });
   };
