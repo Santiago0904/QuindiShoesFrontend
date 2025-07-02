@@ -5,12 +5,23 @@ import indexWoman from '../../assets/images/women2.webp';
 import { BotonReseñas } from '../../Components/BotonReseñas/BotonReseñas';
 import { ModalReseñas } from '../../Components/ModalReseñas/ModalReseñas';
 import { ParaTi } from '../../Components/ParaTi/ParaTi';
+import { jwtDecode } from "jwt-decode";
 
 export const Home = () => {
   const [modalAbierto, setModalAbierto] = useState(false);
 
   // Obtén el id del usuario autenticado
-  const usuario_id = localStorage.getItem("id");
+ const token = localStorage.getItem("token");
+let usuario_id;
+
+if (token) {
+  try {
+    const decoded = jwtDecode(token);
+    usuario_id = decoded.data?.id;
+  } catch (error) {
+    console.error("❌ Token inválido:", error);
+  }
+}
 
   return (
     <div className="px-6 md:px-12 lg:px-20 py-10 space-y-12 relative">
@@ -56,7 +67,9 @@ export const Home = () => {
         <BotonReseñas onClick={() => setModalAbierto(true)} />
       </div>
       {/* MODAL DE RESEÑAS */}
-      <ModalReseñas abierto={modalAbierto} cerrar={() => setModalAbierto(false)} />
+      <ModalReseñas abierto={modalAbierto}
+        cerrar={() => setModalAbierto(false)}
+        usuario_id={usuario_id} />
     </div>
   );
 };
