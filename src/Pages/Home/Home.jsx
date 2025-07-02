@@ -10,10 +10,12 @@ import marketingImage from '../../assets/images/stock-promo.jpg';
 import movementImage from '../../assets/images/exclusive-pair.jpg';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
-
 export const Home = () => {
   const [modalAbierto, setModalAbierto] = useState(false);
-
+ const navigate = useNavigate();
+ const irANosotros = () => {
+    navigate("/nosotros");
+  };
   // Obtén el id del usuario autenticado
  const token = localStorage.getItem("token");
 let usuario_id;

@@ -44,7 +44,6 @@ import { AnimatePresence } from "framer-motion";
 import { ColorNewForm } from './Components/ColorNewForm/ColorNewForm'
 import { PageWrapper } from './Components/PageWrapper/PageWrapper'
 
-import { Accesibilidad } from './Components/Accesibilidad/Accesibilidad'
 function App() {
   const location = useLocation();
   const rutaActual = location.pathname.toLowerCase();
@@ -69,10 +68,6 @@ function App() {
 
   const ocultarFooter =
     ocultarHeader || ocultarSoloFooterEn.includes(rutaActual);
-
-  // Ocultar solo el footer en el personalizador
-  const ocultarSoloFooter =
-    location.pathname.toLowerCase() === "/personalizador";
 
   // Ocultar solo el footer en el personalizador
   const ocultarSoloFooter =
