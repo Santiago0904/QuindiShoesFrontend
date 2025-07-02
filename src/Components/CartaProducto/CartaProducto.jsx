@@ -152,7 +152,18 @@ export const CartaProducto = ({ producto }) => {
 
         <div className="flex justify-between items-center pt-2">
           <p className="text-lg font-bold text-green-700">${producto.precio_producto}</p>
-          <span className="text-xs text-gray-600 underline underline-offset-4">Ver más</span>
+          {/* Botón de personalización */}
+          {producto.personalizacion_activa === 1 && (
+            <button
+              className="ml-2 px-3 py-1 bg-indigo-600 text-white rounded-full text-xs font-semibold hover:bg-indigo-700 transition"
+              onClick={e => {
+                e.stopPropagation();
+                navigate(`/personalizador`, { state: { producto } });
+              }}
+            >
+              Personalizar
+            </button>
+          )}
         </div>
 
         {!!producto.reserva_activa && (

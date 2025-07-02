@@ -7,12 +7,15 @@ import { WavesBackground } from "../../Components/Particulas2/Particulas2"; // A
 import { Footer } from "../../Layouts/Footer/Footer";
 import { WavesBackground2 } from "../../Components/Particulas2.0/Particulas2.0";
 import { HistorialCompras } from "../../Components/HistorialCompras/HistorialCompras";
+import EditarDatosUsuario from "../../Components/EditarDatosUsuario/EditarDatosUsuario"; // Asegúrate de que esta es la ruta correcta
 
 const Perfil = () => {
+  
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [usuario, setUsuario] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [historialAbierto, setHistorialAbierto] = useState(false);
+  const [editarDatosAbierto, setEditarDatosAbierto] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -199,6 +202,14 @@ const Perfil = () => {
                   >
                     {mostrarFormulario ? "Ocultar Formulario" : "Cambiar Contraseña"}
                   </motion.button>
+                  <motion.button
+                    onClick={() => setEditarDatosAbierto(true)}
+                    className="bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white px-7 py-3 rounded-full shadow-lg text-lg font-medium transform hover:scale-105 transition-all duration-300 ease-out"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Editar datos
+                  </motion.button>
                 </div>
               </motion.div>
 
@@ -265,6 +276,26 @@ const Perfil = () => {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Componente para editar datos de usuario */}
+            <AnimatePresence>
+              {editarDatosAbierto && (
+                <EditarDatosUsuario
+                  usuario={usuario}
+                  onClose={() => setEditarDatosAbierto(false)}
+                  onUpdate={setUsuario}
+                />
+              )}
+            </AnimatePresence>
+
+            <motion.button
+              onClick={() => navigate("/historial-personalizaciones")}
+              className="bg-gradient-to-r from-green-400 to-lime-500 hover:from-green-500 hover:to-lime-600 text-white px-7 py-3 rounded-full shadow-lg text-lg font-medium transform hover:scale-105 transition-all duration-300 ease-out"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Historial de Personalizaciones
+            </motion.button>
           </div>
         )}
       </div>
