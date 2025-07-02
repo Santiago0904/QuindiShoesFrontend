@@ -1,34 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axiosClient from "../../api/axion";
-import { motion } from "framer-motion";
 
-export const FormEmpleados = ({ onSuccess, initialData = null, modo = "agregar" }) => {
+export const FormEmpleados = () => {
   const [formData, setFormData] = useState({
-    id: initialData?.id || initialData?.id_usuario || null,
-    nombre: initialData?.nombre || "",
-    apellido: initialData?.apellido || "",
-    telefono: initialData?.telefono || "",
-    direccion: initialData?.direccion || "",
-    correo: initialData?.correo || "",
+    nombres: "",
+    apellidos: "",
+    telefono: "",
+    direccion: "",
+    correo: "",
     contrasena: "",
-    rol: initialData?.rol || "vendedor",
+    rol:"vendedor",
   });
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (initialData) {
-      setFormData(prev => ({
-        ...prev,
-        id: initialData.id || initialData.id_usuario || prev.id,
-        nombre: initialData.nombre || "",
-        apellido: initialData.apellido || "",
-        telefono: initialData.telefono || "",
-        direccion: initialData.direccion || "",
-        correo: initialData.correo || "",
-        rol: initialData.rol || "vendedor",
-      }));
-    }
-  }, [initialData]);
 
   const handleChange = (e) => {
     setFormData({
@@ -39,81 +21,44 @@ export const FormEmpleados = ({ onSuccess, initialData = null, modo = "agregar" 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
     try {
-      const payload = { ...formData };
-
-      if (modo === "actualizar" && !payload.contrasena.trim()) {
-        delete payload.contrasena;
-      }
-
-      if (modo === "agregar") {
-        const backendPayload = {
-          nombres: payload.nombre,
-          apellidos: payload.apellido,
-          telefono: payload.telefono,
-          direccion: payload.direccion,
-          correo: payload.correo,
-          contrasena: payload.contrasena,
-          rol: payload.rol,
-        };
-
-        await axiosClient.post("/register", backendPayload);
-      } else {
-        await axiosClient.put(`/empleado/${payload.id}`, payload);
-      }
-
-      if (onSuccess) onSuccess();
+      const response = await axiosClient.post("/register", formData);
+      console.log("Empleado registrado:", response.data);
+  
     } catch (error) {
-      console.error(error);
-      setError("Error al guardar empleado.");
+      console.error("Error al registrar Empleado:", error);
     }
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -30, scale: 0.97 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className="w-full max-w-3xl bg-white p-10 rounded-3xl shadow-xl border border-gray-200 mx-auto"
-    >
-      <h2 className="text-3xl font-extrabold text-center text-emerald-700 mb-6 drop-shadow-sm">
-        {modo === "agregar" ? "Registro de Empleado" : "Actualizar Empleado"}
-      </h2>
-
-      {error && (
-        <p className="text-rose-600 text-sm mb-4 text-center font-semibold">
-          {error}
-        </p>
-      )}
-
-      <form className="space-y-5" onSubmit={handleSubmit}>
+    <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded-2xl shadow-md">
+      <h2 className="text-2xl font-bold mb-4 text-center">Registro de Empleados</h2>
+      <form className="space-y-4">
         <input
           type="text"
-          name="nombre"
-          placeholder="Nombres"
-          value={formData.nombre}
+          name="nombres"
+          placeholder="Nombre"
+          value={formData.nombres}
           onChange={handleChange}
-          className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300 placeholder:text-emerald-400 border-emerald-200 bg-white"
+          className="w-full p-2 border rounded-md"
           required
         />
         <input
           type="text"
-          name="apellido"
-          placeholder="Apellidos"
-          value={formData.apellido}
+          name="apellidos"
+          placeholder="Apellido"
+          value={formData.apellidos}
           onChange={handleChange}
-          className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300 placeholder:text-emerald-400 border-emerald-200 bg-white"
+          className="w-full p-2 border rounded-md"
           required
         />
         <input
-          type="text"
+          type="tel"
           name="telefono"
           placeholder="Teléfono"
           value={formData.telefono}
           onChange={handleChange}
-          className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300 placeholder:text-emerald-400 border-emerald-200 bg-white"
+          className="w-full p-2 border rounded-md"
           required
         />
         <input
@@ -122,7 +67,7 @@ export const FormEmpleados = ({ onSuccess, initialData = null, modo = "agregar" 
           placeholder="Dirección"
           value={formData.direccion}
           onChange={handleChange}
-          className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300 placeholder:text-emerald-400 border-emerald-200 bg-white"
+          className="w-full p-2 border rounded-md"
           required
         />
         <input
@@ -131,44 +76,37 @@ export const FormEmpleados = ({ onSuccess, initialData = null, modo = "agregar" 
           placeholder="Correo"
           value={formData.correo}
           onChange={handleChange}
-          className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300 placeholder:text-emerald-400 border-emerald-200 bg-white"
+          className="w-full p-2 border rounded-md"
           required
         />
-        {modo === "agregar" && (
-          <input
-            type="password"
-            name="contrasena"
-            placeholder="Contraseña"
-            value={formData.contrasena}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300 placeholder:text-emerald-400 border-emerald-200 bg-white"
-            required
-          />
-        )}
+        <input
+          type="password"
+          name="contrasena"
+          placeholder="Contraseña"
+          value={formData.contrasena}
+          onChange={handleChange}
+          className="w-full p-2 border rounded-md"
+          required
+        />
+
         <select
           name="rol"
           value={formData.rol}
           onChange={handleChange}
-          className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-300 border-emerald-200 bg-white"
+          className="w-full p-2 border rounded"
         >
           <option value="vendedor">Vendedor</option>
           <option value="domiciliario">Domiciliario</option>
         </select>
-
-        <motion.button
+        <button
+          onClick={handleSubmit}
           type="submit"
-          className="w-full inline-flex items-center justify-center
-                     bg-emerald-600 hover:bg-emerald-700
-                     text-white font-semibold text-lg py-3 rounded-full
-                     shadow-lg hover:shadow-xl
-                     transform hover:scale-105 transition-all duration-300 ease-out
-                     focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-opacity-75"
-          whileHover={{ scale: 1.05, boxShadow: "0 8px 24px rgba(0,0,0,0.15)" }}
-          whileTap={{ scale: 0.97 }}
+          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
         >
-          {modo === "agregar" ? "Registrar" : "Guardar"}
-        </motion.button>
+          Registrarse
+        </button>
       </form>
-    </motion.div>
+    </div>
   );
 };
+

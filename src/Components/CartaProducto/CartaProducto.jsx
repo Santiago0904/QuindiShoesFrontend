@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import ColorThief from "colorthief";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import axiosClient from "../../api/axion";
-import { motion, AnimatePresence } from "framer-motion";
 
 function rgbToHsl(r, g, b) {
   r /= 255; g /= 255; b /= 255;
@@ -245,32 +244,10 @@ export const MostrarProducto = ({ productosProp }) => {
       : Array.isArray(productos) ? productos : [];
 
   return (
-    <motion.div
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-      initial="hidden"
-      animate="visible"
-      variants={{
-        hidden: {},
-        visible: {
-          transition: {
-            staggerChildren: 0.1,
-          },
-        },
-      }}
-    >
-      <AnimatePresence>
-        {productosMostrar.map((producto, index) => (
-          <motion.div
-            key={producto.id_producto}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 30 }}
-            transition={{ duration: 0.4, delay: index * 0.05 }}
-          >
-            <CartaProducto producto={producto} />
-          </motion.div>
-        ))}
-      </AnimatePresence>
-    </motion.div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {productosMostrar.map((producto) => (
+        <CartaProducto key={producto.id_producto} producto={producto} />
+      ))}
+    </div>
   );
 };
