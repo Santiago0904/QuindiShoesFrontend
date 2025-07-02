@@ -18,6 +18,7 @@ import { ListaMateriales } from './Pages/MostrarMateriales/MostrarMateriales'
 import { ListaColores } from './Pages/MostrarColores/MostrarColores'
 import { ListaZonas } from './Pages/MostrarZonaProductos/MostrarZonaProductos'
 import { Personalizador } from './Pages/Personalizador/Personalizador'
+import {HistorialPersonalizaciones} from './Pages/HistorialPersonalizaciones/HistorialPersonalizaciones'
 
 
 import { Footer } from './Layouts/Footer/Footer'
@@ -108,6 +109,7 @@ function App() {
           <Route path="/producto/:id" element={<PageWrapper><DetalleProducto /></PageWrapper>} />
           <Route path="/producto/:id/variantes" element={<PageWrapper><VariantesProducto /></PageWrapper>} />
           <Route path="/historialfacturas" element={<PageWrapper><HistorialFacturas /></PageWrapper>} />
+            <Route path="/historial-personalizaciones" element={<HistorialPersonalizaciones />} />
           <Route path="/metricas" element={<PageWrapper><MetricasPages /></PageWrapper>} />
           <Route path="/favoritos" element={<PageWrapper><Favoritos /></PageWrapper>} />
           <Route path="/personalizador" element={<PageWrapper><Personalizador /></PageWrapper>} />
