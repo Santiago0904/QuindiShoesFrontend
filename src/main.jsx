@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { BrowserRouter } from "react-router-dom";
 import { ContadorCarritoContextProvider } from './Contexts/ContadorCarritoContext.jsx'
 
+
 createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <ContadorCarritoContextProvider>

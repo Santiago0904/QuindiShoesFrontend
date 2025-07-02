@@ -41,14 +41,15 @@ function renderNode(node, colores, personalizacion) {
     </group>
   );
 }
+useGLTF.preload("https://res.cloudinary.com/dwdjlk9lv/image/upload/v1751481715/nike_shoes_hupdgv.glb");
 
 function ShoeModel() {
-  const { scene } = useGLTF("/models/nike_shoes (1).glb");
+  const { scene } = useGLTF("https://res.cloudinary.com/dwdjlk9lv/image/upload/v1751481715/nike_shoes_hupdgv.glb");
   const { personalizacion, colores } = GuardarPersonalizado();
 
-  // Renderiza desde el nodo raíz (scene)
   return renderNode(scene, colores, personalizacion);
 }
+
 
 export default function PersonalizadorCanvas() {
   return (

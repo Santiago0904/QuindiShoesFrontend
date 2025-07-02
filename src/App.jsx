@@ -29,29 +29,50 @@ import { RespuestaPago } from './Pages/RespuestaPagos/RespuestaPago'
 import { Confirmacion } from './Pages/RespuestaPagos/Confrimacion'
 import  VerificarCorreo  from './Layouts/VerificarCorreo/VerificarCorreo'
 import EsperandoConfirmacion from './Pages/EsperandoConfirmacion/EsperandoConfirmacion'
-import Chat from './Components/ChatBot/ChatBot'
 import { Juego } from './Pages/Juego/Juego'
 import { DetalleProducto } from './Pages/ProductoDetalle/ProductoDetalle'
 import { VariantesProducto } from './Pages/VariantesProducto/VariantesProducto'
-import { WavesBackground } from './Components/Particulas2/Particulas2'
 import { HistorialFacturas } from './Pages/HistorialVentas/historialventas'
 import { MaterialPage } from './Pages/MaterialPage/MaterialPage'
 import { ColorPage } from './Pages/ColorPage/ColorPage'
 import { MetricasPages } from './Pages/MetricasPage/MetricasPages'
 import { Favoritos } from './Pages/Favoritos/Favoritos'
+import ScrollToTop from './Components/ScrollTop/ScrollTop'
+import { Accesibilidad } from './Components/Accesibilidad/Accesibilidad'
+import { Nosotros } from './Pages/Nosotros/Nosotros'
+import { AnimatePresence } from "framer-motion";
+import { ColorNewForm } from './Components/ColorNewForm/ColorNewForm'
+import { PageWrapper } from './Components/PageWrapper/PageWrapper'
 
 import { Accesibilidad } from './Components/Accesibilidad/Accesibilidad'
 function App() {
   const location = useLocation();
+  const rutaActual = location.pathname.toLowerCase();
 
-  // Rutas donde se ocultan header y footer
+  // Rutas donde se oculta SOLO el footer
+  const ocultarSoloFooterEn = [
+    "/perfil",
+    "/login",
+    "/register",
+    "/recuperarcontrasena",
+    "/reiniciarcontrasena",
+    "/esperando-confirmacion",
+    "/validarcorreo"
+  ];
+
+  // Rutas donde se oculta TODO (header + footer)
   const ocultarHeaderYFooterEn = ["/panelcontrol"];
-  // Expresión regular para /producto/:id/variantes
   const variantesRegex = /^\/producto\/[^/]+\/variantes$/i;
 
-  const ocultarHeaderYFooter =
-    ocultarHeaderYFooterEn.includes(location.pathname.toLowerCase()) ||
-    variantesRegex.test(location.pathname);
+  const ocultarHeader =
+    ocultarHeaderYFooterEn.includes(rutaActual) || variantesRegex.test(rutaActual);
+
+  const ocultarFooter =
+    ocultarHeader || ocultarSoloFooterEn.includes(rutaActual);
+
+  // Ocultar solo el footer en el personalizador
+  const ocultarSoloFooter =
+    location.pathname.toLowerCase() === "/personalizador";
 
   // Ocultar solo el footer en el personalizador
   const ocultarSoloFooter =
@@ -59,59 +80,52 @@ function App() {
 
   return (
     <>
-      {!ocultarHeaderYFooter && <Header />}
-       <Accesibilidad />
+      {!ocultarHeader && <Header />}
+      <Accesibilidad />
+
       <div className="relative min-h-screen flex flex-col">
         <div className="flex-1 flex flex-col">
-          <Routes>
-            <Route path='/' element={<Home/>}/>
-            <Route path='/Register' element={<Register/>}/>
-            <Route path='/Login' element={<Login/>}/>
-            <Route path='/recuperarContrasena' element={<EmailPage/>}/>
-            <Route path='/reiniciarContrasena' element={<PasswordPage/>}/>
-            <Route path='/nuevoProducto' element={<NewProduct/>}/>
-            <Route path='/productos' element={<ListaProductos/>}/>
-            <Route path='/material' element={<MaterialPage/>}/>
-            <Route path='/color' element={<ColorPage/>}/>
-            <Route path='/zona' element={<ZonaProductoPage/>}/>
-            <Route path='/productos' element={<ListaProductos/>}/>
-            <Route path='/Empleados' element={<RegisterEmpledos/>}/>
-            <Route path='/ListaEmpleados' element={<ListaEmpleados/>}/>
-            <Route path='/PanelControl' element={<PanelControl/>}/>
-            <Route path='/carrito' element={<Carrito/>}/>
-            <Route path='/ListaMateriales' element={<ListaMateriales/>}/>
-            <Route path='/ListaColores' element={<ListaColores/>}/>
-            <Route path='/ListaZonas' element={<ListaZonas/>}/>
-            <Route path='/RespuestaPago' element={<RespuestaPago />}/>
-            <Route path='/Metricas' element={<MetricasPages />}/>
-            <Route path='/ProductoDetalladoPages' element={<ProductoDetalladoPages/>}/>
-            <Route path='/HistorialFacturas' element={<HistorialFacturas />}/>
-            
-            
-            <Route path='/Confirmacion' element={<Confirmacion />}/>
-
-
-            <Route path='/Perfil' element={<Perfil/>}/>
-
-            <Route path="/validarCorreo" element={<VerificarCorreo />}/>
-            <Route path="/esperando-confirmacion" element={<EsperandoConfirmacion />} />
-            <Route path="/juego" element={<Juego />} />
-            <Route path="/producto/:id" element={<DetalleProducto />} />
-            <Route path="/producto/:id/variantes" element={<VariantesProducto />} />
-            <Route path="/personalizador" element={<Personalizador />} />
-
-            <Route path="/Favoritos" element={<Favoritos/>} />
-
-
-          </Routes>
+         <ScrollToTop />
+            <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/nosotros" element={<PageWrapper><Nosotros /></PageWrapper>} />
+          <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
+          <Route path="/register" element={<PageWrapper><Register /></PageWrapper>} />
+          <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
+          <Route path="/recuperarcontrasena" element={<PageWrapper><EmailPage /></PageWrapper>} />
+          <Route path="/reiniciarcontrasena" element={<PageWrapper><PasswordPage /></PageWrapper>} />
+          <Route path="/nuevoProducto" element={<PageWrapper><NewProduct /></PageWrapper>} />
+          <Route path="/productos" element={<PageWrapper><ListaProductos /></PageWrapper>} />
+          <Route path="/color" element={<PageWrapper><ColorNewForm /></PageWrapper>} />
+          <Route path="/empleados" element={<PageWrapper><RegisterEmpledos /></PageWrapper>} />
+          <Route path="/listaempleados" element={<PageWrapper><ListaEmpleados /></PageWrapper>} />
+          <Route path="/panelcontrol" element={<PageWrapper><PanelControl /></PageWrapper>} />
+          <Route path="/carrito" element={<PageWrapper><Carrito /></PageWrapper>} />
+          <Route path="/listacolores" element={<PageWrapper><ListaColores /></PageWrapper>} />
+          <Route path="/respuestapago" element={<PageWrapper><RespuestaPago /></PageWrapper>} />
+          <Route path="/rechazada" element={<PageWrapper><Rechazada /></PageWrapper>} />
+          <Route path="/confirmacion" element={<PageWrapper><Confirmacion /></PageWrapper>} />
+          <Route path="/perfil" element={<PageWrapper><Perfil /></PageWrapper>} />
+          <Route path="/validarcorreo" element={<PageWrapper><VerificarCorreo /></PageWrapper>} />
+          <Route path="/esperando-confirmacion" element={<PageWrapper><EsperandoConfirmacion /></PageWrapper>} />
+          <Route path="/productodetalladopages" element={<PageWrapper><ProductoDetalladoPages /></PageWrapper>} />
+          <Route path="/juego" element={<PageWrapper><Juego /></PageWrapper>} />
+          <Route path="/producto/:id" element={<PageWrapper><DetalleProducto /></PageWrapper>} />
+          <Route path="/producto/:id/variantes" element={<PageWrapper><VariantesProducto /></PageWrapper>} />
+          <Route path="/historialfacturas" element={<PageWrapper><HistorialFacturas /></PageWrapper>} />
+          <Route path="/metricas" element={<PageWrapper><MetricasPages /></PageWrapper>} />
+          <Route path="/favoritos" element={<PageWrapper><Favoritos /></PageWrapper>} />
+          <Route path="/personalizador" element={<PageWrapper><Personalizador /></PageWrapper>} />
+        </Routes>
+      </AnimatePresence>
         </div>
-       
       </div>
-      {/* Oculta el footer si está en rutas especiales o en el personalizador */}
-      {!(ocultarHeaderYFooter || ocultarSoloFooter) && <Footer />}
 
+      {!ocultarFooter && <Footer />}
     </>
   );
 }
 
-export default App
+
+
+export default App;

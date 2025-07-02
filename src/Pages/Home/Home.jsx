@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { BuscadorProductos } from '../../Components/BuscadorProducto.ts/BuscadorProducto';
 import ChatWidget from '../../Components/ChatBot/ChatBot';
-import indexWoman from '../../assets/images/women2.webp'; 
 import { BotonReseñas } from '../../Components/BotonReseñas/BotonReseñas';
 import { ModalReseñas } from '../../Components/ModalReseñas/ModalReseñas';
-import { ParaTi } from '../../Components/ParaTi/ParaTi';
+import { MostrarProducto } from '../../Components/CartaProducto/CartaProducto';
+import { motion } from 'framer-motion';
+import heroImage from '../../assets/images/women2.webp';
+import marketingImage from '../../assets/images/stock-promo.jpg';
+import movementImage from '../../assets/images/exclusive-pair.jpg';
+import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
 
 export const Home = () => {
@@ -24,45 +28,114 @@ if (token) {
 }
 
   return (
-    <div className="px-6 md:px-12 lg:px-20 py-10 space-y-12 relative">
-      <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-10">
-        <img
-          src={indexWoman}
-          alt="Modelo principal"
-          className="w-full max-w-md rounded-3xl shadow-xl mx-auto"
+    <div className="w-full min-h-screen bg-white font-sans">
+
+      {/* HERO SECTION */}
+      <section className="relative w-full h-[100vh] overflow-hidden flex items-center justify-center">
+        <motion.img
+          src={heroImage}
+          alt="Portada"
+          className="absolute w-full h-full object-cover object-center brightness-[0.5]"
+          initial={{ scale: 1.2 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 2 }}
         />
-        <div className="text-center md:text-left space-y-6">
-          <h1 className="text-4xl md:text-6xl font-black leading-tight text-gray-900">
-            Encuentra tu <span className="text-pink-300">estilo ideal</span>
-          </h1>
-          <p className="text-gray-500 text-lg">
-            Zapatos de calidad para cada ocasión, diseñados para que te sientas único cada día.
-          </p>
-          <div className="flex justify-center md:justify-start gap-4">
-            <button className="px-6 py-3 rounded-full border border-black text-black hover:bg-gray-100">
-              Descubrir más
-            </button>
-            <button className="px-6 py-3 rounded-full bg-black text-white hover:bg-gray-900">
-              Comprar ahora
-            </button>
+        <motion.div
+          className="relative z-10 text-center text-white px-6 space-y-6"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.4 }}
+        >
+          <h1 className="text-6xl md:text-8xl font-serif italic drop-shadow-xl">Enriquece tu día</h1>
+          <p className="text-lg md:text-2xl font-light">Estilo, elegancia y comodidad para todos los días.</p>
+          <div className="flex flex-wrap justify-center gap-4 mt-6">
+            
+            <motion.button
+              className="px-6 py-3 border border-white rounded-full hover:bg-white hover:text-black transition font-medium"
+              whileHover={{ scale: 1.05 }}
+            >
+              Ver más
+            </motion.button>
           </div>
+        </motion.div>
+      </section>
+
+      {/* MARKETING */}
+      <motion.section
+        className="grid md:grid-cols-2 items-center gap-12 px-8 md:px-16 py-24"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        transition={{ duration: 1 }}
+        variants={{
+          hidden: { opacity: 0, y: 60 },
+          visible: { opacity: 1, y: 0 },
+        }}
+      >
+        <motion.img
+          src={marketingImage}
+          alt="Material Premium"
+          className="rounded-3xl shadow-2xl object-cover w-full h-[500px]"
+          whileHover={{ scale: 1.01 }}
+          transition={{ duration: 0.4 }}
+        />
+        <div className="space-y-6">
+          <h2 className="text-4xl font-bold text-gray-800">Eleva cada paso</h2>
+          <p className="text-gray-600 text-lg leading-relaxed">
+            Camina con seguridad y propósito. Con materiales sostenibles, diseño atemporal y un enfoque absoluto en la comodidad.
+          </p>
+          <ul className="text-gray-700 list-disc list-inside space-y-2">
+            <li>📦 Envíos rápidos y seguros</li>
+            <li>💳 Pago contra entrega disponible</li>
+            <li>📞 Soporte 24/7 personalizado</li>
+          </ul>
         </div>
-      </div>
+      </motion.section>
 
-      {/* Productos Destacados */}
-      <div>
-        <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-4">
+      {/* NUEVA SECCIÓN: MOVIMIENTO */}
+      <motion.section
+        className="flex flex-col md:flex-row items-center justify-between gap-10 px-6 md:px-20 py-24 bg-pink-50"
+        initial={{ opacity: 0, y: 60 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+      >
+        <motion.div className="md:w-1/2 space-y-6 text-center md:text-left">
+          <h3 className="text-4xl md:text-5xl font-extrabold text-pink-700 leading-tight">Únete al movimiento</h3>
+          <p className="text-gray-700 text-lg">
+            No solo es calzado, es una forma de expresarte. Cada par que eliges transforma tu paso en una declaración de principios.
+          </p>
+          <motion.button
+            className="mt-4 px-6 py-3 bg-pink-600 text-white rounded-full shadow-md hover:bg-pink-700 transition font-semibold"
+            whileHover={{ scale: 1.05 }}
+            onClick={irANosotros}
+          >
+            Conoce nuestra filosofía
+          </motion.button>
+        </motion.div>
+        <motion.img
+          src={movementImage}
+          alt="Movimiento"
+          className="rounded-3xl w-full md:w-[500px] shadow-xl object-cover"
+          whileHover={{ scale: 1.02 }}
+          transition={{ duration: 0.5 }}
+        />
+      </motion.section>
+
+      {/* PRODUCTOS DESTACADOS */}
+      <section className="py-20 px-4 md:px-16 bg-white">
+        <motion.h2
+          className="text-4xl font-bold text-center text-gray-800 mb-12"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
           Productos Destacados
-        </h2>
-        <BuscadorProductos />
-      </div>
+        </motion.h2>
+        <MostrarProducto cantidad={6} />
+      </section>
 
-      {/* Apartado de recomendaciones ParaTi */}
-      <ParaTi userId={usuario_id} />
-
+      {/* CHAT Y RESEÑAS */}
       <ChatWidget />
-
-      {/* BOTÓN DE RESEÑAS */}
       <div className="fixed bottom-6 right-6 z-50">
         <BotonReseñas onClick={() => setModalAbierto(true)} />
       </div>
