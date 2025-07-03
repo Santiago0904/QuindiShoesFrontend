@@ -218,32 +218,12 @@ export function DetalleProducto() {
             alt={producto.nombre_producto}
             className="w-[480px] h-[420px] object-contain"
           />
-          <div className="flex gap-3 mt-4">
-            {producto.imagenes.slice(1).map((img, idx) => (
-              <img key={idx} src={img} className="w-14 h-14 rounded-full border border-gray-300" />
-            ))}
-          </div>
-        </div>
-    <>
-      <div className="w-full min-h-screen bg-gradient-to-br from-pink-100 via-white to-green-100 px-16 pt-16 pb-24 flex flex-col gap-20">
-        {/* Sección superior: imagen + detalles producto */}
-        <div className="flex gap-16">
-          <div className="flex-1 flex flex-col justify-center items-center mt-[100px]">
-            <img
-              src={imagenPrincipal}
-              alt={producto.nombre_producto}
-              className="w-[480px] h-[420px] object-contain"
-            />
-            <div className="flex gap-3 mt-4">
-              {producto.imagenes.slice(1).map((img, idx) => (
-                <img
-                  key={idx}
-                  src={img}
-                  className="w-14 h-14 rounded-full border border-gray-300"
-                />
-              ))}
-            </div>
-          </div>
+      <div className="flex gap-3 mt-4">
+        {producto.imagenes.slice(1).map((img, idx) => (
+          <img key={idx} src={img} className="w-14 h-14 rounded-full border border-gray-300" />
+        ))}
+      </div>
+    </div>
 
         {/* Detalles */}
         <div className="flex-1 flex flex-col justify-center mt-[100px]">
@@ -286,34 +266,48 @@ export function DetalleProducto() {
               <button onClick={() => setCantidad(c => Math.min(stockDisponible, c + 1))} className="w-8 h-8 rounded-full border hover:bg-green-200">+</button>
             </div>
 
-            {/* Botones */}
             <div className="flex gap-4 mb-6">
-              <motion.button onClick={handleAgregarCarrito} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1 bg-pink-400 text-white py-3 rounded-full font-semibold flex items-center justify-center gap-2">
-                Agregar al Carrito <FaShoppingCart />
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleAgregarCarrito}
+                className="flex-1 bg-pink-500 text-white py-3 rounded-full font-semibold shadow-lg hover:bg-pink-600 transition flex items-center justify-center gap-2"
+              >
+                Agregar al Carrito
+                <FaShoppingCart className="text-lg" />
               </motion.button>
 
               {producto.reserva_activa && (
-                <motion.button onClick={handleReservar} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-1 bg-white border-2 border-black text-black py-3 rounded-full font-semibold hover:bg-black hover:text-white">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleReservar}
+                  className="flex-1 bg-white border-2 border-black text-black py-3 rounded-full font-semibold hover:bg-black hover:text-white transition"
+                >
                   Reservar
                 </motion.button>
               )}
             </div>
 
-            {/* Favorito */}
-            <motion.button onClick={toggleFavorito} whileTap={{ rotate: 360, scale: 1.3 }} className="p-3 rounded-full text-pink-500 text-3xl shadow-md hover:scale-110 transition-transform">
+            <motion.button
+              onClick={toggleFavorito}
+              whileTap={{ rotate: 360, scale: 1.3 }}
+              className="p-3 rounded-full text-pink-500 text-3xl shadow-md hover:scale-110 transition-transform"
+            >
               {esFavorito ? <FaHeart /> : <FaRegHeart />}
             </motion.button>
           </div>
         </div>
       </div>
 
-      {/* Reseñas */}
+      {/* Sección reseñas integrada */}
       <div className="w-full flex justify-center mt-[50px]">
         <div className="w-full max-w-3xl rounded-1xl shadow-2xl p-8 bg-white/60 backdrop-blur-md border border-pink-200">
-          <ParticlesBackground />
+        <ParticlesBackground />
+
           <ResenasProducto id_producto={producto.id_producto} usuario={usuario} />
         </div>
       </div>
     </div>
-  );
+);
 }

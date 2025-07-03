@@ -475,7 +475,6 @@ export const ListaProductos = () => {
       animate={{ opacity: 1 }}
       className="min-h-screen relative py-12 px-4 sm:px-8 overflow-hidden"
     >
-      <ParticlesBackground />
       <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-3xl p-10">
         <div className="flex gap-4 mb-8">
           <button
