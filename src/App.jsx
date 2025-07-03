@@ -57,7 +57,8 @@ function App() {
     "/recuperarcontrasena",
     "/reiniciarcontrasena",
     "/esperando-confirmacion",
-    "/validarcorreo"
+    "/validarcorreo",
+    "/historial-personalizaciones"
   ];
 
   // Rutas donde se oculta TODO (header + footer)

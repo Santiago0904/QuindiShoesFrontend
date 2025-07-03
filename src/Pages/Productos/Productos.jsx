@@ -7,6 +7,7 @@ import { FiltrosProducto } from "../../Components/FiltrosProducto/FiltrosProduct
 import { motion } from "framer-motion";
 import { ParticlesBackground } from "../../Components/Particulas/ParticlesBackground";
 import { ColorNewForm } from "../../Components/ColorNewForm/ColorNewForm";
+import VisorModeloGLB from "../../Components/VisorModeloGLB/VisorModeloGLB";
 
 // CRUD de colores para actualizar y eliminar
 const CrudColores = ({ colores, onActualizar, onEliminar }) => (
@@ -80,12 +81,14 @@ const ModelosGuardados = ({ modelos }) => (
       ) : (
         modelos.map((modelo) => (
           <div key={modelo.id} className="bg-gray-50 rounded-xl p-4 shadow">
-            <iframe
-              src={`${import.meta.env.VITE_API_URL || ""}/personalizacion/modelo/${modelo.id}`}
-              title={`Modelo ${modelo.id}`}
-              className="w-full h-40 rounded-lg border"
+            <VisorModeloGLB
+              url={`http://localhost:3000/personalizacion/modelo/${modelo.id}`}
             />
-            <p className="mt-2 text-sm text-gray-600">Modelo #{modelo.id}</p>
+            {modelo.fecha && (
+              <p className="mt-2 text-xs text-gray-400">
+                {new Date(modelo.fecha).toLocaleDateString()}
+              </p>
+            )}
           </div>
         ))
       )}
@@ -192,7 +195,14 @@ export const ListaProductos = () => {
   const cargarColores = () => {
     axiosClient
       .get("/color")
-      .then((res) => setColores(res.data))
+      .then((res) => {
+        const colores = res.data.map(c => ({
+          id_color: c.id_color,
+          color: c.nombre_color,
+          codigo_hex: c.codigo_hax
+        }));
+        setColores(colores);
+      })
       .catch(() => setColores([]));
   };
 
@@ -200,7 +210,17 @@ export const ListaProductos = () => {
   const cargarTopColores = () => {
     axiosClient
       .get("/color/top-usados")
-      .then((res) => setTopColores(res.data))
+      .then((res) => {
+        const topColores = res.data
+          .map(c => ({
+            id_color: c.id_color,
+            color: c.nombre_color,
+            codigo_hex: c.codigo_hax,
+            usos: c.usos // <-- aquí el cambio
+          }))
+          .sort((a, b) => b.usos - a.usos); // Ordena de mayor a menor
+        setTopColores(topColores);
+      })
       .catch(() => setTopColores([]));
   };
 

@@ -163,7 +163,7 @@ const Perfil = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.5 }}
                 >
-                  ¡Hola, {usuario.nombre}!
+                  ¡Hola, {usuario.nombre} {usuario.apellido}!
                 </motion.h1>
                 <p className="text-xl text-slate-700 mb-6 leading-relaxed">
                   Bienvenido a tu espacio personal. Aquí puedes gestionar tu
@@ -235,7 +235,7 @@ const Perfil = () => {
             </motion.div>
 
             {/* Botón vistoso para abrir historial */}
-            <div className="flex justify-center my-8">
+            <div className="flex justify-center my-8 gap-4 flex-wrap">
               <button
                 onClick={() => setHistorialAbierto(true)}
                 className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-pink-200 text-pink-800 font-bold text-lg shadow-lg hover:bg-pink-300 transition-all border-2 border-pink-300"
@@ -244,6 +244,15 @@ const Perfil = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Ver historial de compras
+              </button>
+              <button
+                onClick={() => navigate("/historial-personalizaciones")}
+                className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-pink-200 text-pink-800 font-bold text-lg shadow-lg hover:bg-pink-300 transition-all border-2 border-pink-300"
+              >
+                <svg className="w-7 h-7 text-pink-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Historial de Personalizaciones
               </button>
             </div>
 
@@ -283,19 +292,12 @@ const Perfil = () => {
                 <EditarDatosUsuario
                   usuario={usuario}
                   onClose={() => setEditarDatosAbierto(false)}
-                  onUpdate={setUsuario}
+                  onUpdate={(usuarioActualizado) => {
+                    setUsuario(usuarioActualizado);
+                  }}
                 />
               )}
             </AnimatePresence>
-
-            <motion.button
-              onClick={() => navigate("/historial-personalizaciones")}
-              className="bg-gradient-to-r from-green-400 to-lime-500 hover:from-green-500 hover:to-lime-600 text-white px-7 py-3 rounded-full shadow-lg text-lg font-medium transform hover:scale-105 transition-all duration-300 ease-out"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Historial de Personalizaciones
-            </motion.button>
           </div>
         )}
       </div>

@@ -4,13 +4,14 @@ import axiosClient from "../../api/axion";
 
 export default function EditarDatosUsuario({ usuario, onClose, onUpdate }) {
   const [form, setForm] = useState({
-    nombre: usuario.nombre || "",
-    correo: usuario.correo || "",
-    telefono: usuario.telefono || "",
-    direccion: usuario.direccion || "",
+    nombre: usuario?.nombre || "",
+    apellido: usuario?.apellido || "", // <-- usa apellido (singular)
+    correo: usuario?.correo || "",
+    telefono: usuario?.telefono || "",
+    direccion: usuario?.direccion || "",
   });
-  const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState(null);
+  const [cargando, setCargando] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -18,68 +19,97 @@ export default function EditarDatosUsuario({ usuario, onClose, onUpdate }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setLoading(true);
-    setMsg(null);
+    setCargando(true);
+    setError("");
     try {
-      const res = await axiosClient.put("/profile", form);
-      setMsg("Datos actualizados correctamente.");
-      onUpdate(res.data); // Actualiza el usuario en Perfil.jsx
-      setTimeout(onClose, 1200);
+      const res = await axiosClient.put(`/profile/${usuario.id_usuario}`, form);
+      onUpdate(res.data); // <-- Esto envía el usuario actualizado al Perfil
+      onClose();
     } catch (err) {
-      setMsg("Error al actualizar datos.");
-    } finally {
-      setLoading(false);
+      setError("Error al actualizar datos.");
     }
+    setCargando(false);
   };
 
   return (
     <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 40 }}
+      transition={{ duration: 0.5 }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
     >
-      <motion.form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative"
-        initial={{ scale: 0.95 }}
-        animate={{ scale: 1 }}
-        exit={{ scale: 0.95 }}
-      >
+      <div className="bg-white bg-opacity-95 p-8 rounded-3xl shadow-2xl border border-pink-100 w-full max-w-lg relative">
         <button
-          type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 text-blue-500 hover:text-blue-700 text-2xl font-bold"
+          className="absolute top-4 right-4 text-pink-500 hover:text-pink-700 text-2xl font-bold"
           aria-label="Cerrar"
         >
           ×
         </button>
-        <h2 className="text-2xl font-bold mb-6 text-blue-600">Editar datos</h2>
-        <label className="block mb-3">
-          Nombre:
-          <input name="nombre" value={form.nombre} onChange={handleChange} className="w-full border rounded p-2 mt-1" />
-        </label>
-        <label className="block mb-3">
-          Correo:
-          <input name="correo" value={form.correo} onChange={handleChange} className="w-full border rounded p-2 mt-1" />
-        </label>
-        <label className="block mb-3">
-          Teléfono:
-          <input name="telefono" value={form.telefono} onChange={handleChange} className="w-full border rounded p-2 mt-1" />
-        </label>
-        <label className="block mb-6">
-          Dirección:
-          <input name="direccion" value={form.direccion} onChange={handleChange} className="w-full border rounded p-2 mt-1" />
-        </label>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-500 text-white py-2 rounded font-bold hover:bg-blue-600 transition"
-        >
-          {loading ? "Guardando..." : "Guardar cambios"}
-        </button>
-        {msg && <div className="mt-4 text-center text-blue-600">{msg}</div>}
-      </motion.form>
+        <h2 className="text-3xl font-bold text-center text-pink-600 mb-6 drop-shadow">
+          Editar Datos
+        </h2>
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <input
+              name="nombre"
+              type="text"
+              placeholder="Nombre"
+              value={form.nombre}
+              onChange={handleChange}
+              className="flex-1 px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300"
+              required
+            />
+            <input
+              name="apellido"
+              type="text"
+              placeholder="Apellido"
+              value={form.apellido}
+              onChange={handleChange}
+              className="flex-1 px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300"
+              required
+            />
+          </div>
+          <input
+            name="correo"
+            type="email"
+            placeholder="Correo"
+            value={form.correo}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300"
+            required
+          />
+          <input
+            name="telefono"
+            type="text"
+            placeholder="Teléfono"
+            value={form.telefono}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300"
+            required
+          />
+          <input
+            name="direccion"
+            type="text"
+            placeholder="Dirección"
+            value={form.direccion}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300"
+            required
+          />
+          {error && <p className="text-red-500 text-center">{error}</p>}
+          <motion.button
+            type="submit"
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-pink-400 to-emerald-400 text-white font-bold text-lg shadow-lg hover:from-pink-500 hover:to-emerald-500 transition-all"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            disabled={cargando}
+          >
+            {cargando ? "Guardando..." : "Guardar Cambios"}
+          </motion.button>
+        </form>
+      </div>
     </motion.div>
   );
 }
