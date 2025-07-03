@@ -12,6 +12,7 @@ const ModalActualizarProducto = ({ producto, onClose, onActualizar }) => {
     generoProducto: producto.genero_producto,
     precioProducto: producto.precio_producto,
     id_producto: producto.id_producto,
+    urlImagen: producto.imagenes?.[0]?.url || "", // Nueva línea
   });
 
   const [mostrarInputTipo, setMostrarInputTipo] = useState(false);
@@ -29,7 +30,12 @@ const ModalActualizarProducto = ({ producto, onClose, onActualizar }) => {
     e.preventDefault();
     const tipoFinal = mostrarInputTipo ? nuevoTipo : formData.tipoProducto;
 
-    if (!tipoFinal || !formData.nombreProducto || !formData.generoProducto || !formData.precioProducto) {
+    if (
+      !tipoFinal ||
+      !formData.nombreProducto ||
+      !formData.generoProducto ||
+      !formData.precioProducto
+    ) {
       Swal.fire({
         icon: "warning",
         title: "Campos incompletos",
@@ -38,10 +44,23 @@ const ModalActualizarProducto = ({ producto, onClose, onActualizar }) => {
       return;
     }
 
+    if (
+      formData.urlImagen.trim() !== "" &&
+      !formData.urlImagen.startsWith("http")
+    ) {
+      Swal.fire({
+        icon: "warning",
+        title: "URL inválida",
+        text: "La URL de la imagen no es válida.",
+      });
+      return;
+    }
+
     try {
       await axiosClient.put(`/producto/${formData.id_producto}`, {
         ...formData,
         tipoProducto: tipoFinal,
+        imagenUrl: formData.urlImagen, // Envío al backend
       });
 
       onActualizar();
@@ -98,11 +117,11 @@ const ModalActualizarProducto = ({ producto, onClose, onActualizar }) => {
               <motion.button
                 type="button"
                 onClick={() => setMostrarInputTipo(true)}
-               className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-all shadow-md"
+                className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-all shadow-md"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <FaPlus />Otro
+                <FaPlus /> Otro
               </motion.button>
             </div>
           ) : (
@@ -154,6 +173,15 @@ const ModalActualizarProducto = ({ producto, onClose, onActualizar }) => {
             onChange={handleChange}
             placeholder="Precio"
             required
+            className="w-full p-3 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300"
+          />
+
+          {/* Campo para editar URL de la imagen */}
+          <input
+            name="urlImagen"
+            value={formData.urlImagen}
+            onChange={handleChange}
+            placeholder="URL de la imagen del producto"
             className="w-full p-3 border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300"
           />
 

@@ -120,128 +120,141 @@ export function DetalleProducto() {
   };
 
   return (
-  <>
+    <>
 
-    <div className="w-full min-h-screen bg-gradient-to-br from-pink-100 via-white to-green-100 px-16 pt-16 pb-24 flex flex-col gap-20">
-      {/* Sección superior: imagen + detalles producto */}
+      <div className="w-full min-h-screen bg-gradient-to-br from-pink-100 via-white to-green-100 px-16 pt-16 pb-24 flex flex-col gap-20">
+        {/* Sección superior: imagen + detalles producto */}
 
-      <div className="flex gap-16">
-        <div className="flex-1 flex flex-col justify-center items-center mt-[100px]">
-          <img
-            src={imagenPrincipal}
-            alt={producto.nombre_producto}
-            className="w-[480px] h-[420px] object-contain"
-          />
-          <div className="flex gap-3 mt-4">
-            {producto.imagenes.slice(1).map((img, idx) => (
-              <img
-                key={idx}
-                src={img}
-                className="w-14 h-14 rounded-full border border-gray-300"
-              />
-            ))}
+        <div className="flex gap-16">
+          <div className="flex-1 flex flex-col justify-center items-center mt-[100px]">
+            <img
+              src={imagenPrincipal}
+              alt={producto.nombre_producto}
+              className="w-[480px] h-[420px] object-contain"
+            />
+            <div className="flex gap-3 mt-4">
+              {producto.imagenes.slice(1).map((img, idx) => (
+                <img
+                  key={idx}
+                  src={img}
+                  className="w-14 h-14 rounded-full border border-gray-300"
+                />
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="flex-1 flex flex-col justify-center mt-[100px]">
-          <h1 className="text-5xl font-bold text-black mb-3">
-            {producto.nombre_producto}
-          </h1>
-          <p className="text-lg text-gray-600 mb-1">{producto.tipo_producto}</p>
-          <p className="text-3xl font-black text-black mb-4">${producto.precio_producto}</p>
+          <div className="flex-1 flex flex-col justify-center mt-[100px]">
+            <h1 className="text-5xl font-bold text-black mb-3">
+              {producto.nombre_producto}
+            </h1>
+            <p className="text-lg text-gray-600 mb-1">{producto.tipo_producto}</p>
+            <p className="text-3xl font-black text-black mb-4">${producto.precio_producto}</p>
 
-          <div className="mb-4">
-            <div className="flex gap-4 mb-4">
-              {producto.colores.map((c) => (
-                <button
-                  key={c.id_color}
-                  onClick={() => setColorSeleccionado(c.id_color)}
-                  className={`w-11 h-18 rounded-full border-2 transition-all duration-300 ${
-                    colorSeleccionado === c.id_color
+            <div className="mb-4">
+              <div className="flex gap-4 mb-4">
+                {producto.colores.map((c) => (
+                  <button
+                    key={c.id_color}
+                    onClick={() => setColorSeleccionado(c.id_color)}
+                    className={`w-11 h-18 rounded-full border-2 transition-all duration-300 ${colorSeleccionado === c.id_color
                       ? "border-black scale-110"
                       : "border-gray-300"
-                  }`}
-                  style={{ backgroundColor: c.codigo_hex }}
-                ></button>
-              ))}
-            </div>
+                      }`}
+                    style={{ backgroundColor: c.codigo_hex }}
+                  ></button>
+                ))}
+              </div>
 
-            <div className="flex gap-2 mb-4 flex-wrap">
-              {producto.tallas.map((t) => (
+              <div className="flex gap-2 mb-4 flex-wrap">
+                {producto.tallas
+                  .sort((a, b) => Number(b.talla) - Number(a.talla))
+                  .map((t) => {
+                    const varianteDisponible = producto.variantes.find(
+                      (v) => v.id_color === colorSeleccionado && v.id_talla === t.id_talla && v.stock > 0
+                    );
+
+                    const estaDisponible = Boolean(varianteDisponible);
+
+                    return (
+                      <button
+                        key={t.id_talla}
+                        onClick={() => {
+                          if (estaDisponible) setTallaSeleccionada(t.id_talla);
+                        }}
+                        disabled={!estaDisponible}
+                        className={`px-4 py-2 rounded-full text-sm border font-semibold transition-all duration-300 ${tallaSeleccionada === t.id_talla
+                            ? "bg-pink-500 text-white border-none"
+                            : estaDisponible
+                              ? "bg-white text-black border-black hover:bg-pink-100"
+                              : "bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed"
+                          }`}
+                      >
+                        {t.talla}
+                      </button>
+                    );
+                  })}
+              </div>
+
+              <div className="flex gap-2 items-center mb-6">
+                <label className="text-gray-700 font-medium">Cantidad:</label>
                 <button
-                  key={t.id_talla}
-                  onClick={() => setTallaSeleccionada(t.id_talla)}
-                  className={`px-4 py-2 rounded-full text-sm border font-semibold transition-all duration-300 ${
-                    tallaSeleccionada === t.id_talla
-                      ? "bg-pink-500 text-white border-none"
-                      : "bg-white text-black border-black"
-                  }`}
+                  onClick={() => setCantidad((c) => Math.max(1, c - 1))}
+                  className="w-8 h-8 rounded-full border hover:bg-pink-200"
                 >
-                  {t.talla}
+                  -
                 </button>
-              ))}
-            </div>
+                <span>{cantidad}</span>
+                <button
+                  onClick={() => setCantidad((c) => Math.min(stockDisponible, c + 1))}
+                  className="w-8 h-8 rounded-full border hover:bg-green-200"
+                >
+                  +
+                </button>
+              </div>
 
-            <div className="flex gap-2 items-center mb-6">
-              <label className="text-gray-700 font-medium">Cantidad:</label>
-              <button
-                onClick={() => setCantidad((c) => Math.max(1, c - 1))}
-                className="w-8 h-8 rounded-full border hover:bg-pink-200"
-              >
-                -
-              </button>
-              <span>{cantidad}</span>
-              <button
-                onClick={() => setCantidad((c) => Math.min(stockDisponible, c + 1))}
-                className="w-8 h-8 rounded-full border hover:bg-green-200"
-              >
-                +
-              </button>
-            </div>
-
-            <div className="flex gap-4 mb-6">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleAgregarCarrito}
-                className="flex-1 bg-pink-500 text-white py-3 rounded-full font-semibold shadow-lg hover:bg-pink-600 transition flex items-center justify-center gap-2"
-              >
-                Agregar al Carrito
-                <FaShoppingCart className="text-lg" />
-              </motion.button>
-
-              {producto.reserva_activa && (
+              <div className="flex gap-4 mb-6">
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={handleReservar}
-                  className="flex-1 bg-white border-2 border-black text-black py-3 rounded-full font-semibold hover:bg-black hover:text-white transition"
+                  onClick={handleAgregarCarrito}
+                  className="flex-1 bg-pink-500 text-white py-3 rounded-full font-semibold shadow-lg hover:bg-pink-600 transition flex items-center justify-center gap-2"
                 >
-                  Reservar
+                  Agregar al Carrito
+                  <FaShoppingCart className="text-lg" />
                 </motion.button>
-              )}
-            </div>
 
-            <motion.button
-              onClick={toggleFavorito}
-              whileTap={{ rotate: 360, scale: 1.3 }}
-              className="p-3 rounded-full text-pink-500 text-3xl shadow-md hover:scale-110 transition-transform"
-            >
-              {esFavorito ? <FaHeart /> : <FaRegHeart />}
-            </motion.button>
+                {producto.reserva_activa && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleReservar}
+                    className="flex-1 bg-white border-2 border-black text-black py-3 rounded-full font-semibold hover:bg-black hover:text-white transition"
+                  >
+                    Reservar
+                  </motion.button>
+                )}
+              </div>
+
+              <motion.button
+                onClick={toggleFavorito}
+                whileTap={{ rotate: 360, scale: 1.3 }}
+                className="p-3 rounded-full text-pink-500 text-3xl shadow-md hover:scale-110 transition-transform"
+              >
+                {esFavorito ? <FaHeart /> : <FaRegHeart />}
+              </motion.button>
+            </div>
+          </div>
+        </div>
+
+        {/* Sección reseñas integrada */}
+        <div className="w-full flex justify-center mt-[50px]">
+          <div className="w-full max-w-3xl rounded-1xl shadow-2xl p-8 bg-white/60 backdrop-blur-md border border-pink-200">
+            <ParticlesBackground />
+
+            <ResenasProducto id_producto={producto.id_producto} usuario={usuario} />
           </div>
         </div>
       </div>
-
-      {/* Sección reseñas integrada */}
-      <div className="w-full flex justify-center mt-[50px]">
-        <div className="w-full max-w-3xl rounded-1xl shadow-2xl p-8 bg-white/60 backdrop-blur-md border border-pink-200">
-        <ParticlesBackground />
-
-          <ResenasProducto id_producto={producto.id_producto} usuario={usuario} />
-        </div>
-      </div>
-    </div>
-  </>
-);
+    </>
+  );
 }
