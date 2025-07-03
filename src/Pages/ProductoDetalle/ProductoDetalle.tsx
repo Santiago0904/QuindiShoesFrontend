@@ -287,6 +287,18 @@ export function DetalleProducto() {
                   Reservar
                 </motion.button>
               )}
+
+              {/* Botón de personalizar SOLO si el producto es personalizable */}
+              {producto.personalizacion_activa === 1 && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate("/personalizador", { state: { producto } })}
+                  className="flex-1 bg-indigo-600 text-white py-3 rounded-full font-semibold shadow-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+                >
+                  Personalizar
+                </motion.button>
+              )}
             </div>
 
             <motion.button
