@@ -48,8 +48,8 @@ const PaymentBrick = React.memo(() => {
       if (!isMounted) return;
 
       const mp = new window.MercadoPago("TEST-29b38254-defe-4eaf-8a78-2296e12fe210", {
-      locale: "es-CO",
-    });
+        locale: "es-CO",
+      });
 
 
       const bricksBuilder = mp.bricks();

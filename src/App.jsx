@@ -19,6 +19,8 @@ import { ListaColores } from './Pages/MostrarColores/MostrarColores'
 import { ListaZonas } from './Pages/MostrarZonaProductos/MostrarZonaProductos'
 import { Personalizador } from './Pages/Personalizador/Personalizador'
 import { Pagesproductos } from './Pages/ProductosPages/Pagesproductos'
+import {HistorialPersonalizaciones} from './Pages/HistorialPersonalizaciones/HistorialPersonalizaciones'
+
 
 import { Footer } from './Layouts/Footer/Footer'
 import { ProductoDetalladoPages } from './Pages/ProductoDetalladoPages/ProductoDetalladoPages'
@@ -33,6 +35,8 @@ import { Juego } from './Pages/Juego/Juego'
 import { DetalleProducto } from './Pages/ProductoDetalle/ProductoDetalle'
 import { VariantesProducto } from './Pages/VariantesProducto/VariantesProducto'
 import { HistorialFacturas } from './Pages/HistorialVentas/historialventas'
+import { MaterialPage } from './Pages/MaterialPage/MaterialPage'
+import { ColorPage } from './Pages/ColorPage/ColorPage'
 import { MetricasPages } from './Pages/MetricasPage/MetricasPages'
 import { Favoritos } from './Pages/Favoritos/Favoritos'
 import ScrollToTop from './Components/ScrollTop/ScrollTop'
@@ -106,6 +110,7 @@ function App() {
           <Route path="/producto/:id" element={<PageWrapper><DetalleProducto /></PageWrapper>} />
           <Route path="/producto/:id/variantes" element={<PageWrapper><VariantesProducto /></PageWrapper>} />
           <Route path="/historialfacturas" element={<PageWrapper><HistorialFacturas /></PageWrapper>} />
+            <Route path="/historial-personalizaciones" element={<HistorialPersonalizaciones />} />
           <Route path="/metricas" element={<PageWrapper><MetricasPages /></PageWrapper>} />
           <Route path="/favoritos" element={<PageWrapper><Favoritos /></PageWrapper>} />
           <Route path="/personalizador" element={<PageWrapper><Personalizador /></PageWrapper>} />

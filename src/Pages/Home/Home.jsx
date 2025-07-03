@@ -9,13 +9,26 @@ import heroImage from '../../assets/images/women2.webp';
 import marketingImage from '../../assets/images/stock-promo.jpg';
 import movementImage from '../../assets/images/exclusive-pair.jpg';
 import { useNavigate } from 'react-router-dom';
-
+import { jwtDecode } from "jwt-decode";
 export const Home = () => {
   const [modalAbierto, setModalAbierto] = useState(false);
-  const navigate = useNavigate();
-const irANosotros = () => {
-  navigate('/nosotros'); // o la ruta que quieras
-};
+ const navigate = useNavigate();
+ const irANosotros = () => {
+    navigate("/nosotros");
+  };
+  // Obtén el id del usuario autenticado
+ const token = localStorage.getItem("token");
+let usuario_id;
+
+if (token) {
+  try {
+    const decoded = jwtDecode(token);
+    usuario_id = decoded.data?.id;
+  } catch (error) {
+    console.error("❌ Token inválido:", error);
+  }
+}
+
   return (
     <div className="w-full min-h-screen bg-white font-sans">
 
@@ -128,7 +141,10 @@ const irANosotros = () => {
       <div className="fixed bottom-6 right-6 z-50">
         <BotonReseñas onClick={() => setModalAbierto(true)} />
       </div>
-      <ModalReseñas abierto={modalAbierto} cerrar={() => setModalAbierto(false)} />
+      {/* MODAL DE RESEÑAS */}
+      <ModalReseñas abierto={modalAbierto}
+        cerrar={() => setModalAbierto(false)}
+        usuario_id={usuario_id} />
     </div>
   );
 };
