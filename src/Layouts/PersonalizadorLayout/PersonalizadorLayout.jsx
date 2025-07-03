@@ -13,7 +13,7 @@ export default function PersonalizadorLayout() {
 
   return (
     <div className="flex flex-col md:flex-row h-screen w-full bg-gray-100 relative overflow-x-hidden">
-      <div className="flex-1 h-1/2 md:h-screen bg-white border-b md:border-b-0 md:border-r border-gray-300">
+      <div className="flex-1 h-1/2 md:h-full bg-white border-b md:border-b-0 md:border-r border-gray-300 ">
         <PersonalizadorCanvas ref={canvasRef} /> {/* ✅ se pasa como ref */}
       </div>
       <div>

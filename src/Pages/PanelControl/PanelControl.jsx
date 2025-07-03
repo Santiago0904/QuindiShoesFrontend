@@ -6,7 +6,7 @@ import { ListaProductos } from '../Productos/Productos';
 import { ListaEmpleados } from '../Empleados/Empleados';
 import { MetricasPages } from '../MetricasPage/MetricasPages';
 import { HistorialFacturas } from '../HistorialVentas/historialventas';
-import { ParticlesBackground } from '../../Components/Particulas/ParticlesBackground';
+import { BlobBackground } from '../../Components/FondoBlobs/FondoBlobs';
 import VentasPorRango from '../../Components/Metricas/Metricas';
 import { ReservasPanel } from '../../Components/Reservas/Reservas';
 import Domicilios from '../Domicilios/Domicilios';
@@ -29,7 +29,7 @@ export const PanelControl = () => {
 
   return (
     <>
-    <ParticlesBackground />
+    <BlobBackground />
     <div className="min-h-screen p-5 relative">
       <h1 className="text-3xl font-bold mb-10">Backoffice</h1>
 

@@ -54,7 +54,7 @@ const PersonalizadorCanvas = forwardRef((props, ref) => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-screen min-h-[300px] bg-white"
+        className="relative w-full h-full bg-white overflow-hidden"
     >
       <Canvas
         camera={{ position: [0, 1, 5], fov: 50 }}

@@ -15,6 +15,7 @@ import { ListaEmpleados } from './Pages/Empleados/Empleados'
 import Carrito from './Pages/Carrito/Carrito'
 import { ListaColores } from './Pages/MostrarColores/MostrarColores'
 import { Personalizador } from './Pages/Personalizador/Personalizador'
+import { Pagesproductos } from './Pages/ProductosPages/Pagesproductos'
 import {HistorialPersonalizaciones} from './Pages/HistorialPersonalizaciones/HistorialPersonalizaciones'
 
 
@@ -52,7 +53,8 @@ function App() {
     "/reiniciarcontrasena",
     "/esperando-confirmacion",
     "/validarcorreo",
-    "/historial-personalizaciones"
+    "/historial-personalizaciones",
+    "/personalizador"
   ];
 
   // Rutas donde se oculta TODO (header + footer)
@@ -66,8 +68,7 @@ function App() {
     ocultarHeader || ocultarSoloFooterEn.includes(rutaActual);
 
   // Ocultar solo el footer en el personalizador
-  const ocultarSoloFooter =
-    location.pathname.toLowerCase() === "/personalizador";
+ //
 
   return (
     <>
@@ -107,11 +108,12 @@ function App() {
           <Route path="/metricas" element={<PageWrapper><MetricasPages /></PageWrapper>} />
           <Route path="/favoritos" element={<PageWrapper><Favoritos /></PageWrapper>} />
           <Route path="/personalizador" element={<PageWrapper><Personalizador /></PageWrapper>} />
+          <Route path="/Productospages" element={<PageWrapper><Pagesproductos /></PageWrapper>} />
         </Routes>
       </AnimatePresence>
         </div>
       </div>
-
+      
       {!ocultarFooter && <Footer />}
     </>
   );
