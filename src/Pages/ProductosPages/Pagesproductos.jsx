@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { MostrarProducto } from '../../Components/CartaProducto/CartaProducto';
 import axiosClient from '../../api/axion';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BlobBackground } from '../../Components/FondoBlobs/FondoBlobs';
+import { ParticlesBackground } from '../../Components/Particulas/ParticlesBackground';
 export const Pagesproductos = () => {
   const [productos, setProductos] = useState([]);
   const [mostrarFiltros, setMostrarFiltros] = useState(true);
@@ -43,7 +43,7 @@ export const Pagesproductos = () => {
 
   return (
    <div className="relative min-h-screen  overflow-hidden">
-  <BlobBackground />
+  <ParticlesBackground />
   <div className="flex flex-col lg:flex-row p-6 gap-6 relative z-10">
 
       <motion.div
