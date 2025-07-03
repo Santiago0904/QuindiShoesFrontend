@@ -98,7 +98,7 @@ export default function ZonaPersonalizar({ canvasRef }) {
   };
 
   return (
-    <div className="w-full absolute bottom-0 left-0 px-4 pb-4 z-50">
+    <div className="w-full absolute bottom-20 left-0 px-4 pb-4 z-50">
       <motion.div
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}

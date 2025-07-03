@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { BuscadorProductos } from '../../Components/BuscadorProducto.ts/BuscadorProducto';
 import ChatWidget from '../../Components/ChatBot/ChatBot';
 import { BotonReseñas } from '../../Components/BotonReseñas/BotonReseñas';
@@ -13,6 +13,10 @@ import { jwtDecode } from "jwt-decode";
 export const Home = () => {
   const [modalAbierto, setModalAbierto] = useState(false);
  const navigate = useNavigate();
+
+// dentro del componente
+const productosRef = useRef(null);
+
  const irANosotros = () => {
     navigate("/nosotros");
   };
@@ -55,7 +59,10 @@ if (token) {
             <motion.button
               className="px-6 py-3 border border-white rounded-full hover:bg-white hover:text-black transition font-medium"
               whileHover={{ scale: 1.05 }}
-            >
+              onClick={() => {
+                const top = productosRef.current?.offsetTop || 0;
+                window.scrollTo({ top, behavior: 'smooth' });
+              }}>
               Ver más
             </motion.button>
           </div>
@@ -100,6 +107,8 @@ if (token) {
         initial={{ opacity: 0, y: 60 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
+            ref={productosRef}
+
       >
         <motion.div className="md:w-1/2 space-y-6 text-center md:text-left">
           <h3 className="text-4xl md:text-5xl font-extrabold text-pink-700 leading-tight">Únete al movimiento</h3>
@@ -124,7 +133,7 @@ if (token) {
       </motion.section>
 
       {/* PRODUCTOS DESTACADOS */}
-      <section className="py-20 px-4 md:px-16 bg-white">
+      <section    className="py-20 px-4 md:px-16 bg-white">
         <motion.h2
           className="text-4xl font-bold text-center text-gray-800 mb-12"
           initial={{ opacity: 0 }}

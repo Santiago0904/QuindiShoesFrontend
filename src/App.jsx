@@ -58,7 +58,8 @@ function App() {
     "/recuperarcontrasena",
     "/reiniciarcontrasena",
     "/esperando-confirmacion",
-    "/validarcorreo"
+    "/validarcorreo",
+    "/personalizador"
   ];
 
   // Rutas donde se oculta TODO (header + footer)
@@ -72,8 +73,7 @@ function App() {
     ocultarHeader || ocultarSoloFooterEn.includes(rutaActual);
 
   // Ocultar solo el footer en el personalizador
- // const ocultarSoloFooter =
-    location.pathname.toLowerCase() === "/personalizador";
+ //
 
   return (
     <>
@@ -119,7 +119,7 @@ function App() {
       </AnimatePresence>
         </div>
       </div>
-
+      
       {!ocultarFooter && <Footer />}
     </>
   );
