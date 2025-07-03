@@ -1,22 +1,25 @@
 import React, { useState } from "react";
-import axiosClient from "../../api/axion"; // Asegúrate de importar axiosClient correctamente
+import axiosClient from "../../api/axion";
+import { motion } from "framer-motion";
 
 const CambiarContraseñaForm = () => {
   const [contraseñaActual, setContraseñaActual] = useState("");
   const [nuevaContraseña, setNuevaContraseña] = useState("");
   const [confirmarContraseña, setConfirmarContraseña] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [cargando, setCargando] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (nuevaContraseña !== confirmarContraseña) {
       setMensaje("Las contraseñas no coinciden.");
       return;
     }
-  
+
+    setCargando(true);
+    setMensaje("");
     try {
-      const token = localStorage.getItem("token");
       const response = await axiosClient.post(
         "/cambiarContrasenaR",
         {
@@ -24,24 +27,31 @@ const CambiarContraseñaForm = () => {
           nuevaContraseña: nuevaContraseña,
         }
       );
-  
-      console.log("Respuesta:", response.data);
       setMensaje("Contraseña cambiada con éxito");
+      setContraseñaActual("");
+      setNuevaContraseña("");
+      setConfirmarContraseña("");
     } catch (error) {
-      console.error("Error al cambiar la contraseña:", error);
       setMensaje("Hubo un error al cambiar la contraseña.");
     }
+    setCargando(false);
   };
-  
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <motion.form
+      onSubmit={handleSubmit}
+      className="space-y-5 w-full"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 30 }}
+      transition={{ duration: 0.5 }}
+    >
       <input
         type="password"
         placeholder="Contraseña actual"
         value={contraseñaActual}
         onChange={(e) => setContraseñaActual(e.target.value)}
-        className="w-full p-2 border rounded"
+        className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300"
         required
       />
       <input
@@ -49,7 +59,7 @@ const CambiarContraseñaForm = () => {
         placeholder="Nueva contraseña"
         value={nuevaContraseña}
         onChange={(e) => setNuevaContraseña(e.target.value)}
-        className="w-full p-2 border rounded"
+        className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300"
         required
       />
       <input
@@ -57,19 +67,26 @@ const CambiarContraseñaForm = () => {
         placeholder="Confirmar nueva contraseña"
         value={confirmarContraseña}
         onChange={(e) => setConfirmarContraseña(e.target.value)}
-        className="w-full p-2 border rounded"
+        className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300"
         required
       />
 
-      <button
-        type="submit"
-        className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
-      >
-        Cambiar Contraseña
-      </button>
+      {mensaje && (
+        <p className={`text-center text-sm ${mensaje.includes("éxito") ? "text-green-500" : "text-red-500"}`}>
+          {mensaje}
+        </p>
+      )}
 
-      {mensaje && <p className="mt-2 text-center text-sm text-red-600">{mensaje}</p>}
-    </form>
+      <motion.button
+        type="submit"
+        className="w-full py-3 rounded-xl bg-gradient-to-r from-pink-400 to-emerald-400 text-white font-bold text-lg shadow-lg hover:from-pink-500 hover:to-emerald-500 transition-all"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.97 }}
+        disabled={cargando}
+      >
+        {cargando ? "Guardando..." : "Cambiar Contraseña"}
+      </motion.button>
+    </motion.form>
   );
 };
 
