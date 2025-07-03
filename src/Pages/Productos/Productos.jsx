@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import axiosClient from "../../api/axion";
 import { FaEdit, FaTrash, FaPlus, FaPalette, FaCubes, FaList } from "react-icons/fa";
 import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
@@ -6,35 +6,40 @@ import Swal from "sweetalert2";
 import { FiltrosProducto } from "../../Components/FiltrosProducto/FiltrosProducto";
 import { motion } from "framer-motion";
 import { ParticlesBackground } from "../../Components/Particulas/ParticlesBackground";
-import { ColorNewForm } from "../../Components/ColorNewForm/ColorNewForm";
 import VisorModeloGLB from "../../Components/VisorModeloGLB/VisorModeloGLB";
+import { ColorNewForm } from "../../Components/ColorNewForm/ColorNewForm";
 
-// CRUD de colores para actualizar y eliminar
+// CRUD de colores estilizado
 const CrudColores = ({ colores, onActualizar, onEliminar }) => (
-  <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
-    <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-pink-700">
+  <div className="bg-white rounded-2xl shadow-lg p-8 mb-8 border border-pink-100">
+    <h3 className="text-2xl font-bold mb-6 flex items-center gap-2 text-pink-700">
       <FaList /> CRUD de Colores
     </h3>
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {colores.map((color) => (
-        <div key={color.id_color} className="flex items-center gap-3 bg-pink-50 p-3 rounded-xl shadow">
+        <div
+          key={color.id_color}
+          className="flex items-center gap-4 bg-gradient-to-tr from-pink-50 to-white p-4 rounded-xl shadow hover:shadow-lg transition"
+        >
           <span
-            className="inline-block w-8 h-8 rounded-full border"
+            className="inline-block w-10 h-10 rounded-full border-2 border-pink-200 shadow"
             style={{ backgroundColor: color.codigo_hex }}
             title={color.color}
           />
-          <span className="font-semibold">{color.color}</span>
+          <span className="font-semibold text-lg text-gray-700 flex-1">{color.color}</span>
           <button
-            className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs"
+            className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-xs font-semibold shadow"
             onClick={() => onActualizar(color)}
+            title="Actualizar"
           >
-            Actualizar
+            <FaEdit />
           </button>
           <button
-            className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs"
+            className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 text-xs font-semibold shadow"
             onClick={() => onEliminar(color.id_color)}
+            title="Eliminar"
           >
-            Eliminar
+            <FaTrash />
           </button>
         </div>
       ))}
@@ -42,32 +47,90 @@ const CrudColores = ({ colores, onActualizar, onEliminar }) => (
   </div>
 );
 
-// Top colores más usados
-const TopColores = ({ colores }) => (
-  <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
-    <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-indigo-700">
-      <FaPalette /> Top colores más usados
-    </h3>
-    <div className="flex flex-wrap gap-4">
-      {colores.length === 0 ? (
+// Top colores más usados estilizado tipo podio
+const TopColores = ({ colores }) => {
+  if (!colores || colores.length === 0) {
+    return (
+      <div className="bg-white rounded-2xl shadow-lg p-8 mb-8 border border-indigo-100">
+        <h3 className="text-2xl font-bold mb-6 flex items-center gap-2 text-indigo-700">
+          <FaPalette /> Top colores más usados
+        </h3>
         <span className="text-gray-500">No hay datos aún.</span>
-      ) : (
-        colores.map((color, idx) => (
-          <div key={color.id_color} className="flex items-center gap-2">
+      </div>
+    );
+  }
+
+  // Podio: 1°, 2°, 3°
+  const podio = colores.slice(0, 3);
+  const resto = colores.slice(3);
+
+  return (
+    <div className="bg-white rounded-2xl shadow-lg p-8 mb-8 border border-indigo-100">
+      <h3 className="text-2xl font-bold mb-6 flex items-center gap-2 text-indigo-700">
+        <FaPalette /> Top colores más usados
+      </h3>
+      {/* Podio */}
+      <div className="flex justify-center items-end gap-8 mb-8">
+        {/* Segundo lugar */}
+        {podio[1] && (
+          <div className="flex flex-col items-center">
+            <span className="text-lg font-bold text-gray-500 mb-1">2°</span>
             <span
-              className="inline-block w-6 h-6 rounded-full border"
+              className="inline-block w-16 h-16 rounded-full border-4 border-indigo-300 shadow-lg mb-2"
+              style={{ backgroundColor: podio[1].codigo_hex }}
+              title={podio[1].color}
+            />
+            <span className="font-semibold text-indigo-700">{podio[1].color}</span>
+            <span className="text-xs text-gray-500">{podio[1].usos} usos</span>
+          </div>
+        )}
+        {/* Primer lugar */}
+        {podio[0] && (
+          <div className="flex flex-col items-center">
+            <span className="text-2xl font-extrabold text-yellow-500 mb-1">1°</span>
+            <span
+              className="inline-block w-24 h-24 rounded-full border-4 border-yellow-400 shadow-2xl mb-2"
+              style={{ backgroundColor: podio[0].codigo_hex }}
+              title={podio[0].color}
+            />
+            <span className="font-bold text-yellow-600">{podio[0].color}</span>
+            <span className="text-xs text-gray-500">{podio[0].usos} usos</span>
+          </div>
+        )}
+        {/* Tercer lugar */}
+        {podio[2] && (
+          <div className="flex flex-col items-center">
+            <span className="text-lg font-bold text-gray-500 mb-1">3°</span>
+            <span
+              className="inline-block w-14 h-14 rounded-full border-4 border-orange-400 shadow-lg mb-2"
+              style={{ backgroundColor: podio[2].codigo_hex }}
+              title={podio[2].color}
+            />
+            <span className="font-semibold text-orange-700">{podio[2].color}</span>
+            <span className="text-xs text-gray-500">{podio[2].usos} usos</span>
+          </div>
+        )}
+      </div>
+      {/* Resto de colores */}
+      <div className="flex flex-wrap gap-4 justify-center">
+        {resto.map((color, idx) => (
+          <div
+            key={color.id_color}
+            className="flex flex-col items-center gap-1 bg-indigo-50 px-4 py-3 rounded-xl shadow border border-indigo-200"
+          >
+            <span
+              className="inline-block w-10 h-10 rounded-full border-2 border-indigo-300 shadow"
               style={{ backgroundColor: color.codigo_hex }}
               title={color.color}
             />
-            <span className="font-semibold">{color.color}</span>
-            <span className="text-xs text-gray-500">({color.usos} usos)</span>
-            {idx < colores.length - 1 && <span className="mx-2">|</span>}
+            <span className="font-semibold text-indigo-700">{color.color}</span>
+            <span className="text-xs text-gray-500">{color.usos} usos</span>
           </div>
-        ))
-      )}
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Modelos 3D guardados
 const ModelosGuardados = ({ modelos }) => (
@@ -80,7 +143,7 @@ const ModelosGuardados = ({ modelos }) => (
         <span className="text-gray-500">No hay modelos guardados.</span>
       ) : (
         modelos.map((modelo) => (
-          <div key={modelo.id} className="bg-gray-50 rounded-xl p-4 shadow">
+          <div key={modelo.id} className="bg-gray-50 rounded-xl p-4 shadow flex flex-col">
             <VisorModeloGLB
               url={`http://localhost:3000/personalizacion/modelo/${modelo.id}`}
             />
@@ -89,6 +152,13 @@ const ModelosGuardados = ({ modelos }) => (
                 {new Date(modelo.fecha).toLocaleDateString()}
               </p>
             )}
+            <div className="mt-2 flex items-center gap-2">
+              <span className="text-xs text-indigo-600 font-semibold">
+                <FaCubes className="inline mr-1" />
+                {modelo.nombre_usuario || "Usuario desconocido"}
+              </span>
+              <span className="text-xs text-gray-400">ID: {modelo.id_usuario}</span>
+            </div>
           </div>
         ))
       )}
@@ -237,6 +307,7 @@ export const ListaProductos = () => {
     try {
       await axiosClient.delete(`/color/${id_color}`);
       setColores((prev) => prev.filter((c) => c.id_color !== id_color));
+      cargarTopColores(); // <-- Recarga el top colores después de eliminar
       Swal.fire({ icon: "success", title: "Color eliminado", timer: 1200, showConfirmButton: false });
     } catch {
       Swal.fire({ icon: "error", title: "Error al eliminar color" });
@@ -245,22 +316,61 @@ export const ListaProductos = () => {
 
   // PUT /color/:id
   const handleActualizarColor = (color) => {
-    const nuevoNombre = prompt("Nuevo nombre del color:", color.color);
-    const nuevoHex = prompt("Nuevo código HEX:", color.codigo_hex);
-    if (!nuevoNombre || !nuevoHex) return;
-    axiosClient
-      .put(`/color/${color.id_color}`, { nombreColor: nuevoNombre, codigoHax: nuevoHex })
-      .then(() => {
-        setColores((prev) =>
-          prev.map((c) =>
-            c.id_color === color.id_color
-              ? { ...c, color: nuevoNombre, codigo_hex: nuevoHex }
-              : c
-          )
-        );
-        Swal.fire({ icon: "success", title: "Color actualizado", timer: 1200, showConfirmButton: false });
-      })
-      .catch(() => Swal.fire({ icon: "error", title: "Error al actualizar color" }));
+    Swal.fire({
+      title: `<span class="font-bold text-pink-700">Actualizar color</span>`,
+      html: `
+      <input id="swal-input-nombre" class="swal2-input" placeholder="Nombre" value="${color.color}" style="font-size:1.1rem; border-radius:0.75rem; border:2px solid #f472b6; margin-bottom:1rem;" />
+      <div style="display:flex;justify-content:center;">
+        <input id="swal-input-hex" class="swal2-input" type="color" value="${color.codigo_hex}" style="width:4rem;height:3rem;border-radius:1rem;border:2px solid #818cf8;background:#fff;padding:0;box-shadow:0 1px 6px #818cf855;margin-bottom:0;" />
+      </div>
+    `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: "Guardar",
+      cancelButtonText: "Cancelar",
+      customClass: {
+        popup: "rounded-2xl p-6",
+        title: "text-2xl font-bold mb-4 flex items-center justify-center gap-2 text-pink-700",
+        confirmButton: "bg-pink-600 text-white px-6 py-2 rounded-lg mx-2 font-semibold shadow hover:bg-pink-700 transition",
+        cancelButton: "bg-gray-200 text-gray-700 px-6 py-2 rounded-lg mx-2 font-semibold shadow hover:bg-gray-300 transition",
+      },
+      buttonsStyling: false,
+      preConfirm: () => {
+        const nuevoNombre = document.getElementById("swal-input-nombre").value;
+        const nuevoHex = document.getElementById("swal-input-hex").value;
+        if (!nuevoNombre || !nuevoHex) {
+          Swal.showValidationMessage("Debes ingresar nombre y color");
+          return false;
+        }
+        return { nuevoNombre, nuevoHex };
+      },
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        axiosClient
+          .put(`/color/${color.id_color}`, {
+            nombreColor: result.value.nuevoNombre,
+            codigoHax: result.value.nuevoHex,
+          })
+          .then(() => {
+            cargarColores();
+            cargarTopColores();
+            Swal.fire({
+              icon: "success",
+              title: "Color actualizado",
+              timer: 1200,
+              showConfirmButton: false,
+              customClass: { popup: "rounded-xl" },
+            });
+          })
+          .catch(() =>
+            Swal.fire({
+              icon: "error",
+              title: "Error al actualizar color",
+              customClass: { popup: "rounded-xl" },
+            })
+          );
+      }
+    });
   };
 
   const handleEliminar = (idProducto) => {
@@ -450,12 +560,12 @@ export const ListaProductos = () => {
                       </p>
                     </div>
                   ))
-                )}
+              )}
               </div>
             </div>
 
             {/* Formulario para agregar colores */}
-            <ColorNewForm />
+            <ColorNewForm onColorGuardado={() => { cargarColores(); cargarTopColores(); }} />
 
             {/* CRUD de colores */}
             <CrudColores
