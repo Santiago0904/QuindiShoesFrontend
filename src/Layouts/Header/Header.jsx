@@ -13,6 +13,7 @@ export const Header = () => {
           <NavLink to="/" className="hover:text-black">Inicio</NavLink>
           <NavLink to="/juego" className="hover:text-black">VideoJuego</NavLink>
           <NavLink to="/nosotros" className="hover:text-black">Nosotros</NavLink>
+          <NavLink to="/Productospages" className="hover:text-black">Productos</NavLink>
         </nav>
         <div className="flex items-center space-x-6">
           <NavLink to="/favoritos" className="text-xl text-gray-600 hover:text-pink-400">

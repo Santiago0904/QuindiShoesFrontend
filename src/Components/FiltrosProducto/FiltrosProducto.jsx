@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import axiosClient from "../../api/axion";
+import React, { useState } from "react";
+import { tiposProductoPredeterminados } from "../../utils/tipoProducto";
+import { FaPlus } from "react-icons/fa";
 
 export const FiltrosProducto = ({ onFiltrar }) => {
   const [filtros, setFiltros] = useState({
@@ -8,15 +9,32 @@ export const FiltrosProducto = ({ onFiltrar }) => {
     genero: "",
   });
 
+  const [mostrarInputTipo, setMostrarInputTipo] = useState(false);
+  const [tipoPersonalizado, setTipoPersonalizado] = useState("");
+
+  const aplicarFiltro = (nuevosFiltros) => {
+    const filtrosActualizados = {
+      ...nuevosFiltros,
+      tipo: mostrarInputTipo ? tipoPersonalizado : nuevosFiltros.tipo,
+    };
+    onFiltrar(filtrosActualizados);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const nuevosFiltros = { ...filtros, [name]: value };
     setFiltros(nuevosFiltros);
-    onFiltrar(nuevosFiltros);
+    aplicarFiltro(nuevosFiltros);
+  };
+
+  const handleTipoPersonalizado = (e) => {
+    const value = e.target.value;
+    setTipoPersonalizado(value);
+    aplicarFiltro({ ...filtros, tipo: value });
   };
 
   return (
-    <div className="flex flex-wrap gap-4 p-4 bg-white rounded-xl shadow-md mb-6">
+    <div className="flex flex-wrap gap-4 p-4 bg-white rounded-xl shadow-md mb-6 items-center">
       <input
         type="text"
         name="nombre"
@@ -24,14 +42,56 @@ export const FiltrosProducto = ({ onFiltrar }) => {
         className="border p-2 rounded w-full sm:w-auto"
         onChange={handleChange}
       />
-      <select name="tipo" className="border p-2 rounded" onChange={handleChange}>
-        <option value="">Tipo</option>
-        <option value="zapato">Zapato</option>
-        <option value="tenis">Tenis</option>
-        <option value="sandalia">Sandalia</option>
-      </select>
-      <select name="genero" className="border p-2 rounded" onChange={handleChange}>
-        <option value="">Género</option>
+
+      {!mostrarInputTipo ? (
+        <div className="flex gap-2">
+          <select
+            name="tipo"
+            className="border p-2 rounded"
+            onChange={handleChange}
+          >
+            <option value="">Tipo</option>
+            {tiposProductoPredeterminados.map((tipo, index) => (
+              <option key={index} value={tipo}>{tipo}</option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-all shadow-md"
+            onClick={() => setMostrarInputTipo(true)}
+          >
+            <FaPlus />Otro
+          </button>
+        </div>
+      ) : (
+        <div className="flex gap-2 items-center">
+          <input
+            type="text"
+            placeholder="Tipo personalizado"
+            value={tipoPersonalizado}
+            onChange={handleTipoPersonalizado}
+            className="border p-2 rounded"
+          />
+          <button
+            type="button"
+            className="text-sm px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+            onClick={() => {
+              setMostrarInputTipo(false);
+              setTipoPersonalizado("");
+              aplicarFiltro({ ...filtros, tipo: "" });
+            }}
+          >
+            Cancelar
+          </button>
+        </div>
+      )}
+
+      <select
+        name="genero"
+        className="border p-2 rounded"
+        onChange={handleChange}
+      >
+        <option value="">GÃ©nero</option>
         <option value="Femenino">Femenino</option>
         <option value="Masculino">Masculino</option>
         <option value="Unisex">Unisex</option>
@@ -39,27 +99,3 @@ export const FiltrosProducto = ({ onFiltrar }) => {
     </div>
   );
 };
-
-// Supón que cada producto tiene un array producto.variaciones
-const filtrarProductos = (productos, filtros) => {
-  return productos.filter(producto => {
-    // Filtros principales
-    if (filtros.nombre && !producto.nombre_producto.toLowerCase().includes(filtros.nombre.toLowerCase())) return false;
-    if (filtros.tipo && producto.tipo_producto !== filtros.tipo) return false;
-    if (filtros.genero && producto.genero_producto !== filtros.genero) return false;
-
-    // Filtros de variaciones
-    if (filtros.talla || filtros.color || filtros.stock) {
-      return producto.variaciones.some(variacion => {
-        if (filtros.talla && variacion.talla !== filtros.talla) return false;
-        if (filtros.color && variacion.color !== filtros.color) return false;
-        if (filtros.stock && filtros.stock === "asc" && variacion.stock <= 0) return false;
-        if (filtros.stock && filtros.stock === "desc" && variacion.stock > 0) return false;
-        return true;
-      });
-    }
-
-    return true;
-  });
-};
-

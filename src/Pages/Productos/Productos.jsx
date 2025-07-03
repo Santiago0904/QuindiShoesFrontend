@@ -5,6 +5,7 @@ import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FiltrosProducto } from "../../Components/FiltrosProducto/FiltrosProducto";
+
 import { motion } from "framer-motion";
 import { ParticlesBackground } from "../../Components/Particulas/ParticlesBackground";
 
@@ -28,7 +29,6 @@ const ProductoCard = ({ producto, onDelete, onUpdate }) => {
       className="rounded-3xl p-4 bg-gradient-to-tr from-white to-pink-50 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
       onClick={handleCardClick}
     >
-        <ParticlesBackground />
       <img
         src={imagenPrincipal}
         alt={producto.nombre_producto}

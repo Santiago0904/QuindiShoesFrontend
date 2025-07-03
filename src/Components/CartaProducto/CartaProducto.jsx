@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
 import { useNavigate } from "react-router-dom";
 import ColorThief from "colorthief";
@@ -56,9 +56,9 @@ function hacerPastel(rgb) {
 }
 
 export const CartaProducto = ({ producto }) => {
-  const { incrementarContador } = useContext(ContadorCarritoContext);
+  //const { incrementarContador } = useContext(ContadorCarritoContext);
   const navigate = useNavigate();
-  const usuario_id = localStorage.getItem("id");
+ // const usuario_id = localStorage.getItem("id");
 
   const [bgColor, setBgColor] = useState("#fde8f0");
   const [esFavorito, setEsFavorito] = useState(false);
@@ -124,7 +124,7 @@ export const CartaProducto = ({ producto }) => {
     <div
       onClick={irADetalle}
       style={{ backgroundColor: bgColor }}
-      className="rounded-3xl p-5 shadow-lg cursor-pointer transition-all duration-300 transform hover:scale-[1.015] hover:shadow-2xl border border-white/30 backdrop-blur-md"
+      className="rounded-3xl p-5 shadow-lg cursor-pointer transition-all duration-300 transform hover:scale-[1.015] hover:shadow-2xl border border-white/30 backdrop-blur-md w-90"
     >
       <div className="relative group">
         <img
@@ -187,6 +187,8 @@ export const CartaProducto = ({ producto }) => {
 };
 
 
+import { motion, AnimatePresence } from 'framer-motion';
+
 export const MostrarProducto = ({ productosProp }) => {
   const [productos, setProductos] = React.useState([]);
 
@@ -213,11 +215,43 @@ export const MostrarProducto = ({ productosProp }) => {
       ? productosProp
       : Array.isArray(productos) ? productos : [];
 
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+  };
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 px-4 md:px-8 mt-8">
-      {productosMostrar.map((producto) => (
-        <CartaProducto key={producto.id_producto} producto={producto} />
-      ))}
-    </div>
+    <motion.div
+      className="flex-1"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+        <AnimatePresence>
+          {productosMostrar.map((producto) => (
+            <motion.div
+              key={producto.id_producto}
+              variants={itemVariants}
+              exit={{ opacity: 0, y: 20 }}
+              className="w-full"
+            >
+              <CartaProducto producto={producto} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    </motion.div>
   );
 };
+
+

@@ -18,6 +18,7 @@ import { ListaMateriales } from './Pages/MostrarMateriales/MostrarMateriales'
 import { ListaColores } from './Pages/MostrarColores/MostrarColores'
 import { ListaZonas } from './Pages/MostrarZonaProductos/MostrarZonaProductos'
 import { Personalizador } from './Pages/Personalizador/Personalizador'
+import { Pagesproductos } from './Pages/ProductosPages/Pagesproductos'
 import {HistorialPersonalizaciones} from './Pages/HistorialPersonalizaciones/HistorialPersonalizaciones'
 
 
@@ -72,7 +73,7 @@ function App() {
     ocultarHeader || ocultarSoloFooterEn.includes(rutaActual);
 
   // Ocultar solo el footer en el personalizador
- 
+ //
 
   return (
     <>
@@ -113,6 +114,7 @@ function App() {
           <Route path="/metricas" element={<PageWrapper><MetricasPages /></PageWrapper>} />
           <Route path="/favoritos" element={<PageWrapper><Favoritos /></PageWrapper>} />
           <Route path="/personalizador" element={<PageWrapper><Personalizador /></PageWrapper>} />
+          <Route path="/Productospages" element={<PageWrapper><Pagesproductos /></PageWrapper>} />
         </Routes>
       </AnimatePresence>
         </div>
