@@ -4,6 +4,7 @@ import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { FiltrosProducto } from "../../Components/FiltrosProducto/FiltrosProducto";
 
 import { motion } from "framer-motion";
 import { ParticlesBackground } from "../../Components/Particulas/ParticlesBackground";
