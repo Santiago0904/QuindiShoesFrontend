@@ -187,6 +187,8 @@ export const CartaProducto = ({ producto }) => {
 };
 
 
+import { motion, AnimatePresence } from 'framer-motion';
+
 export const MostrarProducto = ({ productosProp }) => {
   const [productos, setProductos] = React.useState([]);
 
@@ -213,12 +215,43 @@ export const MostrarProducto = ({ productosProp }) => {
       ? productosProp
       : Array.isArray(productos) ? productos : [];
 
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+  };
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-      {productosMostrar.map((p) => (
-        <CartaProducto key={p.id_producto} producto={p} />
-      ))}
-    </div>
+    <motion.div
+      className="flex-1"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full">
+        <AnimatePresence>
+          {productosMostrar.map((producto) => (
+            <motion.div
+              key={producto.id_producto}
+              variants={itemVariants}
+              exit={{ opacity: 0, y: 20 }}
+              className="w-full"
+            >
+              <CartaProducto producto={producto} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    </motion.div>
   );
 };
+
 
