@@ -91,7 +91,7 @@ export const FiltrosProducto = ({ onFiltrar }) => {
         className="border p-2 rounded"
         onChange={handleChange}
       >
-        <option value="">GÃ©nero</option>
+        <option value="">Genero</option>
         <option value="Femenino">Femenino</option>
         <option value="Masculino">Masculino</option>
         <option value="Unisex">Unisex</option>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FormularioResena } from "../FormularioReseña/FormularioReseña";
 import axios from "axios";
 import { FaTrash } from "react-icons/fa";
+import Swal from "sweetalert2";
+import "sweetalert2/src/sweetalert2.scss";
 
 interface ModalProps {
   abierto: boolean;
@@ -12,16 +14,37 @@ interface ModalProps {
 export const ModalReseñas: React.FC<ModalProps> = ({ abierto, cerrar, usuario_id }) => {
   return (
     <>
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+          }
+          .modal-fade-in {
+            animation: fadeIn 0.3s ease-out;
+          }
+          .modal-slide-up {
+            animation: slideUp 0.4s ease-out;
+          }
+        `}
+      </style>
+
       {abierto && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center z-50">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-10 w-full max-w-2xl border border-pink-200 space-y-6 relative">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 modal-fade-in">
+          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-10 w-full max-w-3xl border border-pink-200 space-y-6 relative modal-slide-up">
             <button
               onClick={cerrar}
               className="absolute top-4 right-5 text-xl text-pink-500 hover:text-pink-700"
             >
               ✖
             </button>
-            <h2 className="text-2xl font-bold text-green-700">Escribe tu reseña</h2>
+            <h2 className="text-3xl font-extrabold text-green-700 text-center">
+              Reseñas de usuarios
+            </h2>
             <ListaResenas usuario_id={usuario_id} />
           </div>
         </div>
@@ -47,8 +70,22 @@ export const ListaResenas: React.FC<{ usuario_id?: number }> = ({ usuario_id }) 
       .catch(() => setResenas([]));
   }, [usuario_id]);
 
+  const showAlert = (tipo: "success" | "error", mensaje: string) => {
+    Swal.fire({
+      icon: tipo,
+      title: mensaje,
+      toast: true,
+      position: "top-end",
+      timer: 2200,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      background: tipo === "success" ? "#e6f4ea" : "#fde2e2",
+      color: tipo === "success" ? "#2e7d32" : "#c62828",
+    });
+  };
+
   const handleEnviar = async () => {
-    if (!usuario_id || !mensajeEdit.trim()) return alert("Escribe algo primero.");
+    if (!usuario_id || !mensajeEdit.trim()) return showAlert("error", "Escribe algo primero.");
 
     try {
       const fecha_resena = new Date().toISOString().slice(0, 19).replace("T", " ");
@@ -80,21 +117,23 @@ export const ListaResenas: React.FC<{ usuario_id?: number }> = ({ usuario_id }) 
   };
 
   const handleGuardar = async (id_usuario: number) => {
-    if (!mensajeEdit.trim()) return alert("La reseña no puede estar vacía.");
+    if (!mensajeEdit.trim()) return showAlert("error", "La reseña no puede estar vacía.");
     setEnviando(true);
     try {
+      const fecha_resena = new Date().toISOString().slice(0, 19).replace("T", " ");
       await axios.put("http://localhost:3000/resena/editar", {
         resena: mensajeEdit,
+        fecha_resena,
         id_usuario,
       });
       setResenas((prev) =>
         prev.map((r) =>
-          r.id_usuario === id_usuario ? { ...r, resena: mensajeEdit } : r
+          r.id_usuario === id_usuario ? { ...r, resena: mensajeEdit, fecha_resena } : r
         )
       );
       setEditandoId(null);
       setMensajeEdit("");
-      showAlert("success", "¡Reseña editada correctamente!");
+      showAlert("success", "¡Reseña editada!");
     } catch {
       showAlert("error", "No se pudo editar la reseña.");
     }
@@ -102,9 +141,23 @@ export const ListaResenas: React.FC<{ usuario_id?: number }> = ({ usuario_id }) 
   };
 
   const handleEliminar = async (id_usuario: number) => {
-    if (!window.confirm("¿Seguro que deseas eliminar tu reseña?")) return;
+    const confirm = await Swal.fire({
+      title: "¿Eliminar reseña?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#aaa"
+    });
+
+    if (!confirm.isConfirmed) return;
+
     try {
-      await axios.delete(`http://localhost:3000/resena/eliminar/${id_usuario}`);
+      await axios.delete("http://localhost:3000/resena/eliminar", {
+        data: { id_usuario },
+      });
       setResenas((prev) => prev.filter((r) => r.id_usuario !== id_usuario));
       setYaTieneResena(false);
       setMensajeEdit("");
@@ -120,91 +173,94 @@ export const ListaResenas: React.FC<{ usuario_id?: number }> = ({ usuario_id }) 
     setMensajeEdit("");
   };
 
-  const showAlert = (tipo: "success" | "error", mensaje: string) => {
-    const color =
-      tipo === "success"
-        ? "bg-green-200 text-green-800 border-green-400"
-        : "bg-pink-200 text-pink-800 border-pink-400";
-    const alertDiv = document.createElement("div");
-    alertDiv.className = `fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl border shadow-lg text-lg font-semibold transition-all duration-300 ${color}`;
-    alertDiv.innerText = mensaje;
-    document.body.appendChild(alertDiv);
-    setTimeout(() => {
-      alertDiv.style.opacity = "0";
-      setTimeout(() => document.body.removeChild(alertDiv), 400);
-    }, 2000);
-  };
-
   return (
-    <div className="mt-8">
-      <h3 className="text-lg font-semibold text-pink-700 mb-4">Reseñas de otros usuarios</h3>
+    <div className="mt-6">
       {!yaTieneResena && usuario_id && (
-        <div className="mb-6">
+        <div className="mb-8">
           <FormularioResena mensaje={mensajeEdit} onChange={setMensajeEdit} />
           <button
-            className="bg-pink-400 text-white px-4 py-2 rounded-md hover:bg-pink-500"
+            className="bg-pink-400 text-white px-6 py-2 mt-2 rounded-md hover:bg-pink-500 transition"
             onClick={handleEnviar}
           >
             Enviar reseña
           </button>
         </div>
       )}
+
+      {yaTieneResena && (
+        <div className="bg-green-100 border border-green-300 text-green-700 px-4 py-2 rounded-md font-medium mb-6">
+          Ya escribiste una reseña. Puedes editarla o eliminarla abajo.
+        </div>
+      )}
+
       {resenas.length === 0 ? (
         <div className="text-gray-400 italic">No hay reseñas aún.</div>
       ) : (
-        <ul className="space-y-6 max-h-64 overflow-y-auto pr-2">
+        <ul className="space-y-6 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-pink-300 scrollbar-track-pink-50">
           {resenas.map((r) => (
             <li
               key={r.id_usuario}
-              className="bg-pink-50 border border-pink-200 p-4 rounded-lg shadow-sm"
+              className="bg-white border border-pink-100 rounded-xl shadow-md hover:shadow-lg transition p-6 group"
             >
-              <div className="flex justify-between items-start mb-2">
-                <span className="font-bold text-pink-800">{r.nombre || "Usuario"}</span>
-                <span className="text-xs text-gray-500">
-                  {r.fecha_resena && new Date(r.fecha_resena).toLocaleString()}
-                </span>
-              </div>
-              {editandoId === r.id_usuario ? (
-                <>
-                  <FormularioResena mensaje={mensajeEdit} onChange={setMensajeEdit} />
-                  <div className="flex gap-3">
-                    <button
-                      className="bg-green-300 text-green-900 px-4 py-1 rounded hover:bg-green-400 font-semibold"
-                      onClick={() => handleGuardar(r.id_usuario)}
-                      disabled={enviando}
-                    >
-                      {enviando ? "Guardando..." : "Guardar"}
-                    </button>
-                    <button
-                      className="bg-pink-200 text-pink-800 px-4 py-1 rounded hover:bg-pink-300 font-semibold"
-                      onClick={handleCancelar}
-                      disabled={enviando}
-                    >
-                      Cancelar
-                    </button>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="bg-gradient-to-br from-pink-300 to-pink-100 text-pink-700 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-inner shrink-0">
+                  {(r.nombre || "U")[0]?.toUpperCase()}
+                </div>
+
+                <div className="flex-1 space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-base font-semibold text-pink-700">{r.nombre || "Usuario"}</span>
+                    <span className="text-xs text-gray-400">
+                      {r.fecha_resena && new Date(r.fecha_resena).toLocaleString()}
+                    </span>
                   </div>
-                </>
-              ) : (
-                <>
-                  <p className="text-gray-700">{r.resena}</p>
-                  {usuario_id === r.id_usuario && (
-                    <div className="flex gap-2 mt-2">
-                      <button
-                        className="text-sm text-green-700 bg-green-100 px-3 py-1 rounded hover:bg-green-200"
-                        onClick={() => handleEditar(r)}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        className="text-sm text-pink-700 bg-pink-100 px-3 py-1 rounded hover:bg-pink-200 flex items-center gap-1"
-                        onClick={() => handleEliminar(r.id_usuario)}
-                      >
-                        <FaTrash className="text-xs" /> Eliminar
-                      </button>
-                    </div>
+
+                  {editandoId === r.id_usuario ? (
+                    <>
+                      <FormularioResena mensaje={mensajeEdit} onChange={setMensajeEdit} />
+                      <div className="flex gap-2 mt-2">
+                        <button
+                          className="bg-green-300 text-green-900 px-4 py-1 rounded hover:bg-green-400 font-semibold"
+                          onClick={() => handleGuardar(r.id_usuario)}
+                          disabled={enviando}
+                        >
+                          {enviando ? "Guardando..." : "Guardar"}
+                        </button>
+                        <button
+                          className="bg-pink-200 text-pink-800 px-4 py-1 rounded hover:bg-pink-300 font-semibold"
+                          onClick={handleCancelar}
+                          disabled={enviando}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
+                        {r.resena}
+                      </p>
+
+                      {usuario_id === r.id_usuario && (
+                        <div className="flex gap-3 mt-3">
+                          <button
+                            className="text-sm text-green-700 bg-green-100 px-3 py-1 rounded hover:bg-green-200 transition"
+                            onClick={() => handleEditar(r)}
+                          >
+                            Editar
+                          </button>
+                          <button
+                            className="text-sm text-pink-700 bg-pink-100 px-3 py-1 rounded hover:bg-pink-200 transition flex items-center gap-1"
+                            onClick={() => handleEliminar(r.id_usuario)}
+                          >
+                            <FaTrash className="text-xs" /> Eliminar
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )}
-                </>
-              )}
+                </div>
+              </div>
             </li>
           ))}
         </ul>
@@ -212,4 +268,3 @@ export const ListaResenas: React.FC<{ usuario_id?: number }> = ({ usuario_id }) 
     </div>
   );
 };
-
