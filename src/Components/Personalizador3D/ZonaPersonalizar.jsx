@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { GuardarPersonalizado } from "./GuardarPersonalizado";
 import { zonaDisplayNames, zonaMap } from "../PersonalizadorUtils/utils";
 import axiosClient from "../../api/axion";
-import {GLTFExporter} from "three/examples/jsm/exporters/GLTFExporter";
+import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getZonaIdFromName, getColorHexFromStore } from "../PersonalizadorUtils/utils";
-
+import Swal from "sweetalert2";
 
 const exportarGLB = (scene, personalizacion, coloresDisponibles) => {
   return new Promise((resolve) => {
@@ -37,9 +37,6 @@ const exportarGLB = (scene, personalizacion, coloresDisponibles) => {
   });
 };
 
-
-
-
 export default function ZonaPersonalizar({ canvasRef }) {
   const { colores, personalizacion, setPersonalizacion } = GuardarPersonalizado();
   const zonasModelo = Object.entries(zonaMap).map(([nombre_malla, id_zona]) => ({
@@ -63,14 +60,18 @@ export default function ZonaPersonalizar({ canvasRef }) {
   const handleGuardar = async () => {
     const id_usuario = localStorage.getItem("id");
     if (!id_usuario) {
-      alert("Debes iniciar sesión para guardar tu personalización.");
+      Swal.fire({
+        icon: "warning",
+        title: "Debes iniciar sesión para guardar tu personalización.",
+        confirmButtonColor: "#6366f1",
+        customClass: { popup: "rounded-xl" },
+      });
       return;
     }
     const coloresSeleccionados = Object.values(personalizacion)
       .map((zona) => colores.find((c) => c.id_color === zona.colorId)?.nombre_color)
       .filter(Boolean);
 
-      
     await axiosClient.post("/color/sumar-uso", {
       colores: coloresSeleccionados,
     });
@@ -78,8 +79,13 @@ export default function ZonaPersonalizar({ canvasRef }) {
     console.log("🟡 Enviando colores:", coloresSeleccionados);
 
     const scene = canvasRef.current?.getScene?.();
-    if(!scene){
-      alert("No se capturo el model")
+    if (!scene) {
+      Swal.fire({
+        icon: "error",
+        title: "No se capturó el modelo",
+        confirmButtonColor: "#e11d48",
+        customClass: { popup: "rounded-xl" },
+      });
       return;
     }
 
@@ -88,17 +94,63 @@ export default function ZonaPersonalizar({ canvasRef }) {
     formData.append("modelo", glbBlob, "personalizacion.glb");
     formData.append("id_usuario", id_usuario);
 
+    // Mostrar alerta de carga con barra de progreso
+    Swal.fire({
+      title: "Subiendo modelo...",
+      html: `
+        <div id="swal-progress-text" class="mb-2 text-indigo-600 font-semibold">0%</div>
+        <div class="w-full bg-indigo-100 rounded-full h-3">
+          <div id="swal-progress-bar" class="bg-indigo-500 h-3 rounded-full transition-all" style="width:0%"></div>
+        </div>
+      `,
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      customClass: { popup: "rounded-xl" },
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    let fakePercent = 0;
+    let fakeInterval = setInterval(() => {
+      // Solo avanza hasta 95% para no llegar al 100% antes de tiempo
+      if (fakePercent < 95) {
+        fakePercent += Math.random() * 2 + 1; // avanza entre 1% y 3% cada vez
+        if (fakePercent > 95) fakePercent = 95;
+        const progressBar = document.getElementById("swal-progress-bar");
+        const progressText = document.getElementById("swal-progress-text");
+        if (progressBar) progressBar.style.width = fakePercent + "%";
+        if (progressText) progressText.textContent = Math.floor(fakePercent) + "%";
+      }
+    }, 120);
+
     await axiosClient.post("/personalizacion/guardar-modelo", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
+      onUploadProgress: (progressEvent) => {
+        // Si quieres, puedes mezclar el real con el fake, pero aquí solo usamos el fake
+      }
     });
 
-    alert("Personalización guardada correctamente.");
+    clearInterval(fakeInterval);
+    // Al terminar, pon el progreso al 100%
+    const progressBar = document.getElementById("swal-progress-bar");
+    const progressText = document.getElementById("swal-progress-text");
+    if (progressBar) progressBar.style.width = "100%";
+    if (progressText) progressText.textContent = "100%";
+
+    Swal.fire({
+      icon: "success",
+      title: "¡Personalización guardada correctamente!",
+      showConfirmButton: false,
+      timer: 1500,
+      customClass: { popup: "rounded-xl" },
+    });
   };
 
   return (
-    <div className="w-full absolute bottom-0 left-0 px-4 pb-4 z-50">
+    <div className="w-full absolute bottom-20 left-0 px-4 pb-4 z-50">
       <motion.div
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -107,7 +159,10 @@ export default function ZonaPersonalizar({ canvasRef }) {
       >
         {/* Navegación entre zonas */}
         <div className="flex items-center justify-center gap-6 px-2">
-          <button onClick={() => cambiarZona(-1)} className="rounded-full p-2 bg-gray-100 hover:bg-gray-200 shadow transition">
+          <button
+            onClick={() => cambiarZona(-1)}
+            className="rounded-full p-2 bg-gray-100 hover:bg-gray-200 shadow transition"
+          >
             <ChevronLeft className="w-5 h-5 text-gray-600" />
           </button>
 
@@ -115,7 +170,10 @@ export default function ZonaPersonalizar({ canvasRef }) {
             {zonaActual.display} ({indexZonaActual + 1}/{zonasModelo.length})
           </span>
 
-          <button onClick={() => cambiarZona(1)} className="rounded-full p-2 bg-gray-100 hover:bg-gray-200 shadow transition">
+          <button
+            onClick={() => cambiarZona(1)}
+            className="rounded-full p-2 bg-gray-100 hover:bg-gray-200 shadow transition"
+          >
             <ChevronRight className="w-5 h-5 text-gray-600" />
           </button>
         </div>

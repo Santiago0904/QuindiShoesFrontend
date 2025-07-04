@@ -7,12 +7,15 @@ import { WavesBackground } from "../../Components/Particulas2/Particulas2"; // A
 import { Footer } from "../../Layouts/Footer/Footer";
 import { WavesBackground2 } from "../../Components/Particulas2.0/Particulas2.0";
 import { HistorialCompras } from "../../Components/HistorialCompras/HistorialCompras";
+import EditarDatosUsuario from "../../Components/EditarDatosUsuario/EditarDatosUsuario"; // Asegúrate de que esta es la ruta correcta
 
 const Perfil = () => {
+  
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [usuario, setUsuario] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [historialAbierto, setHistorialAbierto] = useState(false);
+  const [editarDatosAbierto, setEditarDatosAbierto] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -160,7 +163,7 @@ const Perfil = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.5 }}
                 >
-                  ¡Hola, {usuario.nombre}!
+                  ¡Hola, {usuario.nombre} {usuario.apellido}!
                 </motion.h1>
                 <p className="text-xl text-slate-700 mb-6 leading-relaxed">
                   Bienvenido a tu espacio personal. Aquí puedes gestionar tu
@@ -199,6 +202,14 @@ const Perfil = () => {
                   >
                     {mostrarFormulario ? "Ocultar Formulario" : "Cambiar Contraseña"}
                   </motion.button>
+                  <motion.button
+                    onClick={() => setEditarDatosAbierto(true)}
+                    className="bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white px-7 py-3 rounded-full shadow-lg text-lg font-medium transform hover:scale-105 transition-all duration-300 ease-out"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Editar datos
+                  </motion.button>
                 </div>
               </motion.div>
 
@@ -224,7 +235,7 @@ const Perfil = () => {
             </motion.div>
 
             {/* Botón vistoso para abrir historial */}
-            <div className="flex justify-center my-8">
+            <div className="flex justify-center my-8 gap-4 flex-wrap">
               <button
                 onClick={() => setHistorialAbierto(true)}
                 className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-pink-200 text-pink-800 font-bold text-lg shadow-lg hover:bg-pink-300 transition-all border-2 border-pink-300"
@@ -233,6 +244,15 @@ const Perfil = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Ver historial de compras
+              </button>
+              <button
+                onClick={() => navigate("/historial-personalizaciones")}
+                className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-pink-200 text-pink-800 font-bold text-lg shadow-lg hover:bg-pink-300 transition-all border-2 border-pink-300"
+              >
+                <svg className="w-7 h-7 text-pink-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Historial de Personalizaciones
               </button>
             </div>
 
@@ -263,6 +283,19 @@ const Perfil = () => {
                     <HistorialCompras userId={usuario?.id_usuario} onClose={() => setHistorialAbierto(false)}/>
                   </motion.div>
                 </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Componente para editar datos de usuario */}
+            <AnimatePresence>
+              {editarDatosAbierto && (
+                <EditarDatosUsuario
+                  usuario={usuario}
+                  onClose={() => setEditarDatosAbierto(false)}
+                  onUpdate={(usuarioActualizado) => {
+                    setUsuario(usuarioActualizado);
+                  }}
+                />
               )}
             </AnimatePresence>
           </div>

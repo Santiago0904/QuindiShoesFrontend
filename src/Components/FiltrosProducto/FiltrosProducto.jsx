@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { tiposProductoPredeterminados } from "../../utils/tiposProducto";
+import { tiposProductoPredeterminados } from "../../utils/tipoProducto";
 import { FaPlus } from "react-icons/fa";
 
 export const FiltrosProducto = ({ onFiltrar }) => {
@@ -91,7 +91,7 @@ export const FiltrosProducto = ({ onFiltrar }) => {
         className="border p-2 rounded"
         onChange={handleChange}
       >
-        <option value="">Género</option>
+        <option value="">Genero</option>
         <option value="Femenino">Femenino</option>
         <option value="Masculino">Masculino</option>
         <option value="Unisex">Unisex</option>

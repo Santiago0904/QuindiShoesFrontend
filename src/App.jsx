@@ -9,15 +9,13 @@ import { EmailPage } from './Pages/EmailPage/EmailPage'
 import { PasswordPage } from './Pages/PasswordPage/PasswordPage'
 import { NewProduct } from './Pages/NewProduct/NewProduct'
 import { ListaProductos } from './Pages/Productos/Productos'
-import { ZonaProductoPage } from './Pages/ZonaProductoPage/ZonaProductoPage'
 import { RegisterEmpledos } from './Pages/Empleados/Empleadospages'
 import {PanelControl} from './Pages/PanelControl/PanelControl'
 import { ListaEmpleados } from './Pages/Empleados/Empleados'
 import Carrito from './Pages/Carrito/Carrito'
-import { ListaMateriales } from './Pages/MostrarMateriales/MostrarMateriales'
 import { ListaColores } from './Pages/MostrarColores/MostrarColores'
-import { ListaZonas } from './Pages/MostrarZonaProductos/MostrarZonaProductos'
 import { Personalizador } from './Pages/Personalizador/Personalizador'
+import { Pagesproductos } from './Pages/ProductosPages/Pagesproductos'
 import {HistorialPersonalizaciones} from './Pages/HistorialPersonalizaciones/HistorialPersonalizaciones'
 
 
@@ -34,15 +32,12 @@ import { Juego } from './Pages/Juego/Juego'
 import { DetalleProducto } from './Pages/ProductoDetalle/ProductoDetalle'
 import { VariantesProducto } from './Pages/VariantesProducto/VariantesProducto'
 import { HistorialFacturas } from './Pages/HistorialVentas/historialventas'
-import { MaterialPage } from './Pages/MaterialPage/MaterialPage'
-import { ColorPage } from './Pages/ColorPage/ColorPage'
 import { MetricasPages } from './Pages/MetricasPage/MetricasPages'
 import { Favoritos } from './Pages/Favoritos/Favoritos'
 import ScrollToTop from './Components/ScrollTop/ScrollTop'
 import { Accesibilidad } from './Components/Accesibilidad/Accesibilidad'
 import { Nosotros } from './Pages/Nosotros/Nosotros'
 import { AnimatePresence } from "framer-motion";
-import { ColorNewForm } from './Components/ColorNewForm/ColorNewForm'
 import { PageWrapper } from './Components/PageWrapper/PageWrapper'
 
 function App() {
@@ -57,7 +52,9 @@ function App() {
     "/recuperarcontrasena",
     "/reiniciarcontrasena",
     "/esperando-confirmacion",
-    "/validarcorreo"
+    "/validarcorreo",
+    "/historial-personalizaciones",
+    "/personalizador"
   ];
 
   // Rutas donde se oculta TODO (header + footer)
@@ -71,8 +68,7 @@ function App() {
     ocultarHeader || ocultarSoloFooterEn.includes(rutaActual);
 
   // Ocultar solo el footer en el personalizador
-  const ocultarSoloFooter =
-    location.pathname.toLowerCase() === "/personalizador";
+ //
 
   return (
     <>
@@ -92,7 +88,6 @@ function App() {
           <Route path="/reiniciarcontrasena" element={<PageWrapper><PasswordPage /></PageWrapper>} />
           <Route path="/nuevoProducto" element={<PageWrapper><NewProduct /></PageWrapper>} />
           <Route path="/productos" element={<PageWrapper><ListaProductos /></PageWrapper>} />
-          <Route path="/color" element={<PageWrapper><ColorNewForm /></PageWrapper>} />
           <Route path="/empleados" element={<PageWrapper><RegisterEmpledos /></PageWrapper>} />
           <Route path="/listaempleados" element={<PageWrapper><ListaEmpleados /></PageWrapper>} />
           <Route path="/panelcontrol" element={<PageWrapper><PanelControl /></PageWrapper>} />
@@ -113,11 +108,12 @@ function App() {
           <Route path="/metricas" element={<PageWrapper><MetricasPages /></PageWrapper>} />
           <Route path="/favoritos" element={<PageWrapper><Favoritos /></PageWrapper>} />
           <Route path="/personalizador" element={<PageWrapper><Personalizador /></PageWrapper>} />
+          <Route path="/Productospages" element={<PageWrapper><Pagesproductos /></PageWrapper>} />
         </Routes>
       </AnimatePresence>
         </div>
       </div>
-
+      
       {!ocultarFooter && <Footer />}
     </>
   );
