@@ -10,6 +10,7 @@ import marketingImage from '../../assets/images/stock-promo.jpg';
 import movementImage from '../../assets/images/exclusive-pair.jpg';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
+import { ParaTi } from '../../Components/ParaTi/ParaTi';
 export const Home = () => {
   const [modalAbierto, setModalAbierto] = useState(false);
  const navigate = useNavigate();
@@ -32,7 +33,8 @@ if (token) {
     console.error("❌ Token inválido:", error);
   }
 }
-
+console.log("🧪 TOKEN:", token);
+console.log("🧪 USUARIO_ID:", usuario_id);
   return (
     <div className="w-full min-h-screen bg-white font-sans">
 
@@ -132,7 +134,7 @@ if (token) {
         />
       </motion.section>
 
-      {/* PRODUCTOS DESTACADOS */}
+      {/* PARA TI */}
       <section    className="py-20 px-4 md:px-16 bg-white">
         <motion.h2
           className="text-4xl font-bold text-center text-gray-800 mb-12"
@@ -140,9 +142,10 @@ if (token) {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 1 }}
         >
-          Productos Destacados
+          
         </motion.h2>
-        <MostrarProducto cantidad={6} />
+        <ParaTi userId={usuario_id} />
+
       </section>
 
       {/* CHAT Y RESEÑAS */}
