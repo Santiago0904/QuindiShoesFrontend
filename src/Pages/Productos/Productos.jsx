@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axion";
-import { FaEdit, FaTrash, FaPlus, FaPalette, FaCubes, FaList } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus, FaPalette, FaCubes, FaList, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
 import { NewProductForm } from "../../Components/NewProductForm/NewProductForm";
 import Swal from "sweetalert2";
@@ -168,7 +168,7 @@ const ModelosGuardados = ({ modelos }) => (
   </div>
 );
 
-const ProductoCard = ({ producto, onDelete, onUpdate, onTogglePersonalizacion }) => {
+const ProductoCard = ({ producto, onDelete, onUpdate, onTogglePersonalizacion, onExpandir, expandido, variantes, cargandoVariantes }) => {
   console.log("🔍 Imágenes del producto:", producto.imagenes);
   const BASE_URL = "http://localhost:3000"; // o tu dominio en producción
 
@@ -182,7 +182,7 @@ const ProductoCard = ({ producto, onDelete, onUpdate, onTogglePersonalizacion })
       layout
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.98 }}
-      className="rounded-3xl p-4 bg-gradient-to-tr from-white to-pink-50 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+      className="rounded-3xl p-4 bg-gradient-to-tr from-white to-pink-50 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer mb-4"
     >
       <img
         src={imagenPrincipal}
@@ -226,11 +226,49 @@ const ProductoCard = ({ producto, onDelete, onUpdate, onTogglePersonalizacion })
           <FaTrash /> Eliminar
         </button>
       </div>
+      {/* Botón para expandir variantes */}
+      <div className="mt-4">
+        <button
+          className="flex items-center gap-2 text-sm text-indigo-600 hover:underline"
+          onClick={() => onExpandir(producto.id_producto)}
+        >
+          {expandido ? (
+            <>
+              <FaChevronUp /> Ocultar variantes
+            </>
+          ) : (
+            <>
+              <FaChevronDown /> Ver variantes
+            </>
+          )}
+        </button>
+      </div>
+      {/* Lista de variantes */}
+      {expandido && (
+        <div className="mt-4 bg-indigo-50 rounded-xl p-4">
+          {cargandoVariantes ? (
+            <span className="text-gray-500">Cargando variantes...</span>
+          ) : variantes && variantes.length > 0 ? (
+            <ul className="divide-y divide-indigo-200">
+              {variantes.map((v) => (
+                <li key={v.id_variantes} className="py-2 flex justify-between items-center">
+                  <span>
+                    <b>Talla:</b> {v.talla} | <b>Color:</b> {v.color} | <b>Stock:</b> {v.stock}
+                  </span>
+                  {/* Aquí puedes agregar botones para editar/eliminar variantes si lo deseas */}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <span className="text-gray-500">No hay variantes registradas.</span>
+          )}
+        </div>
+      )}
     </motion.div>
   );
 };
 
-export const  ListaProductos = () => {
+const ListaProductos = () => {
   const [productos, setProductos] = useState([]);
   const [productoEditar, setProductoEditar] = useState(null);
   const [mostrarModalEditar, setMostrarModalEditar] = useState(false);
@@ -242,6 +280,9 @@ export const  ListaProductos = () => {
   const [colores, setColores] = useState([]);
   const [topColores, setTopColores] = useState([]);
   const [modelos, setModelos] = useState([]);
+  const [productoExpandido, setProductoExpandido] = useState(null);
+  const [variantesPorProducto, setVariantesPorProducto] = useState({});
+  const [cargandoVariantes, setCargandoVariantes] = useState(false);
 
   useEffect(() => {
     cargarProductos();
@@ -467,6 +508,32 @@ export const  ListaProductos = () => {
     }
   };
 
+  // Cargar variantes de un producto
+  const handleExpandir = async (idProducto) => {
+    if (productoExpandido === idProducto) {
+      setProductoExpandido(null);
+      return;
+    }
+    setProductoExpandido(idProducto);
+    if (!variantesPorProducto[idProducto]) {
+      setCargandoVariantes(true);
+      try {
+        const res = await axiosClient.get(`/variantes/${idProducto}`);
+        setVariantesPorProducto((prev) => ({
+          ...prev,
+          [idProducto]: res.data,
+        }));
+      } catch {
+        setVariantesPorProducto((prev) => ({
+          ...prev,
+          [idProducto]: [],
+        }));
+      } finally {
+        setCargandoVariantes(false);
+      }
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -521,6 +588,10 @@ export const  ListaProductos = () => {
                   onDelete={() => handleEliminar(producto.id_producto)}
                   onUpdate={() => handleActualizar(producto)}
                   onTogglePersonalizacion={handleTogglePersonalizacion}
+                  onExpandir={handleExpandir}
+                  expandido={productoExpandido === producto.id_producto}
+                  variantes={variantesPorProducto[producto.id_producto]}
+                  cargandoVariantes={cargandoVariantes && productoExpandido === producto.id_producto}
                 />
               ))}
             </div>
@@ -577,7 +648,7 @@ export const  ListaProductos = () => {
                       </p>
                     </div>
                   ))
-                )}
+                }
               </div>
             </div>
 
@@ -614,7 +685,7 @@ export const  ListaProductos = () => {
                 onClick={() => setMostrarModalAgregar(false)}
                 className="absolute top-3 right-4 text-gray-500 hover:text-red-500 text-xl font-bold"
               >
-                ×
+                
               </button>
               <NewProductForm
                 onClose={() => {
@@ -630,3 +701,5 @@ export const  ListaProductos = () => {
     </motion.div>
   );
 };
+
+export { ListaProductos };
