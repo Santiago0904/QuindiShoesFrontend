@@ -1,11 +1,12 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axion";
 import { FaEdit, FaTrash, FaPlus, FaPalette, FaCubes, FaList } from "react-icons/fa";
 import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
+import { NewProductForm } from "../../Components/NewProductForm/NewProductForm";
 import Swal from "sweetalert2";
 import { FiltrosProducto } from "../../Components/FiltrosProducto/FiltrosProducto";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ParticlesBackground } from "../../Components/Particulas/ParticlesBackground";
 import VisorModeloGLB from "../../Components/VisorModeloGLB/VisorModeloGLB";
 import { ColorNewForm } from "../../Components/ColorNewForm/ColorNewForm";
@@ -114,7 +115,7 @@ const TopColores = ({ colores }) => {
       </div>
       {/* Resto de colores */}
       <div className="flex flex-wrap gap-4 justify-center">
-        {resto.map((color, idx) => (
+        {resto.map((color) => (
           <div
             key={color.id_color}
             className="flex flex-col items-center gap-1 bg-indigo-50 px-4 py-3 rounded-xl shadow border border-indigo-200"
@@ -168,10 +169,13 @@ const ModelosGuardados = ({ modelos }) => (
 );
 
 const ProductoCard = ({ producto, onDelete, onUpdate, onTogglePersonalizacion }) => {
+  console.log("🔍 Imágenes del producto:", producto.imagenes);
+  const BASE_URL = "http://localhost:3000"; // o tu dominio en producción
+
   const imagenPrincipal =
-    producto.imagenes && producto.imagenes.length > 0
-      ? producto.imagenes[0]
-      : "https://via.placeholder.com/300x200?text=Sin+Imagen";
+    producto.imagenes?.[0]?.startsWith("/")
+      ? BASE_URL + producto.imagenes[0]
+      : producto.imagenes?.[0] || "https://via.placeholder.com/300x200?text=Sin+Imagen";
 
   return (
     <motion.div
@@ -226,10 +230,11 @@ const ProductoCard = ({ producto, onDelete, onUpdate, onTogglePersonalizacion })
   );
 };
 
-export const ListaProductos = () => {
+export const  ListaProductos = () => {
   const [productos, setProductos] = useState([]);
   const [productoEditar, setProductoEditar] = useState(null);
-  const [mostrarModal, setMostrarModal] = useState(false);
+  const [mostrarModalEditar, setMostrarModalEditar] = useState(false);
+  const [mostrarModalAgregar, setMostrarModalAgregar] = useState(false);
   const [filtros, setFiltros] = useState({});
   const [seccion, setSeccion] = useState("productos");
 
@@ -383,25 +388,21 @@ export const ListaProductos = () => {
       cancelButtonColor: "#64748b",
       confirmButtonText: "Sí, eliminar",
       cancelButtonText: "Cancelar",
-      showClass: { popup: "animate__animated animate__fadeInDown" },
-      hideClass: { popup: "animate__animated animate__fadeOutUp" }
     }).then((result) => {
       if (result.isConfirmed) {
         const token = localStorage.getItem("token");
         axiosClient
           .delete(`/producto/${idProducto}`, {
-            headers: { Authorization: `Bearer ${token}` }
+            headers: { Authorization: `Bearer ${token}` },
           })
           .then(() => {
-            setProductos(productos.filter(p => p.id_producto !== idProducto));
+            setProductos(productos.filter((p) => p.id_producto !== idProducto));
             Swal.fire({
               icon: "success",
               title: "Eliminado",
               text: "El producto ha sido eliminado.",
               timer: 1200,
               showConfirmButton: false,
-              showClass: { popup: "animate__animated animate__fadeInDown" },
-              hideClass: { popup: "animate__animated animate__fadeOutUp" }
             });
           })
           .catch(() => {
@@ -409,8 +410,6 @@ export const ListaProductos = () => {
               icon: "error",
               title: "Error",
               text: "No se pudo eliminar el producto.",
-              confirmButtonColor: "#2563eb",
-              showClass: { popup: "animate__animated animate__shakeX" }
             });
           });
       }
@@ -419,27 +418,26 @@ export const ListaProductos = () => {
 
   const handleActualizar = (producto) => {
     setProductoEditar(producto);
-    setMostrarModal(true);
-  };
-
-  const redirigirFormulario = () => {
-    window.location.href = "/nuevoProducto";
+    setMostrarModalEditar(true);
   };
 
   const filtrarProductos = (productos, filtros) => {
-    return productos.filter(producto => {
+    return productos.filter((producto) => {
       if (
         filtros.nombre &&
         !producto.nombre_producto.toLowerCase().includes(filtros.nombre.toLowerCase())
-      ) return false;
+      )
+        return false;
       if (
         filtros.tipo &&
         producto.tipo_producto.trim().toLowerCase() !== filtros.tipo.trim().toLowerCase()
-      ) return false;
+      )
+        return false;
       if (
         filtros.genero &&
         producto.genero_producto.trim().toLowerCase() !== filtros.genero.trim().toLowerCase()
-      ) return false;
+      )
+        return false;
       return true;
     });
   };
@@ -464,7 +462,7 @@ export const ListaProductos = () => {
             : p
         )
       );
-    } catch (error) {
+    } catch {
       alert("Error al actualizar la personalización");
     }
   };
@@ -506,14 +504,16 @@ export const ListaProductos = () => {
                 Productos Disponibles
               </h2>
               <button
-                onClick={redirigirFormulario}
+                onClick={() => setMostrarModalAgregar(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-all shadow-md"
               >
                 <FaPlus /> Nuevo Producto
               </button>
             </div>
-            <FiltrosProducto onFiltrar={setFiltros} />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 mt-8">
+    
+        <FiltrosProducto onFiltrar={setFiltros} />
+    
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 mt-8">
               {productosFiltrados.map((producto) => (
                 <ProductoCard
                   key={producto.id_producto}
@@ -524,14 +524,32 @@ export const ListaProductos = () => {
                 />
               ))}
             </div>
-            {mostrarModal && (
+          </>
+        )}
+
+      {/* Modal Editar */}
+      <AnimatePresence>
+        {mostrarModalEditar && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-gray-100/30 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
+              <button
+                onClick={() => setMostrarModalEditar(false)}
+                className="absolute top-3 right-4 text-gray-500 hover:text-red-500 text-xl font-bold"
+              >
+                ×
+              </button>
               <ModalActualizarProducto
                 producto={productoEditar}
-                onClose={() => setMostrarModal(false)}
+                onClose={() => setMostrarModalEditar(false)}
                 onActualizar={cargarProductos}
               />
-            )}
-          </>
+            </div>
+          </motion.div>
         )}
 
         {seccion === "personalizacion" && (
@@ -559,7 +577,7 @@ export const ListaProductos = () => {
                       </p>
                     </div>
                   ))
-              )}
+                )}
               </div>
             </div>
 
@@ -580,6 +598,34 @@ export const ListaProductos = () => {
             <ModelosGuardados modelos={modelos} />
           </motion.div>
         )}
+      </AnimatePresence>
+
+      {/* Modal Agregar */}
+      <AnimatePresence>
+        {mostrarModalAgregar && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-gray-100/30 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
+              <button
+                onClick={() => setMostrarModalAgregar(false)}
+                className="absolute top-3 right-4 text-gray-500 hover:text-red-500 text-xl font-bold"
+              >
+                ×
+              </button>
+              <NewProductForm
+                onClose={() => {
+                  setMostrarModalAgregar(false);
+                  cargarProductos(); // Actualiza después de registrar
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       </div>
     </motion.div>
   );

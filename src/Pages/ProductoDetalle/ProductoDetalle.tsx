@@ -266,16 +266,16 @@ export function DetalleProducto() {
               <button onClick={() => setCantidad(c => Math.min(stockDisponible, c + 1))} className="w-8 h-8 rounded-full border hover:bg-green-200">+</button>
             </div>
 
-            <div className="flex gap-4 mb-6">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleAgregarCarrito}
-                className="flex-1 bg-pink-500 text-white py-3 rounded-full font-semibold shadow-lg hover:bg-pink-600 transition flex items-center justify-center gap-2"
-              >
-                Agregar al Carrito
-                <FaShoppingCart className="text-lg" />
-              </motion.button>
+              <div className="flex gap-4 mb-6">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleAgregarCarrito}
+                  className="flex-1 bg-pink-500 text-white py-3 rounded-full font-semibold shadow-lg hover:bg-pink-600 transition flex items-center justify-center gap-2"
+                >
+                  Agregar al Carrito
+                  <FaShoppingCart className="text-lg" />
+                </motion.button>
 
               {producto.reserva_activa && (
                 <motion.button
@@ -301,21 +301,21 @@ export function DetalleProducto() {
               )}
             </div>
 
-            <motion.button
-              onClick={toggleFavorito}
-              whileTap={{ rotate: 360, scale: 1.3 }}
-              className="p-3 rounded-full text-pink-500 text-3xl shadow-md hover:scale-110 transition-transform"
-            >
-              {esFavorito ? <FaHeart /> : <FaRegHeart />}
-            </motion.button>
+              <motion.button
+                onClick={toggleFavorito}
+                whileTap={{ rotate: 360, scale: 1.3 }}
+                className="p-3 rounded-full text-pink-500 text-3xl shadow-md hover:scale-110 transition-transform"
+              >
+                {esFavorito ? <FaHeart /> : <FaRegHeart />}
+              </motion.button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Sección reseñas integrada */}
-      <div className="w-full flex justify-center mt-[50px]">
-        <div className="w-full max-w-3xl rounded-1xl shadow-2xl p-8 bg-white/60 backdrop-blur-md border border-pink-200">
-        <ParticlesBackground />
+        {/* Sección reseñas integrada */}
+        <div className="w-full flex justify-center mt-[50px]">
+          <div className="w-full max-w-3xl rounded-1xl shadow-2xl p-8 bg-white/60 backdrop-blur-md border border-pink-200">
+            <ParticlesBackground />
 
           <ResenasProducto id_producto={producto.id_producto} usuario={usuario} />
         </div>
