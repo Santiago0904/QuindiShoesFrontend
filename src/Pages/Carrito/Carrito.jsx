@@ -13,15 +13,41 @@ const Carrito = () => {
   const { resetear } = useContext(ContadorCarritoContext);
   const [descuento, setDescuento] = useState(0);
   const [productoConDescuento, setProductoConDescuento] = useState(null);
+  const [descuentoUsado, setDescuentoUsado] = useState(false);
+
+
 
   useEffect(() => {
-    axiosClient
-      .get("/profile/recompensa")
-      .then((res) => {
-        setDescuento(res.data.recompensa_juego || 0);
-      })
-      .catch(() => setDescuento(0));
-  }, []);
+  const token = localStorage.getItem("token");
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      const id = decoded.data?.id;
+      setUserId(id);
+
+      // 🔄 Obtener porcentaje de descuento
+      axiosClient
+        .get("/profile/recompensa")
+        .then((res) => setDescuento(res.data.recompensa_juego || 0))
+        .catch(() => setDescuento(0));
+
+      // 🔄 Verificar si el descuento ya fue usado
+      axiosClient
+        .get(`/usuarios/${id}/descuento-estado`)
+        .then((res) => setDescuentoUsado(res.data.descuento_usado))
+        .catch(() => setDescuentoUsado(false));
+        
+    } catch (error) {
+      console.error("Token inválido:", error);
+    }
+  }
+
+  const script = document.createElement("script");
+  script.src = "https://checkout.epayco.co/checkout.js";
+  script.async = true;
+  document.body.appendChild(script);
+}, []);
+
 
   const totalVisual = carrito.reduce((acc, p, idx) => {
     if (productoConDescuento === idx && descuento > 0) {
@@ -38,21 +64,6 @@ const Carrito = () => {
     }
   }, []);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        setUserId(decoded.data?.id);
-      } catch (error) {
-        console.error("Token inválido:", error);
-      }
-    }
-    const script = document.createElement("script");
-    script.src = "https://checkout.epayco.co/checkout.js";
-    script.async = true;
-    document.body.appendChild(script);
-  }, []);
 
   const handlePSEPayment = () => {
     if (!userId) return;
@@ -117,6 +128,12 @@ const Carrito = () => {
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-green-50 px-4 py-8 flex justify-center items-start">
       <div className="w-full max-w-6xl bg-white shadow-2xl rounded-[40px] p-10 space-y-12">
         <h2 className="text-5xl font-extrabold text-center text-[#1D3124]">🛍️ Tu Carrito</h2>
+        {descuentoUsado && (
+          <div className="text-yellow-800 bg-yellow-100 p-3 rounded-lg text-center font-medium shadow">
+            🎁 Ya usaste tu recompensa del juego.
+          </div>
+        )}
+
 
         {carrito.length === 0 ? (
           <div className="text-center text-xl text-gray-600 flex flex-col items-center">
@@ -231,15 +248,22 @@ const Carrito = () => {
                       onClick={() =>
                         setProductoConDescuento(productoConDescuento === index ? null : index)
                       }
-                      disabled={descuento === 0}
+                      disabled={descuento === 0 || descuentoUsado}
                       className={`w-full py-2 rounded-full text-sm font-semibold shadow transition ${
                         productoConDescuento === index
                           ? "bg-yellow-200 text-yellow-900"
                           : "bg-yellow-50 text-gray-600"
-                      } ${descuento === 0 && "opacity-50 cursor-not-allowed"}`}
+                      } ${descuento === 0 || descuentoUsado ? "opacity-50 cursor-not-allowed" : ""}`}
                     >
-                      🎁 {productoConDescuento === index ? `Descuento aplicado (-${descuento}%)` : `Aplicar descuento`}
+                      🎁 {
+                        descuentoUsado
+                          ? "Descuento ya usado"
+                          : productoConDescuento === index
+                            ? `Descuento aplicado (-${descuento}%)`
+                            : `Aplicar descuento`
+                      }
                     </button>
+
 
                     {/* Eliminar */}
                     <motion.button

@@ -79,7 +79,7 @@ const CambiarContraseñaForm = () => {
 
       <motion.button
         type="submit"
-        className="w-full py-3 rounded-xl bg-gradient-to-r from-pink-400 to-emerald-400 text-white font-bold text-lg shadow-lg hover:from-pink-500 hover:to-emerald-500 transition-all"
+        className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg shadow-lg transition-all"
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}
         disabled={cargando}

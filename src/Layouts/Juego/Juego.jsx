@@ -31,7 +31,7 @@ export default function FlappyBirdGame({ onGameOver }) {
   const gameOverRef = useRef(false);
 
 
-  function checkAndSetDescuento(score) {
+async function checkAndSetDescuento(score) {
   const token = localStorage.getItem("token");
   if (!token) return;
 
@@ -54,15 +54,25 @@ export default function FlappyBirdGame({ onGameOver }) {
   const key = `descuento_max_${usuarioId}`;
   const guardado = parseInt(localStorage.getItem(key) || "0", 10);
 
-  if (nuevoDescuento > guardado) {
-    localStorage.setItem(key, nuevoDescuento.toString());
-    setDescuentoMsg(
-      guardado === 0
-        ? `¡Felicidades! Has conseguido un ${nuevoDescuento}% de descuento.`
-        : `¡Genial! Tu descuento ha mejorado a ${nuevoDescuento}%.`
-    );
+  try {
+    // 👇 Aquí consultamos si ya usó su descuento
+    const res = await axiosClient.get(`/usuarios/${usuarioId}/descuento-estado`);
+    const { descuento_usado } = res.data;
+
+    // ✅ Solo mostramos si NO lo ha usado
+    if (!descuento_usado && nuevoDescuento > guardado) {
+      localStorage.setItem(key, nuevoDescuento.toString());
+      setDescuentoMsg(
+        guardado === 0
+          ? `¡Felicidades! Has conseguido un ${nuevoDescuento}% de descuento.`
+          : `¡Genial! Tu descuento ha mejorado a ${nuevoDescuento}%.`
+      );
+    }
+  } catch (error) {
+    console.error("Error al verificar estado del descuento:", error);
   }
 }
+
 
   useEffect(() => {
     dieSound.current.load();
