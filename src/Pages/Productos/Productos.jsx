@@ -5,7 +5,7 @@ import ModalActualizarProducto from "./Modal/ModalActualizarProducto";
 import { NewProductForm } from "../../Components/NewProductForm/NewProductForm";
 import Swal from "sweetalert2";
 import { FiltrosProducto } from "../../Components/FiltrosProducto/FiltrosProducto";
-
+import { useNavigate } from "react-router-dom"; 
 import { motion, AnimatePresence } from "framer-motion";
 import { ParticlesBackground } from "../../Components/Particulas/ParticlesBackground";
 import VisorModeloGLB from "../../Components/VisorModeloGLB/VisorModeloGLB";
@@ -169,8 +169,13 @@ const ModelosGuardados = ({ modelos }) => (
 );
 
 const ProductoCard = ({ producto, onDelete, onUpdate, onTogglePersonalizacion, onToggleActivo }) => {
-  console.log("🔍 Imágenes del producto:", producto.imagenes);
-  const BASE_URL = "http://localhost:3000"; // o tu dominio en producción
+  const navigate = useNavigate(); // <- Agregado
+  const BASE_URL = "http://localhost:3000";
+
+  const handleCardClick = (e) => {
+    if (e.target.closest("button")) return;
+    navigate(`/producto/${producto.id_producto}/variantes`);
+  };
 
   const imagenPrincipal =
     producto.imagenes?.[0]?.startsWith("/")
@@ -182,6 +187,7 @@ const ProductoCard = ({ producto, onDelete, onUpdate, onTogglePersonalizacion, o
       layout
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.98 }}
+      onClick={handleCardClick} // <- Agregado
       className="rounded-3xl p-4 bg-gradient-to-tr from-white to-pink-50 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
     >
       <img

@@ -173,18 +173,22 @@ export const FormEmpleados = ({ modoModal = false, onClose }) => {
   );
 
   return modoModal ? (
-    <AnimatePresence>
-      <motion.div
-        key="modal"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex justify-center items-center px-4"
-      >
-        {Formulario}
-      </motion.div>
-    </AnimatePresence>
-  ) : (
-    <div className="my-20 px-4">{Formulario}</div>
-  );
+  <AnimatePresence>
+    <motion.div
+      key="modal"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex justify-center items-center px-4"
+    >
+      {/* Fondo difuminado */}
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm z-0" />
+
+      {/* Contenido del modal */}
+      <div className="relative z-10">{Formulario}</div>
+    </motion.div>
+  </AnimatePresence>
+) : (
+  <div className="my-20 px-4">{Formulario}</div>
+);
 };

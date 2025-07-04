@@ -53,11 +53,31 @@ export const LoginForm = () => {
 
     try {
       const response = await axios.post("http://localhost:3000/auth", loginData);
-      localStorage.setItem("token", response.data.token);
+      // Validar que el token tiene datos de usuario
+      const token = response.data.token;
+      let payload = {};
+      try {
+        payload = JSON.parse(atob(token.split('.')[1]));
+      } catch {
+        payload = {};
+      }
+      if (!payload.data || !payload.data.id) {
+        MySwal.fire({
+          icon: "error",
+          title: "Error de autenticación",
+          text: "El token recibido no contiene datos de usuario. Contacta soporte.",
+          confirmButtonColor: "#fda4af",
+          background: "#fff1f2",
+        });
+        return;
+      }
+      localStorage.setItem("token", token);
       localStorage.setItem("rol", response.data.rol);
       if (response.data.id) {
-        localStorage.setItem("id", response.data.id); // <-- Esto ya lo guarda
+        localStorage.setItem("id", response.data.id);
       }
+      // Log para depuración: verifica que el token se guarda correctamente
+      console.log("🔑 Token guardado en localStorage:", localStorage.getItem("token"));
 
       await MySwal.fire({
         icon: "success",

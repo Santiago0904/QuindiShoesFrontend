@@ -14,9 +14,6 @@ export const VariantesProducto = () => {
   const [filtroColor, setFiltroColor] = useState("");
   const [filtroStock, setFiltroStock] = useState("");
   // Estados para agregar color desde el modal de variante
-  const [nuevoColor, setNuevoColor] = useState("");
-  const [nuevoHex, setNuevoHex] = useState("#000000");
-  const [mostrarFormColor, setMostrarFormColor] = useState(false);
 
   useEffect(() => {
     cargarVariantes();
@@ -59,58 +56,9 @@ export const VariantesProducto = () => {
       .catch(() => setColores([]));
   };
 
-  // Utilidad para generar selects HTML como string
-  const getSelectHTML = (id, options, selectedValue, placeholder, isColor = false) => {
-    return `
-      <select id="${id}" class="swal2-input" style="width:95%;margin-bottom:10px;">
-        <option value="">${placeholder}</option>
-        ${options
-        .map(
-          (opt) =>
-            `<option value="${opt.id_talla || opt.id_color}" ${(opt.id_talla === selectedValue || opt.id_color === selectedValue) ? "selected" : ""
-            }>${isColor ? `${opt.color} (${opt.codigo_hex})` : opt.talla}</option>`
-        )
-        .join("")}
-      </select>
-    `;
-  };
+  // (Eliminada función getSelectHTML porque no se utiliza)
 
   // Handler para agregar color desde el modal
-  const handleAgregarColor = async () => {
-    if (!nuevoColor || !nuevoHex) {
-      Swal.fire({
-        icon: "warning",
-        title: "Faltan datos",
-        text: "Debes ingresar el nombre y el código hexadecimal del color."
-      });
-      return;
-    }
-    try {
-      const token = localStorage.getItem("token");
-      await axiosClient.post(
-        "/producto/colores",
-        { color: nuevoColor, codigo_hex: nuevoHex },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      cargarColores();
-      setNuevoColor("");
-      setNuevoHex("#000000");
-      setMostrarFormColor(false);
-      Swal.fire({
-        icon: "success",
-        title: "Color registrado",
-        text: "Color registrado correctamente",
-        timer: 1200,
-        showConfirmButton: false
-      });
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Error al registrar el color"
-      });
-    }
-  };
 
   const handleDelete = (idVariante) => {
     Swal.fire({
@@ -463,7 +411,7 @@ export const VariantesProducto = () => {
               showConfirmButton: false
             });
             formNuevoColor.classList.add("hidden");
-          } catch (error) {
+          } catch {
             Swal.fire({
               icon: "error",
               title: "Error",
