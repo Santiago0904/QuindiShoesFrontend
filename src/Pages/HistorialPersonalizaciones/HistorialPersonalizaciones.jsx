@@ -8,7 +8,7 @@ export const HistorialPersonalizaciones = () => {
   const [modelos, setModelos] = useState([]);
   const [cargando, setCargando] = useState(true);
 
-  const BASE_URL = "https://quindishoes-backend-3.onrender.com";
+  const BASE_URL = "https://quindishoes-backend-def.onrender.com";
 
   useEffect(() => {
     const id_usuario = localStorage.getItem("id");

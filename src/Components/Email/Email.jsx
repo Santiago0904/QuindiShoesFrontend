@@ -24,7 +24,7 @@ export const Email = () => {
     }
 
     try {
-      await axios.post("https://quindishoes-backend-3.onrender.com/RecuperarContrasena", { correo });
+      await axios.post("https://quindishoes-backend-def.onrender.com/RecuperarContrasena", { correo });
       MySwal.fire({
         icon: "success",
         title: "¡Correo enviado!",
