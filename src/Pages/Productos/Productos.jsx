@@ -168,7 +168,7 @@ const ModelosGuardados = ({ modelos }) => (
   </div>
 );
 
-const ProductoCard = ({ producto, onDelete, onUpdate, onTogglePersonalizacion }) => {
+const ProductoCard = ({ producto, onDelete, onUpdate, onTogglePersonalizacion, onToggleActivo }) => {
   console.log("🔍 Imágenes del producto:", producto.imagenes);
   const BASE_URL = "http://localhost:3000"; // o tu dominio en producción
 
@@ -205,6 +205,13 @@ const ProductoCard = ({ producto, onDelete, onUpdate, onTogglePersonalizacion })
         >
           {producto.personalizacion_activa ? "Personalización Activada" : "Activar Personalización"}
         </button>
+        <button
+          onClick={() => onToggleActivo(producto)}
+          className={`px-3 py-1 rounded-full text-xs font-semibold shadow transition 
+    ${producto.activo == 1 ? "bg-green-600" : "bg-gray-400 text-white"}`}
+        >
+          {producto.activo == 1 ? "Activo" : "Inactivo  "}
+        </button>
       </div>
       <div className="flex gap-3 mt-4">
         <button
@@ -230,7 +237,7 @@ const ProductoCard = ({ producto, onDelete, onUpdate, onTogglePersonalizacion })
   );
 };
 
-export const  ListaProductos = () => {
+export const ListaProductos = () => {
   const [productos, setProductos] = useState([]);
   const [productoEditar, setProductoEditar] = useState(null);
   const [mostrarModalEditar, setMostrarModalEditar] = useState(false);
@@ -444,6 +451,9 @@ export const  ListaProductos = () => {
 
   const productosFiltrados = filtrarProductos(productos, filtros);
   const productosPersonalizables = productos.filter(p => p.personalizacion_activa === 1);
+  const productosActivos = productosFiltrados.filter(p => Number(p.activo) === 1);
+  const productosInactivos = productosFiltrados.filter(p => Number(p.activo) === 0);
+
 
   // PUT /producto/:id/personalizacion
   const handleTogglePersonalizacion = async (producto) => {
@@ -467,6 +477,28 @@ export const  ListaProductos = () => {
     }
   };
 
+  const handleToggleActivo = async (producto) => {
+    try {
+      const token = localStorage.getItem("token");
+      const nuevoEstado = Number(producto.activo) === 1 ? 0 : 1;
+      console.log("🔄 Cambiando estado a:", nuevoEstado);
+      await axiosClient.put(
+        `/producto/${producto.id_producto}/activo`,
+        { activo: nuevoEstado },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setProductos((prev) =>
+        prev.map((p) =>
+          p.id_producto === producto.id_producto
+            ? { ...p, activo: nuevoEstado }
+            : p
+        )
+      );
+    } catch {
+      Swal.fire({ icon: "error", title: "Error al cambiar estado del producto" });
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -474,35 +506,42 @@ export const  ListaProductos = () => {
       className="min-h-screen relative py-12 px-4 sm:px-8 overflow-hidden"
     >
       <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-3xl p-10">
+        {/* Botones para cambiar de sección */}
         <div className="flex gap-4 mb-8">
           <button
-            className={`px-6 py-2 rounded-full font-bold shadow transition-all flex items-center gap-2 ${
-              seccion === "productos"
-                ? "bg-pink-500 text-white scale-105"
-                : "bg-white text-pink-600 border border-pink-300 hover:bg-pink-100"
-            }`}
+            className={`px-6 py-2 rounded-full font-bold shadow transition-all flex items-center gap-2 ${seccion === "productos"
+              ? "bg-pink-500 text-white scale-105"
+              : "bg-white text-pink-600 border border-pink-300 hover:bg-pink-100"
+              }`}
             onClick={() => setSeccion("productos")}
           >
             <FaPlus /> Productos
           </button>
           <button
-            className={`px-6 py-2 rounded-full font-bold shadow transition-all flex items-center gap-2 ${
-              seccion === "personalizacion"
-                ? "bg-indigo-600 text-white scale-105"
-                : "bg-white text-indigo-600 border border-indigo-300 hover:bg-indigo-100"
-            }`}
+            className={`px-6 py-2 rounded-full font-bold shadow transition-all flex items-center gap-2 ${seccion === "inactivos"
+              ? "bg-gray-700 text-white scale-105"
+              : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
+              }`}
+            onClick={() => setSeccion("inactivos")}
+          >
+            💤 Inactivos
+          </button>
+          <button
+            className={`px-6 py-2 rounded-full font-bold shadow transition-all flex items-center gap-2 ${seccion === "personalizacion"
+              ? "bg-indigo-600 text-white scale-105"
+              : "bg-white text-indigo-600 border border-indigo-300 hover:bg-indigo-100"
+              }`}
             onClick={() => setSeccion("personalizacion")}
           >
             <FaPalette /> Personalización
           </button>
         </div>
 
+        {/* Sección productos */}
         {seccion === "productos" && (
           <>
             <div className="flex justify-between items-center mb-10">
-              <h2 className="text-4xl font-extrabold text-pink-600">
-                Productos Disponibles
-              </h2>
+              <h2 className="text-4xl font-extrabold text-pink-600">Productos Disponibles</h2>
               <button
                 onClick={() => setMostrarModalAgregar(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-all shadow-md"
@@ -510,51 +549,27 @@ export const  ListaProductos = () => {
                 <FaPlus /> Nuevo Producto
               </button>
             </div>
-    
-        <FiltrosProducto onFiltrar={setFiltros} />
-    
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 mt-8">
-              {productosFiltrados.map((producto) => (
+
+            <FiltrosProducto onFiltrar={setFiltros} />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 mt-8">
+              {productosActivos.map((producto) => (
                 <ProductoCard
                   key={producto.id_producto}
                   producto={producto}
                   onDelete={() => handleEliminar(producto.id_producto)}
                   onUpdate={() => handleActualizar(producto)}
                   onTogglePersonalizacion={handleTogglePersonalizacion}
+                  onToggleActivo={handleToggleActivo} // 🔧 Se agregó esta prop
                 />
               ))}
             </div>
           </>
         )}
 
-      {/* Modal Editar */}
-      <AnimatePresence>
-        {mostrarModalEditar && (
-          <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-gray-100/30 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
-              <button
-                onClick={() => setMostrarModalEditar(false)}
-                className="absolute top-3 right-4 text-gray-500 hover:text-red-500 text-xl font-bold"
-              >
-                ×
-              </button>
-              <ModalActualizarProducto
-                producto={productoEditar}
-                onClose={() => setMostrarModalEditar(false)}
-                onActualizar={cargarProductos}
-              />
-            </div>
-          </motion.div>
-        )}
-
+        {/* Sección personalización */}
         {seccion === "personalizacion" && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            {/* Solo productos personalizables */}
             <div className="bg-white rounded-2xl shadow-md p-6 mb-6">
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-indigo-700">
                 <FaPalette /> Productos Personalizables
@@ -566,7 +581,11 @@ export const  ListaProductos = () => {
                   productosPersonalizables.map((producto) => (
                     <div key={producto.id_producto} className="bg-pink-50 rounded-xl p-4 shadow">
                       <img
-                        src={producto.imagenes?.[0] || "https://via.placeholder.com/300x200?text=Sin+Imagen"}
+                        src={
+                          producto.imagenes?.[0]?.startsWith("/")
+                            ? "http://localhost:3000" + producto.imagenes[0]
+                            : producto.imagenes?.[0] || "https://via.placeholder.com/300x200?text=Sin+Imagen"
+                        }
                         alt={producto.nombre_producto}
                         className="w-full h-40 object-contain rounded-lg mb-2"
                       />
@@ -581,52 +600,100 @@ export const  ListaProductos = () => {
               </div>
             </div>
 
-            {/* Formulario para agregar colores */}
             <ColorNewForm onColorGuardado={() => { cargarColores(); cargarTopColores(); }} />
 
-            {/* CRUD de colores */}
             <CrudColores
               colores={colores}
               onActualizar={handleActualizarColor}
               onEliminar={handleEliminarColor}
             />
 
-            {/* Top colores más usados */}
             <TopColores colores={topColores} />
 
-            {/* Modelos 3D guardados */}
             <ModelosGuardados modelos={modelos} />
           </motion.div>
         )}
-      </AnimatePresence>
 
-      {/* Modal Agregar */}
-      <AnimatePresence>
-        {mostrarModalAgregar && (
-          <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-gray-100/30 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
-              <button
-                onClick={() => setMostrarModalAgregar(false)}
-                className="absolute top-3 right-4 text-gray-500 hover:text-red-500 text-xl font-bold"
-              >
-                ×
-              </button>
-              <NewProductForm
-                onClose={() => {
-                  setMostrarModalAgregar(false);
-                  cargarProductos(); // Actualiza después de registrar
-                }}
-              />
+        {seccion === "inactivos" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-3xl font-extrabold text-gray-700">Productos Inactivos</h2>
             </div>
+
+            {productosInactivos.length === 0 ? (
+              <div className="text-gray-500 text-center mt-10">No hay productos inactivos.</div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 mt-4">
+                {productosInactivos.map((producto) => (
+                  <ProductoCard
+                    key={producto.id_producto}
+                    producto={producto}
+                    onDelete={() => handleEliminar(producto.id_producto)}
+                    onUpdate={() => handleActualizar(producto)}
+                    onTogglePersonalizacion={handleTogglePersonalizacion}
+                    onToggleActivo={handleToggleActivo}
+                  />
+                ))}
+              </div>
+            )}
           </motion.div>
         )}
-      </AnimatePresence>
+
+        {/* Modal Editar */}
+        <AnimatePresence>
+          {mostrarModalEditar && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-gray-100/30 backdrop-blur-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
+                <button
+                  aria-label="Cerrar modal"
+                  onClick={() => setMostrarModalEditar(false)}
+                  className="absolute top-3 right-4 text-gray-500 hover:text-red-500 text-xl font-bold"
+                >
+                  ×
+                </button>
+                <ModalActualizarProducto
+                  producto={productoEditar}
+                  onClose={() => setMostrarModalEditar(false)}
+                  onActualizar={cargarProductos}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Modal Agregar */}
+        <AnimatePresence>
+          {mostrarModalAgregar && (
+            <motion.div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-gray-100/30 backdrop-blur-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative">
+                <button
+                  aria-label="Cerrar modal"
+                  onClick={() => setMostrarModalAgregar(false)}
+                  className="absolute top-3 right-4 text-gray-500 hover:text-red-500 text-xl font-bold"
+                >
+                  ×
+                </button>
+                <NewProductForm
+                  onClose={() => {
+                    setMostrarModalAgregar(false);
+                    cargarProductos();
+                  }}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   );
-};
+}

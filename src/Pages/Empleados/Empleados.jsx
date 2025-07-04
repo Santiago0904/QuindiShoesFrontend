@@ -38,54 +38,56 @@ const EmpleadoCard = ({ empleado, onUpdate, onDelete }) => {
       initial={{ opacity: 0, translateY: 20 }}
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ duration: 0.4 }}
-      className="bg-white rounded-2xl shadow-md p-6 flex items-start gap-6 border border-gray-200 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+      className="bg-white rounded-2xl border border-green-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-6 flex flex-col md:flex-row gap-5"
     >
-      {/* Inicial redonda */}
-      <div className="flex-shrink-0 w-16 h-16 rounded-full bg-green-100 text-green-700 font-bold text-2xl flex items-center justify-center shadow-inner">
+      {/* Inicial */}
+      <div className="flex-shrink-0 w-20 h-20 rounded-full bg-green-100 text-green-700 font-bold text-3xl flex items-center justify-center shadow-inner mx-auto md:mx-0">
         {inicial}
       </div>
 
-      {/* Info del empleado */}
-      <div className="flex-grow">
-        <div className="flex justify-between items-start">
-          <h2 className="text-xl font-semibold text-gray-800">
-            {empleado.nombre} {empleado.apellido}
-          </h2>
-          <span className="text-sm text-white bg-green-600 px-3 py-1 rounded-full shadow">
-            {empleado.rol}
-          </span>
-        </div>
-        <div className="mt-2 space-y-1 text-sm text-gray-600">
-          <p>
-            📧{" "}
-            <span className="font-medium text-gray-700">
-              {empleado.correo}
+      {/* Información */}
+      <div className="flex flex-col justify-between flex-grow">
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-xl font-semibold text-gray-800">
+              {empleado.nombre} {empleado.apellido}
+            </h2>
+            <span className="text-xs font-medium text-white bg-green-600 px-3 py-1 rounded-full shadow">
+              {empleado.rol}
             </span>
-          </p>
-          <p>
-            📞{" "}
-            <span className="font-medium text-gray-700">
-              {empleado.telefono}
-            </span>
-          </p>
-          <p>
-            🏠{" "}
-            <span className="font-medium text-gray-700">
-              {empleado.direccion}
-            </span>
-          </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-700 mt-2">
+            <div>
+              <p className="text-xs text-gray-500">ID del Empleado</p>
+              <p className="font-medium">{empleado.id_usuario}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Correo</p>
+              <p className="font-medium">{empleado.correo}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Teléfono</p>
+              <p className="font-medium">{empleado.telefono}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500">Dirección</p>
+              <p className="font-medium">{empleado.direccion}</p>
+            </div>
+          </div>
         </div>
 
-        <div className="flex gap-3 mt-5">
+        {/* Botones */}
+        <div className="flex flex-wrap gap-3 mt-5">
           <button
             onClick={onUpdate}
-            className="bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-green-300 text-white px-4 py-2 rounded-md text-sm flex items-center gap-2 shadow transition"
+            className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 rounded-lg shadow-md transition-all duration-200"
           >
             <FaEdit /> Actualizar
           </button>
           <button
             onClick={confirmarEliminar}
-            className="bg-red-500 hover:bg-red-600 focus:ring-2 focus:ring-red-300 text-white px-4 py-2 rounded-md text-sm flex items-center gap-2 shadow transition"
+            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-lg shadow-md transition-all duration-200"
           >
             <FaTrash /> Eliminar
           </button>
@@ -94,6 +96,8 @@ const EmpleadoCard = ({ empleado, onUpdate, onDelete }) => {
     </motion.div>
   );
 };
+
+
 
 export const ListaEmpleados = () => {
   const [empleados, setEmpleados] = useState([]);
@@ -135,7 +139,7 @@ export const ListaEmpleados = () => {
     setMostrarModalActualizar(true);
   };
 
-  return (
+  return (  
     <>
       {/* Lista de tarjetas */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 py-10">

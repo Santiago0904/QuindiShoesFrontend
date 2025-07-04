@@ -21,6 +21,7 @@ export const FormEmpleados = ({ modoModal = false, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       await axiosClient.post("/register", formData);
       Swal.fire({
@@ -50,7 +51,7 @@ export const FormEmpleados = ({ modoModal = false, onClose }) => {
       transition={{ duration: 0.3 }}
       className="bg-white w-full max-w-2xl p-8 rounded-2xl shadow-xl border border-green-200"
     >
-      {/* Título */}
+      {/* Encabezado */}
       <div className="flex items-center gap-3 mb-6">
         <FaUserPlus className="text-green-600 text-2xl" />
         <h2 className="text-2xl font-bold text-green-700">
@@ -60,7 +61,7 @@ export const FormEmpleados = ({ modoModal = false, onClose }) => {
 
       {/* Formulario */}
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Nombre y Apellido */}
+        {/* Nombres y Apellidos */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="text-sm text-gray-600">Nombres</label>

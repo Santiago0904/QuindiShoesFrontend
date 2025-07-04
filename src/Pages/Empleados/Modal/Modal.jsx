@@ -16,28 +16,38 @@ const ModalActualizarEmpleado = ({ empleado, onClose, onActualizar }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axiosClient.put(`/empleado/${formData.id}`, formData);
-      onActualizar();
-      Swal.fire({
-        icon: "success",
-        title: "Empleado actualizado correctamente",
-        confirmButtonColor: "#4CAF50",
-        timer: 1800,
-        showConfirmButton: false,
-      });
-      onClose();
-    } catch (error) {
-      console.error("Error al actualizar empleado:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error al actualizar empleado",
-        text: "Intenta de nuevo más tarde",
-        confirmButtonColor: "#E53935",
-      });
-    }
+  e.preventDefault();
+
+  const datosBackend = {
+    nombre: formData.nombres,
+    apellido: formData.apellidos,
+    telefono: formData.telefono,
+    direccion: formData.direccion,
+    correo: formData.correo,
+    rol: formData.rol
   };
+
+  try {
+    await axiosClient.put(`/empleado/${formData.id}`, datosBackend);
+    onActualizar();
+    Swal.fire({
+      icon: "success",
+      title: "Empleado actualizado correctamente",
+      confirmButtonColor: "#4CAF50",
+      timer: 1800,
+      showConfirmButton: false,
+    });
+    onClose();
+  } catch (error) {
+    console.error("Error al actualizar empleado:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error al actualizar empleado",
+      text: "Intenta de nuevo más tarde",
+      confirmButtonColor: "#E53935",
+    });
+  }
+};
 
   return (
     <AnimatePresence>
