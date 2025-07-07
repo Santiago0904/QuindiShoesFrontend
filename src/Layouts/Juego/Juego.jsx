@@ -275,10 +275,13 @@ const gameLoop = () => {
       setScore(prev => {
         const newScore = prev + 1;
         scoreRef.current = newScore;
-        
-        if([5, 10, 15].includes(newScore)) {
-          checkAndSetDescuento(newScore);
-        }
+        // Eliminado el sonido aquí:
+        // if (newScore % 10 === 0) {
+        //   const point = pointSound.current;
+        //   point.pause();
+        //   point.currentTime = 0;
+        //   point.play().catch((e) => console.warn("No se pudo reproducir point.mp3:", e));
+        // }
         return newScore;
       });
       pipe.scored = true;
