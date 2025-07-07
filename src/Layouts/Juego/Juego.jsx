@@ -122,11 +122,21 @@ async function checkAndSetDescuento(score) {
   if ((e.key === 'Enter' || e.key === 'ArrowUp') && gameStateRef.current !== 'Play') {
     // Reproduce la música aquí directamente tras interacción
     e.preventDefault()
-    if (!audio.paused) audio.pause();
-    audio.currentTime = 0;
-    audio.play().catch((e) => {
-      console.warn("No se pudo reproducir Ecos_Freneticos:", e);
+    try {
+  if (!audio.paused && !audio.ended) {
+    audio.pause();
+  }
+  audio.currentTime = 0;
+  const playPromise = audio.play();
+  if (playPromise !== undefined) {
+    playPromise.catch((error) => {
+      console.warn("No se pudo reproducir Ecos_Freneticos:", error);
     });
+    }
+    } catch (err) {
+      console.warn("Error general al manejar el audio:", err);
+    }
+
 
     startGame();
   }
@@ -230,8 +240,8 @@ const gameOver = () => {
     clearTimeout(videoTimeoutRef.current);
   }
 
-  guardarPuntuacion(score);    
-  checkAndSetDescuento(score);
+  guardarPuntuacion(scoreRef.current);
+  checkAndSetDescuento(scoreRef.current);
   if (typeof onGameOver === 'function') {
       onGameOver();
     }};
