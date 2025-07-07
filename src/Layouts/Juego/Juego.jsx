@@ -93,6 +93,7 @@ async function checkAndSetDescuento(score) {
       const usuarioId = payload.id || payload.data?.id;
       if (!usuarioId) return;
 
+      console.log("Guardando puntuación:", { usuarioId, puntuacion });
       await axiosClient.post("/juego", { usuarioId, puntuacion });
     } catch (error) {
       console.error("Error al guardar puntuación:", error);
@@ -166,7 +167,16 @@ async function checkAndSetDescuento(score) {
   }, []);
 
  const startGame = () => {
- gameOverRef.current = false;  // Reiniciar bandera
+ gameOverRef.current = false; 
+   if (ecosFreneticosAudio.current) {
+    ecosFreneticosAudio.current.pause();
+    ecosFreneticosAudio.current.currentTime = 0;
+  }
+
+  if (dieSound.current) {
+    dieSound.current.pause();
+    dieSound.current.currentTime = 0;
+  } // Reiniciar bandera
 
   moveSpeedRef.current = 0.3;
   setScore(0);
