@@ -56,7 +56,7 @@ async function checkAndSetDescuento(score) {
 
   try {
     // 👇 Aquí consultamos si ya usó su descuento
-    const res = await axiosClient.get(`/usuarios/${usuarioId}/descuento-estado`);
+    const res = await axiosClient.get(`/juego/${usuarioId}/descuento-estado`);
     const { descuento_usado } = res.data;
 
     // ✅ Solo mostramos si NO lo ha usado
@@ -451,5 +451,3 @@ return (
     </div>
 );
 }
-
-
