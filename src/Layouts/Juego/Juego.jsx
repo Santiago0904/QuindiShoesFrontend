@@ -122,7 +122,7 @@ async function checkAndSetDescuento(score) {
   if ((e.key === 'Enter' || e.key === 'ArrowUp') && gameStateRef.current !== 'Play') {
     // Reproduce la música aquí directamente tras interacción
     e.preventDefault()
-    audio.pause();
+    if (!audio.paused) audio.pause();
     audio.currentTime = 0;
     audio.play().catch((e) => {
       console.warn("No se pudo reproducir Ecos_Freneticos:", e);
@@ -230,8 +230,8 @@ const gameOver = () => {
     clearTimeout(videoTimeoutRef.current);
   }
 
-  guardarPuntuacion(scoreRef.current);    
-  checkAndSetDescuento(scoreRef.current);
+  guardarPuntuacion(score);    
+  checkAndSetDescuento(score);
   if (typeof onGameOver === 'function') {
       onGameOver();
     }};
