@@ -74,10 +74,26 @@ async function checkAndSetDescuento(score) {
 }
 
 
-  useEffect(() => {
-    dieSound.current.load();
-    ecosFreneticosAudio.current.load();
-  }, []);
+useEffect(() => {
+  dieSound.current.load();
+  ecosFreneticosAudio.current.load();
+
+  return () => {
+    // ✅ Libera recursos del audio cuando se desmonta
+    if (ecosFreneticosAudio.current) {
+      ecosFreneticosAudio.current.pause();
+      ecosFreneticosAudio.current.src = '';
+      ecosFreneticosAudio.current.load();
+    }
+
+    if (dieSound.current) {
+      dieSound.current.pause();
+      dieSound.current.src = '';
+      dieSound.current.load();
+    }
+  };
+}, []);
+
 
   useEffect(() => {
     scoreRef.current = score;
