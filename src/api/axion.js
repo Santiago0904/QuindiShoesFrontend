@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const axiosClient = axios.create({
-  baseURL: "https://quindishoes-backend-def.onrender.com",
+  baseURL: "http://localhost:5173",
   headers: {
     "Content-Type": "application/json",
   },
