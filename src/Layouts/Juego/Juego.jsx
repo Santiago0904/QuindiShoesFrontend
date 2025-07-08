@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from 'react';
 import birdImg from '../../assets/images/crocodilo.png';
 import birdFlapImg from '../../assets/images/sprite-up.png';
-import dieSoundFile from '../../assets/sounds/die.mp3';
 import fondoVideo from '../../assets/images/202505231554.mp4';
 import Ecos_Freneticos from '../../assets/sounds/Ecos_Freneticos.mp3';
 import axiosClient from '../../api/axion';
@@ -23,7 +22,6 @@ export default function FlappyBirdGame({ onGameOver }) {
   const animationFrameRef = useRef();
   const pipeTimerRef = useRef(0);
   const gameStateRef = useRef(gameState);
-  const dieSound = useRef(new Audio(dieSoundFile));
   const videoRef = useRef(null);
   const reverseIntervalRef = useRef(null);
   const videoTimeoutRef = useRef(null);
@@ -75,24 +73,14 @@ async function checkAndSetDescuento(score) {
 
 
 useEffect(() => {
-  dieSound.current.load();
-  ecosFreneticosAudio.current.load();
-
   return () => {
-    // ✅ Libera recursos del audio cuando se desmonta
     if (ecosFreneticosAudio.current) {
       ecosFreneticosAudio.current.pause();
       ecosFreneticosAudio.current.src = '';
-      ecosFreneticosAudio.current.load();
-    }
-
-    if (dieSound.current) {
-      dieSound.current.pause();
-      dieSound.current.src = '';
-      dieSound.current.load();
     }
   };
 }, []);
+
 
 
   useEffect(() => {
@@ -199,10 +187,7 @@ useEffect(() => {
     ecosFreneticosAudio.current.currentTime = 0;
   }
 
-  if (dieSound.current) {
-    dieSound.current.pause();
-    dieSound.current.currentTime = 0;
-  } // Reiniciar bandera
+
 
   moveSpeedRef.current = 0.3;
   setScore(0);
