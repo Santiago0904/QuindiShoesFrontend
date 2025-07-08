@@ -27,13 +27,17 @@ const Domicilios = () => {
               <p><strong>Descuento:</strong> {factura.descuento}%</p>
 
               <h3 className="mt-4 font-semibold">🛍 Productos:</h3>
-              <ul className="ml-4 list-disc">
-                {factura.contenido_factura.map((item, i) => (
-                  <li key={i}>
-                    {item.nombre_producto} - Talla: {item.talla}, Cantidad: {item.cantidad}, Color: {item.color}
-                  </li>
-                ))}
-              </ul>
+             <ul className="ml-4 list-disc">
+            {Array.isArray(factura.contenido_factura) ? (
+              factura.contenido_factura.map((item, i) => (
+                <li key={i}>
+                  {item.nombre_producto} - Talla: {item.talla}, Cantidad: {item.cantidad}, Color: {item.color}
+                </li>
+              ))
+            ) : (
+              <li className="text-gray-500">Sin productos asociados</li>
+            )}
+          </ul>
             </div>
           ))}
         </div>

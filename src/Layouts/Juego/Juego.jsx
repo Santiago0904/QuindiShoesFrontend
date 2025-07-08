@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from 'react';
 import birdImg from '../../assets/images/crocodilo.png';
 import birdFlapImg from '../../assets/images/sprite-up.png';
-import dieSoundFile from '../../assets/sounds/die.mp3';
 import fondoVideo from '../../assets/images/202505231554.mp4';
 import Ecos_Freneticos from '../../assets/sounds/Ecos_Freneticos.mp3';
 import axiosClient from '../../api/axion';
@@ -23,11 +22,10 @@ export default function FlappyBirdGame({ onGameOver }) {
   const animationFrameRef = useRef();
   const pipeTimerRef = useRef(0);
   const gameStateRef = useRef(gameState);
-  const dieSound = useRef(new Audio(dieSoundFile));
   const videoRef = useRef(null);
   const reverseIntervalRef = useRef(null);
   const videoTimeoutRef = useRef(null);
-  const ecosFreneticosAudio = useRef(new Audio(Ecos_Freneticos));
+  const ecosFreneticosAudio = useRef(null);
   const gameOverRef = useRef(false);
 
 
@@ -56,7 +54,7 @@ async function checkAndSetDescuento(score) {
 
   try {
     // 👇 Aquí consultamos si ya usó su descuento
-    const res = await axiosClient.get(`/usuarios/${usuarioId}/descuento-estado`);
+    const res = await axiosClient.get(`/juego/${usuarioId}/descuento-estado`);
     const { descuento_usado } = res.data;
 
     // ✅ Solo mostramos si NO lo ha usado
@@ -74,10 +72,21 @@ async function checkAndSetDescuento(score) {
 }
 
 
-  useEffect(() => {
-    dieSound.current.load();
-    ecosFreneticosAudio.current.load();
-  }, []);
+useEffect(() => {
+  ecosFreneticosAudio.current = new Audio(Ecos_Freneticos);
+  ecosFreneticosAudio.current.preload = "auto";
+
+  return () => {
+    if (ecosFreneticosAudio.current) {
+      ecosFreneticosAudio.current.pause();
+      ecosFreneticosAudio.current.src = '';
+      ecosFreneticosAudio.current.load(); // libera el recurso
+      ecosFreneticosAudio.current = null;
+    }
+  };
+}, []);
+
+
 
   useEffect(() => {
     scoreRef.current = score;
@@ -93,6 +102,7 @@ async function checkAndSetDescuento(score) {
       const usuarioId = payload.id || payload.data?.id;
       if (!usuarioId) return;
 
+      console.log("Guardando puntuación:", { usuarioId, puntuacion });
       await axiosClient.post("/juego", { usuarioId, puntuacion });
     } catch (error) {
       console.error("Error al guardar puntuación:", error);
@@ -121,11 +131,21 @@ async function checkAndSetDescuento(score) {
   if ((e.key === 'Enter' || e.key === 'ArrowUp') && gameStateRef.current !== 'Play') {
     // Reproduce la música aquí directamente tras interacción
     e.preventDefault()
+    try {
+  if (!audio.paused && !audio.ended) {
     audio.pause();
-    audio.currentTime = 0;
-    audio.play().catch((e) => {
-      console.warn("No se pudo reproducir Ecos_Freneticos:", e);
+  }
+  audio.currentTime = 0;
+  const playPromise = audio.play();
+  if (playPromise !== undefined) {
+    playPromise.catch((error) => {
+      console.warn("No se pudo reproducir Ecos_Freneticos:", error);
     });
+    }
+    } catch (err) {
+      console.warn("Error general al manejar el audio:", err);
+    }
+
 
     startGame();
   }
@@ -166,7 +186,13 @@ async function checkAndSetDescuento(score) {
   }, []);
 
  const startGame = () => {
- gameOverRef.current = false;  // Reiniciar bandera
+ gameOverRef.current = false; 
+   if (ecosFreneticosAudio.current) {
+    ecosFreneticosAudio.current.pause();
+    ecosFreneticosAudio.current.currentTime = 0;
+  }
+
+
 
   moveSpeedRef.current = 0.3;
   setScore(0);
@@ -220,7 +246,7 @@ const gameOver = () => {
     clearTimeout(videoTimeoutRef.current);
   }
 
-  guardarPuntuacion(scoreRef.current);    
+  guardarPuntuacion(scoreRef.current);
   checkAndSetDescuento(scoreRef.current);
   if (typeof onGameOver === 'function') {
       onGameOver();
@@ -451,5 +477,3 @@ return (
     </div>
 );
 }
-
-

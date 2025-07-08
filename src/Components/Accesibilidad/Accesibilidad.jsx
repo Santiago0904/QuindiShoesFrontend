@@ -2,18 +2,23 @@ import React, { useEffect } from 'react';
 
 export const Accesibilidad = () => {
   useEffect(() => {
-    // Configuración del widget de accesibilidad
+    // Configuración del widget de accesibilidad (nueva)
     window.interdeal = {
-      sitekey: '1f76ceb33566c3c6cd0a939482ddb145',
-      Position: 'left',
-      domains: {
-        js: 'https://cdn.equalweb.com/',
-        acc: 'https://access.equalweb.com/',
+      get sitekey() {
+        return '90cf43a9587416a40f69488555fe005d';
       },
-      Menulang: 'EN',
-      draggable: false,
+      get domains() {
+        return {
+          js: 'https://cdn.equalweb.com/',
+          acc: 'https://access.equalweb.com/',
+        };
+      },
+      Position: 'left',
+      Menulang: 'ES',
+      draggable: true,
       btnStyle: {
-        vPosition: ['50%', '80%'],
+        vPosition: ['80%', '80%'],
+        margin: ['0', '0'],
         scale: ['0.5', '0.5'],
         color: {
           main: '#cc1ec1',
@@ -21,6 +26,7 @@ export const Accesibilidad = () => {
         },
         icon: {
           outline: false,
+          outlineColor: '#ffffff',
           type: 11,
           shape: 'semicircle',
         },
@@ -29,7 +35,7 @@ export const Accesibilidad = () => {
 
     // Cargar el script de EqualWeb
     const script = document.createElement('script');
-    script.src = 'https://cdn.equalweb.com/core/5.1.13/accessibility.js';
+    script.src = `${window.interdeal.domains.js}core/5.1.13/accessibility.js`;
     script.defer = true;
     script.integrity =
       'sha512-70/AbMe6C9H3r5hjsQleJEY4y5l9ykt4WYSgyZj/WjpY/ord/26LWfva163b9W+GwWkfwbP0iLT+h6KRl+LoXA==';

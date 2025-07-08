@@ -33,7 +33,7 @@ const Carrito = () => {
 
       // 🔄 Verificar si el descuento ya fue usado
       axiosClient
-        .get(`/usuarios/${id}/descuento-estado`)
+        .get(`/juego/${id}/descuento-estado`)
         .then((res) => setDescuentoUsado(res.data.descuento_usado))
         .catch(() => setDescuentoUsado(false));
         
