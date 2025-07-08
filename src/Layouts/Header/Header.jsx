@@ -6,7 +6,7 @@ import { ContadorCarritoContext } from "../../Contexts/ContadorCarritoContext";
 export const Header = () => {
   const { contador } = useContext(ContadorCarritoContext);
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50 py-6 px-8">
+    <header className="bg-white shadow-md  top-0 z-50 py-6 px-8">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <h1 className="text-3xl font-black text-gray-800">QuindiShoes</h1>
         <nav className="hidden md:flex space-x-10 font-semibold text-gray-700">

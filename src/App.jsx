@@ -73,7 +73,6 @@ function App() {
   return (
     <>
       {!ocultarHeader && <Header />}
-      <Accesibilidad />
 
       <div className="relative min-h-screen flex flex-col">
         <div className="flex-1 flex flex-col">
