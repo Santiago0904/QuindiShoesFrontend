@@ -20,7 +20,6 @@ export const ParaTi = ({ userId }) => {
       .finally(() => setLoading(false));
   }, [userId]);
 
-  // Auto-advance
   useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % productos.length);
