@@ -11,6 +11,12 @@ import ResenasProducto from "../../Components/ResenasProducto/ResenasProducto";
 import { ParticlesBackground } from "../../Components/Particulas/ParticlesBackground";
 import ColorThief from "colorthief";
 
+declare global {
+  interface Window {
+    ePayco?: any;
+  }
+}
+
 // Interfaces
 interface Variante {
   id_variantes: number;
@@ -121,6 +127,16 @@ export function DetalleProducto() {
     setEsFavorito(favoritos.some((p: any) => p.id_producto === producto.id_producto));
   }, [producto]);
 
+  useEffect(() => {
+  if (!window.ePayco) {
+    const script = document.createElement("script");
+    script.src = "https://checkout.epayco.co/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }
+}, []);
+
+
   // Detectar color dominante y convertirlo en pastel
   useEffect(() => {
     if (!producto) return;
@@ -187,12 +203,77 @@ export function DetalleProducto() {
   };
 
   const handleReservar = () => {
-    if (!usuario_id || !colorSeleccionado || !tallaSeleccionada || cantidad > stockDisponible) {
-      return Swal.fire({ icon: "warning", title: "Completa los campos y verifica stock", confirmButtonColor: "#2563eb" });
-    }
+  if (!usuario_id) {
+    Swal.fire({
+      icon: "warning",
+      title: "Inicia sesión para reservar",
+      text: "Debes iniciar sesión para poder reservar este producto.",
+      confirmButtonColor: "#2563eb"
+    });
+    return;
+  }
 
-    Swal.fire({ icon: "success", title: "Reserva exitosa (simulado)", timer: 1500, showConfirmButton: false });
+  if (!window.ePayco) {
+    alert("No se pudo cargar la pasarela de pagos. Intenta de nuevo.");
+    return;
+  }
+
+  const varianteSeleccionada = producto?.variantes.find(
+    v => v.id_color === colorSeleccionado && v.id_talla === tallaSeleccionada
+  );
+
+  if (!colorSeleccionado || !tallaSeleccionada || !varianteSeleccionada) {
+    Swal.fire({
+      icon: "warning",
+      title: "Selecciona color y talla",
+      text: "Por favor selecciona un color y una talla antes de reservar.",
+      confirmButtonColor: "#2563eb"
+    });
+    return;
+  }
+
+  if (cantidad > varianteSeleccionada.stock) {
+    Swal.fire({
+      icon: "error",
+      title: "Stock insuficiente",
+      text: "No hay suficiente stock disponible para la cantidad seleccionada.",
+      confirmButtonColor: "#2563eb"
+    });
+    return;
+  }
+
+  const handler = window.ePayco.checkout.configure({
+    key: "76018558cee4255d423b4753fee3fdf1", // Tu llave pública
+    test: true,
+  });
+
+  const reservaData = {
+    name: producto.nombre_producto,
+    description: `Reserva de ${producto.nombre_producto}`,
+    invoice: "ORD-" + Date.now(),
+    currency: "cop",
+    amount: (producto.precio_producto * cantidad).toString(),
+    tax_base: "0",
+    tax: "0",
+    country: "co",
+    method: "POST",
+    response: "https://quindi-shoes-frontend-yemj.vercel.app/pagos/respuesta",
+    confirmation: "https://huge-rules-cheat.loca.lt/api/pagos/confirmacion",
+    external: "false",
+    x_extra1: String(usuario_id),
+    x_extra2: JSON.stringify({
+      tipo: "reserva",
+      id_producto: producto.id_producto,
+      nombre_producto: producto.nombre_producto,
+      color: producto.colores.find(c => c.id_color === colorSeleccionado)?.color,
+      talla: producto.tallas.find(t => t.id_talla === tallaSeleccionada)?.talla,
+      cantidad,
+      id_variante: varianteSeleccionada.id_variantes,
+    }),
   };
+
+  handler.open(reservaData);
+};
 
   const toggleFavorito = () => {
     const favoritos = JSON.parse(localStorage.getItem("favoritos") || "[]");
