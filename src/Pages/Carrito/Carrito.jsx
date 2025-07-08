@@ -104,7 +104,7 @@ const Carrito = () => {
       tax: "0",
       country: "co",
       method: "POST",
-      response: "https://quindi-shoes-frontend-yemj.vercel.app/",
+      response: "https://quindi-shoes-frontend-def.vercel.app/",
       confirmation: "https://quindishoes-backend-def.onrender.com/api/pagos/confirmacion",
       external: "false",
       x_extra1: userId.toString(),
@@ -122,7 +122,7 @@ const Carrito = () => {
     resetear();
   };
 
-  const irAProductos = () => navigate("/");
+  const irAProductos = () => navigate("/Productospages");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-green-50 px-4 py-8 flex justify-center items-start">

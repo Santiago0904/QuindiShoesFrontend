@@ -285,122 +285,141 @@ export function DetalleProducto() {
   };
 
   return (
-    <div
-      className="w-full min-h-screen px-16 pt-16 pb-24 flex flex-col gap-20 transition-colors duration-700"
-      style={{ background: `linear-gradient(to bottom right, ${bgColor}, white, ${bgColor})` }}
-    >
-      {/* Sección superior */}
-      <div className="flex gap-16">
-        {/* Imagen */}
-        <div className="flex-1 flex flex-col justify-center items-center mt-[100px]">
-          <img
-            ref={imgRef}
-            src={imagenPrincipal}
-            alt={producto.nombre_producto}
-            className="w-[480px] h-[420px] object-contain"
-          />
-      <div className="flex gap-3 mt-4">
-        {producto.imagenes.slice(1).map((img, idx) => (
-          <img key={idx} src={img} className="w-14 h-14 rounded-full border border-gray-300" />
-        ))}
+  <div
+    className="w-full min-h-screen px-4 sm:px-8 md:px-12 lg:px-16 pt-16 pb-24 flex flex-col gap-16 transition-colors duration-700"
+    style={{ background: `linear-gradient(to bottom right, ${bgColor}, white, ${bgColor})` }}
+  >
+    {/* Sección superior */}
+    <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
+      {/* Imagen */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center mt-10 lg:mt-[100px]">
+        <img
+          ref={imgRef}
+          src={imagenPrincipal}
+          alt={producto.nombre_producto}
+          className="w-full max-w-[380px] sm:max-w-[440px] md:max-w-[480px] h-auto object-contain"
+        />
+        <div className="flex gap-3 mt-4 flex-wrap justify-center">
+          {producto.imagenes.slice(1).map((img, idx) => (
+            <img key={idx} src={img} className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-gray-300 object-cover" />
+          ))}
+        </div>
+      </div>
+
+      {/* Detalles */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center mt-6 lg:mt-[100px] px-4">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-black mb-3 break-words">{producto.nombre_producto}</h1>
+        <p className="text-base sm:text-lg text-gray-600 mb-1">{producto.tipo_producto}</p>
+        <p className="text-2xl sm:text-3xl font-black text-black mb-4">${producto.precio_producto}</p>
+
+        {/* Colores */}
+        <div className="flex gap-3 mb-4 flex-wrap">
+          {producto.colores.map((c) => (
+            <button
+              key={c.id_color}
+              onClick={() => setColorSeleccionado(c.id_color)}
+              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full border-2 transition-all ${colorSeleccionado === c.id_color ? "border-black scale-110" : "border-gray-300"}`}
+              style={{ backgroundColor: c.codigo_hex }}
+            ></button>
+          ))}
+        </div>
+
+        {/* Tallas */}
+        {/* Tallas dinámicas según color seleccionado */}
+<div className="flex gap-2 mb-4 flex-wrap">
+  {producto.tallas.map((t) => {
+    const variante = producto.variantes.find(
+      (v) =>
+        v.id_color === colorSeleccionado &&
+        v.id_talla === t.id_talla &&
+        v.stock > 0
+    );
+
+    const disponible = !!variante;
+
+    return (
+      <button
+        key={t.id_talla}
+        onClick={() => disponible && setTallaSeleccionada(t.id_talla)}
+        disabled={!disponible}
+        className={`px-3 py-2 sm:px-4 sm:py-2 rounded-full text-sm border font-semibold transition-all
+          ${
+            !disponible
+              ? "bg-gray-200 text-gray-500 border-gray-300 cursor-not-allowed opacity-60"
+              : tallaSeleccionada === t.id_talla
+              ? "bg-pink-500 text-white border-pink-500"
+              : "bg-white text-black border-gray-300 hover:bg-pink-100"
+          }`}
+      >
+        {t.talla}
+      </button>
+    );
+  })}
+</div>
+
+
+        {/* Cantidad */}
+        <div className="flex gap-2 items-center mb-6">
+          <label className="text-gray-700 font-medium">Cantidad:</label>
+          <button onClick={() => setCantidad(c => Math.max(1, c - 1))} className="w-8 h-8 rounded-full border hover:bg-pink-200">-</button>
+          <span>{cantidad}</span>
+          <button onClick={() => setCantidad(c => Math.min(stockDisponible, c + 1))} className="w-8 h-8 rounded-full border hover:bg-green-200">+</button>
+        </div>
+
+        {/* Botones de acción */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleAgregarCarrito}
+            className="w-full sm:w-auto flex-1 bg-pink-500 text-white py-3 rounded-full font-semibold shadow-lg hover:bg-pink-600 transition flex items-center justify-center gap-2"
+          >
+            Agregar al Carrito
+            <FaShoppingCart className="text-lg" />
+          </motion.button>
+
+          {producto.reserva_activa && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleReservar}
+              className="w-full sm:w-auto flex-1 bg-white border-2 border-black text-black py-3 rounded-full font-semibold hover:bg-black hover:text-white transition"
+            >
+              Reservar
+            </motion.button>
+          )}
+
+          {producto.personalizacion_activa === 1 && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate("/personalizador", { state: { producto } })}
+              className="w-full sm:w-auto flex-1 bg-indigo-600 text-white py-3 rounded-full font-semibold shadow-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+            >
+              Personalizar
+            </motion.button>
+          )}
+        </div>
+
+        {/* Favorito */}
+        <motion.button
+          onClick={toggleFavorito}
+          whileTap={{ rotate: 360, scale: 1.3 }}
+          className="p-3 rounded-full text-pink-500 text-3xl shadow-md hover:scale-110 transition-transform self-center sm:self-start"
+        >
+          {esFavorito ? <FaHeart /> : <FaRegHeart />}
+        </motion.button>
       </div>
     </div>
 
-        {/* Detalles */}
-        <div className="flex-1 flex flex-col justify-center mt-[100px]">
-          <h1 className="text-5xl font-bold text-black mb-3">{producto.nombre_producto}</h1>
-          <p className="text-lg text-gray-600 mb-1">{producto.tipo_producto}</p>
-          <p className="text-3xl font-black text-black mb-4">${producto.precio_producto}</p>
-
-          {/* Opciones */}
-          <div className="mb-4">
-            {/* Colores */}
-            <div className="flex gap-4 mb-4">
-              {producto.colores.map((c) => (
-                <button
-                  key={c.id_color}
-                  onClick={() => setColorSeleccionado(c.id_color)}
-                  className={`w-11 h-18 rounded-full border-2 ${colorSeleccionado === c.id_color ? "border-black scale-110" : "border-gray-300"}`}
-                  style={{ backgroundColor: c.codigo_hex }}
-                ></button>
-              ))}
-            </div>
-
-            {/* Tallas */}
-            <div className="flex gap-2 mb-4 flex-wrap">
-              {producto.tallas.map((t) => (
-                <button
-                  key={t.id_talla}
-                  onClick={() => setTallaSeleccionada(t.id_talla)}
-                  className={`px-4 py-2 rounded-full text-sm border font-semibold ${tallaSeleccionada === t.id_talla ? "bg-pink-500 text-white" : "bg-white text-black"}`}
-                >
-                  {t.talla}
-                </button>
-              ))}
-            </div>
-
-            {/* Cantidad */}
-            <div className="flex gap-2 items-center mb-6">
-              <label className="text-gray-700 font-medium">Cantidad:</label>
-              <button onClick={() => setCantidad(c => Math.max(1, c - 1))} className="w-8 h-8 rounded-full border hover:bg-pink-200">-</button>
-              <span>{cantidad}</span>
-              <button onClick={() => setCantidad(c => Math.min(stockDisponible, c + 1))} className="w-8 h-8 rounded-full border hover:bg-green-200">+</button>
-            </div>
-
-              <div className="flex gap-4 mb-6">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleAgregarCarrito}
-                  className="flex-1 bg-pink-500 text-white py-3 rounded-full font-semibold shadow-lg hover:bg-pink-600 transition flex items-center justify-center gap-2"
-                >
-                  Agregar al Carrito
-                  <FaShoppingCart className="text-lg" />
-                </motion.button>
-
-              {producto.reserva_activa && (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleReservar}
-                  className="flex-1 bg-white border-2 border-black text-black py-3 rounded-full font-semibold hover:bg-black hover:text-white transition"
-                >
-                  Reservar
-                </motion.button>
-              )}
-
-              {/* Botón de personalizar SOLO si el producto es personalizable */}
-              {producto.personalizacion_activa === 1 && (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate("/personalizador", { state: { producto } })}
-                  className="flex-1 bg-indigo-600 text-white py-3 rounded-full font-semibold shadow-lg hover:bg-indigo-700 transition flex items-center justify-center gap-2"
-                >
-                  Personalizar
-                </motion.button>
-              )}
-            </div>
-
-              <motion.button
-                onClick={toggleFavorito}
-                whileTap={{ rotate: 360, scale: 1.3 }}
-                className="p-3 rounded-full text-pink-500 text-3xl shadow-md hover:scale-110 transition-transform"
-              >
-                {esFavorito ? <FaHeart /> : <FaRegHeart />}
-              </motion.button>
-            </div>
-          </div>
-        </div>
-
-        {/* Sección reseñas integrada */}
-        <div className="w-full flex justify-center mt-[50px]">
-          <div className="w-full max-w-3xl rounded-1xl shadow-2xl p-8 bg-white/60 backdrop-blur-md border border-pink-200">
-            <ParticlesBackground />
-
-          <ResenasProducto id_producto={producto.id_producto} usuario={usuario} />
-        </div>
+    {/* Sección reseñas */}
+    <div className="w-full flex justify-center mt-10 px-2 sm:px-0">
+      <div className="w-full max-w-3xl rounded-2xl shadow-2xl p-6 sm:p-8 bg-white/60 backdrop-blur-md border border-pink-200">
+        <ParticlesBackground />
+        <ResenasProducto id_producto={producto.id_producto} usuario={usuario} />
       </div>
     </div>
+  </div>
 );
+
 }
