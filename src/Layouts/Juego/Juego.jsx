@@ -25,7 +25,7 @@ export default function FlappyBirdGame({ onGameOver }) {
   const videoRef = useRef(null);
   const reverseIntervalRef = useRef(null);
   const videoTimeoutRef = useRef(null);
-  const ecosFreneticosAudio = useRef(new Audio(Ecos_Freneticos));
+  const ecosFreneticosAudio = useRef(null);
   const gameOverRef = useRef(false);
 
 
@@ -73,10 +73,15 @@ async function checkAndSetDescuento(score) {
 
 
 useEffect(() => {
+  ecosFreneticosAudio.current = new Audio(Ecos_Freneticos);
+  ecosFreneticosAudio.current.preload = "auto";
+
   return () => {
     if (ecosFreneticosAudio.current) {
       ecosFreneticosAudio.current.pause();
       ecosFreneticosAudio.current.src = '';
+      ecosFreneticosAudio.current.load(); // libera el recurso
+      ecosFreneticosAudio.current = null;
     }
   };
 }, []);
