@@ -5,7 +5,7 @@ export const Accesibilidad = () => {
     // Configuración del widget de accesibilidad
     window.interdeal = {
       get sitekey() {
-        return '4f87b42463faf00276d7aeedebf1262e'; // Clave original proporcionada
+        return '90cf43a9587416a40f69488555fe005d'; // Clave de tu script original
       },
       get domains() {
         return {
@@ -17,7 +17,7 @@ export const Accesibilidad = () => {
       Menulang: 'ES',
       draggable: true,
       btnStyle: {
-        vPosition: ['50%', '80%'],
+        vPosition: ['80%', '80%'],
         margin: ['0', '0'],
         scale: ['0.5', '0.5'],
         color: {
@@ -27,7 +27,7 @@ export const Accesibilidad = () => {
         icon: {
           outline: false,
           outlineColor: '#ffffff',
-          type: 10, // Cambiado según tu versión original
+          type: 11,
           shape: 'semicircle',
         },
       },
